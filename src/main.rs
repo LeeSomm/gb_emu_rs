@@ -30,6 +30,11 @@ fn main() {
     // let path = gb_emu_rs::cart::cart_choose_rom();
     // println!("{:?}", path);
 
-    let cart = gb_emu_rs::cart::cart_load().unwrap();
+    // TODO: Find a better way than double unwrap.
+    let cart_path = gb_emu_rs::cart::cart_choose_rom().unwrap().unwrap();
+    let cart = gb_emu_rs::cart::Cartridge::load(cart_path).unwrap();
     cart.cart_print_info();
+
+    let cpu = gb_emu_rs::cpu::Cpu::new();
+    cpu.register.debug_print_registers();
 }

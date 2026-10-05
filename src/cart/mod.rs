@@ -11,13 +11,13 @@ const MAX_CART_SIZE: usize = 1024 * 1024;
 const HEADER_END: usize = 0x150;
 
 pub struct Cartridge {
-    data: Vec<u8>,
+    pub data: Vec<u8>,
     header: CartridgeHeader,
     // loaded: bool,
 }
 
 impl Cartridge {
-    fn load(path: PathBuf) -> Result<Self> {
+    pub fn load(path: PathBuf) -> Result<Self> {
         // let rom_file = File::open(path).context("Failed to open ROM file.")?;
         // let reader = BufReader::new(rom_file);
 
@@ -168,9 +168,9 @@ pub fn cart_choose_rom() -> Result<Option<PathBuf>> {
     }
 }
 
-pub fn cart_load() -> Result<Cartridge> {
-    let rom_path = cart_choose_rom()?.unwrap();
-    let cart = Cartridge::load(rom_path)?;
+// pub fn cart_load() -> Result<Cartridge> {
+//     let rom_path = cart_choose_rom()?.unwrap();
+//     let cart = Cartridge::load(rom_path)?;
 
-    Ok(cart)
-}
+//     Ok(cart)
+// }
