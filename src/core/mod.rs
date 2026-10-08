@@ -1,19 +1,25 @@
-use crate::core::clock::Clock;
+use std::path::PathBuf;
 
-pub mod clock;
+use crate::{cart::Cartridge, cpu::Cpu};
 
-struct Runtime {
-    clock: Clock,
+pub struct Runtime {
+    cpu: Cpu,
+    cart: Cartridge,
 }
 
 impl Runtime {
-    pub fn init() -> Self {
+    pub fn init(cart: Cartridge) -> Self {
         Runtime {
-            clock: Clock::default(),
+            cpu: Cpu::new(),
+            cart,
         }
     }
 
-    pub fn run() {}
+    pub fn run(&mut self) {
+        while 1 == 1 {
+            self.cpu.fetch_and_execute();
+        }
+    }
 
     pub fn shutdown() {}
 }

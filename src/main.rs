@@ -35,6 +35,9 @@ fn main() {
     let cart = gb_emu_rs::cart::Cartridge::load(cart_path).unwrap();
     cart.cart_print_info();
 
-    let cpu = gb_emu_rs::cpu::Cpu::new();
-    cpu.register.debug_print_registers();
+    // let cpu = gb_emu_rs::cpu::Cpu::new();
+    // cpu.register.debug_print_registers();
+
+    let mut runtime = gb_emu_rs::core::Runtime::init(cart);
+    runtime.run();
 }

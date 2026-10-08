@@ -8,5 +8,6 @@ impl Clock {
         // of cycles will be a smaller number. u32 would be equally
         // valid.
         self.0 += cycles as u32;
+        println!("Clock: {}", self.0);
     }
 }
