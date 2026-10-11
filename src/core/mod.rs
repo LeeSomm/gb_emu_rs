@@ -1,23 +1,25 @@
-use std::path::PathBuf;
+use crate::{cart::Cartridge, cpu::Cpu, memory::MemoryBus};
 
-use crate::{cart::Cartridge, cpu::Cpu};
-
-pub struct Runtime {
+pub struct GameBoy {
     cpu: Cpu,
-    cart: Cartridge,
+    bus: MemoryBus,
 }
 
-impl Runtime {
+impl GameBoy {
     pub fn init(cart: Cartridge) -> Self {
-        Runtime {
+        GameBoy {
             cpu: Cpu::new(),
-            cart,
+            bus: MemoryBus::init(cart),
         }
+    }
+
+    pub fn step(&mut self) {
+        self.cpu.fetch_and_execute(&mut self.bus);
     }
 
     pub fn run(&mut self) {
         while 1 == 1 {
-            self.cpu.fetch_and_execute();
+            self.step();
         }
     }
 

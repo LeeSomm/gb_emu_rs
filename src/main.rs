@@ -34,10 +34,11 @@ fn main() {
     let cart_path = gb_emu_rs::cart::cart_choose_rom().unwrap().unwrap();
     let cart = gb_emu_rs::cart::Cartridge::load(cart_path).unwrap();
     cart.cart_print_info();
+    println!();
 
     // let cpu = gb_emu_rs::cpu::Cpu::new();
     // cpu.register.debug_print_registers();
 
-    let mut runtime = gb_emu_rs::core::Runtime::init(cart);
-    runtime.run();
+    let mut gb = gb_emu_rs::core::GameBoy::init(cart);
+    gb.run();
 }

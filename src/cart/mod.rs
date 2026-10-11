@@ -5,15 +5,20 @@ use dialoguer::Select;
 use std::fs::{self, DirEntry};
 use std::{env::current_dir, path::PathBuf};
 
-use crate::cart::header::licensee::Licensee;
+use crate::cart::header::{CartridgeHeader, licensee::Licensee};
 
-const MAX_CART_SIZE: usize = 1024 * 1024;
+// const MAX_CART_SIZE: usize = 1024 * 1024;
 const HEADER_END: usize = 0x150;
+
+// TODO: This will be owned by the MemoryBus struct
 
 pub struct Cartridge {
     pub data: Vec<u8>,
-    header: CartridgeHeader,
+    pub header: CartridgeHeader,
     // loaded: bool,
+    // rom_bank: uszie // Determine which ROM bank is available to CPU
+    // HM GB has 32 ROM banks (512KiB) and 1 8KiB bank of Cartridge RAM
+    // ram: // Not entirely sure how this works yet
 }
 
 impl Cartridge {
@@ -70,51 +75,6 @@ impl Cartridge {
             self.header.global_checksum_lo
         });
     }
-}
-
-struct CartridgeHeader {
-    entry_point: [u8; 4],
-    nintendo_logo: [u8; 48],
-    title: [u8; 15],
-    cgb_flag: u8,
-    new_licensee_code: [u8; 2],
-    sgb_flag: u8,
-    cartridge_type: u8,
-    rom_size: u8,
-    ram_size: u8,
-    destination_code: u8,
-    old_licensee_code: u8,
-    mask_rom_version_number: u8,
-    header_checksum: u8,
-    global_checksum_hi: u8,
-    global_checksum_lo: u8,
-}
-
-impl CartridgeHeader {
-    fn load(data: &[u8]) -> Self {
-        CartridgeHeader {
-            entry_point: bytes(data, 0x100),
-            nintendo_logo: bytes(data, 0x104),
-            title: bytes(data, 0x134),
-            cgb_flag: data[0x143],
-            new_licensee_code: bytes(data, 0x144),
-            sgb_flag: data[0x146],
-            cartridge_type: data[0x147],
-            rom_size: data[0x148],
-            ram_size: data[0x149],
-            destination_code: data[0x14A],
-            old_licensee_code: data[0x14B],
-            mask_rom_version_number: data[0x14C],
-            header_checksum: data[0x14D],
-            global_checksum_hi: data[0x14E],
-            global_checksum_lo: data[0x14F],
-        }
-    }
-}
-
-/// Helper function for parsing bytes from binary files
-fn bytes<const N: usize>(data: &[u8], start: usize) -> [u8; N] {
-    data[start..start + N].try_into().unwrap()
 }
 
 fn cart_scan_gb_files() -> Result<impl Iterator<Item = DirEntry>> {

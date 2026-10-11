@@ -1,5 +1,7 @@
 use std::collections::HashMap;
 
+use crate::memory::MemoryBus;
+
 use super::Cpu;
 
 pub struct InstructionSet {
@@ -9,8 +11,8 @@ pub struct InstructionSet {
 
 pub struct CpuInstruction {
     pub disassembly: &'static str,
-    pub operand_length: u8,
-    pub operation: fn(&mut Cpu),
+    pub operand_length: u8, // In bytes
+    pub operation: fn(&mut Cpu, &mut MemoryBus),
 }
 
 pub const NOOP: CpuInstruction = CpuInstruction {
@@ -29,6 +31,12 @@ pub const LD_BC_A: CpuInstruction = CpuInstruction {
     disassembly: "LD BC, A",
     operand_length: 0,
     operation: Cpu::cpu_noop,
+};
+
+pub const JP_A16: CpuInstruction = CpuInstruction {
+    disassembly: "JP a16",
+    operand_length: 2,
+    operation: Cpu::cpu_jp_a16,
 };
 
 pub const PLACEHOLDER: CpuInstruction = CpuInstruction {
@@ -234,7 +242,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xC0 */ PLACEHOLDER,
         /* 0xC1 */ PLACEHOLDER,
         /* 0xC2 */ PLACEHOLDER,
-        /* 0xC3 */ PLACEHOLDER,
+        /* 0xC3 */ JP_A16,
         /* 0xC4 */ PLACEHOLDER,
         /* 0xC5 */ PLACEHOLDER,
         /* 0xC6 */ PLACEHOLDER,
@@ -555,12 +563,3 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xFF */ PLACEHOLDER,
     ],
 };
-
-// CPU Generic Operations
-pub fn cpu_routine_ld_16(hi: &mut u8, lo: &mut u8) {
-    // Advance cpu clocks by 4
-    // Read into lo from memory bus
-    // Advance cpu clocks by 4
-    // Read into hi from memory bus
-    // Advance cpu clocks by 4
-}
