@@ -15,34 +15,53 @@ pub struct CpuInstruction {
     pub operation: fn(&mut Cpu, &mut MemoryBus),
 }
 
-pub const NOOP: CpuInstruction = CpuInstruction {
-    disassembly: "NOP",
+pub const DI: CpuInstruction = CpuInstruction {
+    disassembly: "DI",
     operand_length: 0,
-    operation: Cpu::cpu_noop,
-};
-
-pub const LD_BC_N16: CpuInstruction = CpuInstruction {
-    disassembly: "LD BC, n16",
-    operand_length: 0,
-    operation: Cpu::cpu_ld_bc_n16,
-};
-
-pub const LD_BC_A: CpuInstruction = CpuInstruction {
-    disassembly: "LD BC, A",
-    operand_length: 0,
-    operation: Cpu::cpu_noop,
+    operation: Cpu::di,
 };
 
 pub const JP_A16: CpuInstruction = CpuInstruction {
     disassembly: "JP a16",
     operand_length: 2,
-    operation: Cpu::cpu_jp_a16,
+    operation: Cpu::jp_a16,
 };
 
+pub const LD_A16_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD [a16], A",
+    operand_length: 2,
+    operation: Cpu::ld_a16_a,
+};
+
+pub const LD_BC_N16: CpuInstruction = CpuInstruction {
+    disassembly: "LD BC, n16",
+    operand_length: 0,
+    operation: Cpu::ld_bc_n16,
+};
+
+pub const LD_BC_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD BC, A",
+    operand_length: 0,
+    operation: Cpu::noop,
+};
+
+pub const NOOP: CpuInstruction = CpuInstruction {
+    disassembly: "NOP",
+    operand_length: 0,
+    operation: Cpu::noop,
+};
+
+pub const XOR_A_A: CpuInstruction = CpuInstruction {
+    disassembly: "XOR A, A",
+    operand_length: 0,
+    operation: Cpu::xor_a_a,
+};
+
+// TODO: Remove when all instructions are implemented.
 pub const PLACEHOLDER: CpuInstruction = CpuInstruction {
     disassembly: "Not yet implemented",
     operand_length: 0,
-    operation: Cpu::cpu_noop,
+    operation: Cpu::noop,
 };
 
 pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
@@ -222,7 +241,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xAC */ PLACEHOLDER,
         /* 0xAD */ PLACEHOLDER,
         /* 0xAE */ PLACEHOLDER,
-        /* 0xAF */ PLACEHOLDER,
+        /* 0xAF */ XOR_A_A,
         /* 0xB0 */ PLACEHOLDER,
         /* 0xB1 */ PLACEHOLDER,
         /* 0xB2 */ PLACEHOLDER,
@@ -281,7 +300,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xE7 */ PLACEHOLDER,
         /* 0xE8 */ PLACEHOLDER,
         /* 0xE9 */ PLACEHOLDER,
-        /* 0xEA */ PLACEHOLDER,
+        /* 0xEA */ LD_A16_A,
         /* 0xEB */ PLACEHOLDER,
         /* 0xEC */ PLACEHOLDER,
         /* 0xED */ PLACEHOLDER,
@@ -290,7 +309,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xF0 */ PLACEHOLDER,
         /* 0xF1 */ PLACEHOLDER,
         /* 0xF2 */ PLACEHOLDER,
-        /* 0xF3 */ PLACEHOLDER,
+        /* 0xF3 */ DI,
         /* 0xF4 */ PLACEHOLDER,
         /* 0xF5 */ PLACEHOLDER,
         /* 0xF6 */ PLACEHOLDER,

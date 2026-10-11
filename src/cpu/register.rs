@@ -87,6 +87,14 @@ impl Register {
         0b10000000 & self.f
     }
 
+    pub fn set_flag_z_zero(&mut self) {
+        self.f |= 0b10000000;
+    }
+
+    pub fn clear_flag_z_zero(&mut self) {
+        self.f &= 0b01111111;
+    }
+
     pub fn get_flag_n_subtraction(&self) -> u8 {
         // Bit mask for 6th bit
         0b01000000 & self.f

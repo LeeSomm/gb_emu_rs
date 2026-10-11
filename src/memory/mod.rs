@@ -7,7 +7,7 @@ pub struct MemoryBus {
     oam: [u8; 0xA0],    // Addresses 0xFE00-0xFE9F
     io: [u8; 0x80],     // Address 0xFF00-0xFF7F (Consider a dedicated struct)
     hram: [u8; 0x7F],   // Address 0xFF80-FFFE
-    ie: u8,
+    ie: u8,             // Address 0xFFFF
 }
 
 impl MemoryBus {
@@ -36,16 +36,36 @@ impl MemoryBus {
                     panic!("Unsupported cartridge type")
                 }
             }
-            0x8000..=0x9FFF => 1,
-            0xA000..=0xBFFF => 1,
-            0xC000..=0xCFFF => 1,
-            0xD000..=0xDFFF => 1,
-            0xE000..=0xFDFF => 1,
-            0xFE00..=0xFE9F => 1,
-            0xFEA0..=0xFEFF => 1,
-            0xFF00..=0xFF7F => 1,
-            0xFF80..=0xFFFE => 1,
-            0xFFFF => 1,
+            0x8000..=0x9FFF => todo!("Implement read for: {:#x?}", addr),
+            0xA000..=0xBFFF => todo!("Implement read for: {:#x?}", addr),
+            0xC000..=0xCFFF => todo!("Implement read for: {:#x?}", addr),
+            0xD000..=0xDFFF => todo!("Implement read for: {:#x?}", addr),
+            0xE000..=0xFDFF => todo!("Implement read for: {:#x?}", addr),
+            0xFE00..=0xFE9F => todo!("Implement read for: {:#x?}", addr),
+            0xFEA0..=0xFEFF => todo!("Implement read for: {:#x?}", addr),
+            0xFF00..=0xFF7F => todo!("Implement read for: {:#x?}", addr),
+            0xFF80..=0xFFFE => todo!("Implement read for: {:#x?}", addr),
+            0xFFFF => self.ie,
+        }
+    }
+
+    pub fn write(&mut self, addr: u16, val: u8) {
+        match addr {
+            0x0..=0x7FFF => todo!(
+                "Implement MBC logic for writes to ROM. Addr: {:#x?}, Val: {:#x?}",
+                addr,
+                val
+            ),
+            0x8000..=0x9FFF => self.vram[addr as usize - 0x8000] = val,
+            0xA000..=0xBFFF => todo!("Implement write logic for addr: {:#x?}", addr),
+            0xC000..=0xCFFF => self.wram[addr as usize - 0xC000] = val,
+            0xD000..=0xDFFF => todo!("Implement write logic for addr: {:#x?}", addr),
+            0xE000..=0xFDFF => self.wram[addr as usize - 0xE000] = val, // Echo RAM writes are effectively 0xC000-0xDDFF
+            0xFE00..=0xFE9F => self.oam[addr as usize - 0xFE00] = val,
+            0xFEA0..=0xFEFF => panic!("Writes to address block 0xFEA0-0xFEFF are forbidden"),
+            0xFF00..=0xFF7F => self.io[addr as usize - 0xFF00] = val,
+            0xFF80..=0xFFFE => self.hram[addr as usize - 0xFF80] = val,
+            0xFFFF => self.ie = val,
         }
     }
 }
