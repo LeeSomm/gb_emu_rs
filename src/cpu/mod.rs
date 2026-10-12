@@ -55,12 +55,25 @@ impl Cpu {
     }
 
     // CPU Generic Operations
-    fn routine_ld_16(hi: &mut u8, lo: &mut u8) {
-        // Advance cpu clocks by 4
-        // Read into lo from memory bus
-        // Advance cpu clocks by 4
-        // Read into hi from memory bus
-        // Advance cpu clocks by 4
+
+    fn routine_ld_r16_n16(&mut self, bus: &mut MemoryBus, register: &str) {
+        self.clock.advance_clock(4);
+        let lo = bus.read(self.register.pc) as u16;
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let hi = bus.read(self.register.pc) as u16;
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let val = (hi << 8) | lo;
+        match register {
+            "bc" => self.register.set_bc(val),
+            "de" => self.register.set_de(val),
+            "sp" => self.register.sp = val,
+            "hl" => self.register.set_hl(val),
+            _ => panic!("Attempted to load to invalid 16bit register."),
+        }
     }
 
     // CPU Instructions
@@ -81,6 +94,15 @@ impl Cpu {
         println!("Jumping to: {:#x?}", self.register.pc);
     }
 
+    pub fn ld_a_n8(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let val = bus.read(self.register.pc);
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        self.register.a = val;
+    }
+
     pub fn ld_a16_a(&mut self, bus: &mut MemoryBus) {
         // Load the 8bit value from register A into the 16bit address
         self.clock.advance_clock(4);
@@ -99,7 +121,19 @@ impl Cpu {
     }
 
     pub fn ld_bc_n16(&mut self, bus: &mut MemoryBus) {
-        Cpu::routine_ld_16(&mut self.register.b, &mut self.register.c);
+        self.routine_ld_r16_n16(bus, "bc");
+    }
+
+    pub fn ld_de_n16(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r16_n16(bus, "de");
+    }
+
+    pub fn ld_hl_n16(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r16_n16(bus, "hl");
+    }
+
+    pub fn ld_sp_n16(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r16_n16(bus, "sp");
     }
 
     pub fn noop(&mut self, _bus: &mut MemoryBus) {

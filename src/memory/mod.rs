@@ -51,13 +51,12 @@ impl MemoryBus {
 
     pub fn write(&mut self, addr: u16, val: u8) {
         match addr {
-            0x0..=0x7FFF => todo!(
-                "Implement MBC logic for writes to ROM. Addr: {:#x?}, Val: {:#x?}",
-                addr,
-                val
-            ),
+            0x0..=0x1FFF => self.cart.mbc.set_ramg(val),
+            0x2000..=0x3FFF => self.cart.mbc.set_bank1(val),
+            0x4000..=0x5FFF => self.cart.mbc.set_bank2(val),
+            0x6000..=0x7FFF => self.cart.mbc.set_mode(val),
             0x8000..=0x9FFF => self.vram[addr as usize - 0x8000] = val,
-            0xA000..=0xBFFF => todo!("Implement write logic for addr: {:#x?}", addr),
+            0xA000..=0xBFFF => todo!("Implement writes for Cartridge SRAM; addr: {:#x?}", addr),
             0xC000..=0xCFFF => self.wram[addr as usize - 0xC000] = val,
             0xD000..=0xDFFF => todo!("Implement write logic for addr: {:#x?}", addr),
             0xE000..=0xFDFF => self.wram[addr as usize - 0xE000] = val, // Echo RAM writes are effectively 0xC000-0xDDFF

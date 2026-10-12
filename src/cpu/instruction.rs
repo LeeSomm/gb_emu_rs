@@ -27,6 +27,12 @@ pub const JP_A16: CpuInstruction = CpuInstruction {
     operation: Cpu::jp_a16,
 };
 
+pub const LD_A_N8: CpuInstruction = CpuInstruction {
+    disassembly: "LD A, n8",
+    operand_length: 1,
+    operation: Cpu::ld_a_n8,
+};
+
 pub const LD_A16_A: CpuInstruction = CpuInstruction {
     disassembly: "LD [a16], A",
     operand_length: 2,
@@ -35,14 +41,32 @@ pub const LD_A16_A: CpuInstruction = CpuInstruction {
 
 pub const LD_BC_N16: CpuInstruction = CpuInstruction {
     disassembly: "LD BC, n16",
-    operand_length: 0,
+    operand_length: 2,
     operation: Cpu::ld_bc_n16,
 };
 
-pub const LD_BC_A: CpuInstruction = CpuInstruction {
-    disassembly: "LD BC, A",
-    operand_length: 0,
-    operation: Cpu::noop,
+// pub const LD_BC_A: CpuInstruction = CpuInstruction {
+//     disassembly: "LD BC, A",
+//     operand_length: 2,
+//     operation: Cpu::noop,
+// };
+
+pub const LD_DE_N16: CpuInstruction = CpuInstruction {
+    disassembly: "LD DE, n16",
+    operand_length: 2,
+    operation: Cpu::ld_de_n16,
+};
+
+pub const LD_HL_N16: CpuInstruction = CpuInstruction {
+    disassembly: "LD HL, n16",
+    operand_length: 2,
+    operation: Cpu::ld_hl_n16,
+};
+
+pub const LD_SP_N16: CpuInstruction = CpuInstruction {
+    disassembly: "LD SP, n16",
+    operand_length: 2,
+    operation: Cpu::ld_sp_n16,
 };
 
 pub const NOOP: CpuInstruction = CpuInstruction {
@@ -68,7 +92,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
     normal: [
         /* 0x00 */ NOOP,
         /* 0x01 */ LD_BC_N16,
-        /* 0x02 */ LD_BC_A,
+        /* 0x02 */ PLACEHOLDER,
         /* 0x03 */ PLACEHOLDER,
         /* 0x04 */ PLACEHOLDER,
         /* 0x05 */ PLACEHOLDER,
@@ -83,7 +107,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x0E */ PLACEHOLDER,
         /* 0x0F */ PLACEHOLDER,
         /* 0x10 */ PLACEHOLDER,
-        /* 0x11 */ PLACEHOLDER,
+        /* 0x11 */ LD_DE_N16,
         /* 0x12 */ PLACEHOLDER,
         /* 0x13 */ PLACEHOLDER,
         /* 0x14 */ PLACEHOLDER,
@@ -99,7 +123,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x1E */ PLACEHOLDER,
         /* 0x1F */ PLACEHOLDER,
         /* 0x20 */ PLACEHOLDER,
-        /* 0x21 */ PLACEHOLDER,
+        /* 0x21 */ LD_HL_N16,
         /* 0x22 */ PLACEHOLDER,
         /* 0x23 */ PLACEHOLDER,
         /* 0x24 */ PLACEHOLDER,
@@ -115,7 +139,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x2E */ PLACEHOLDER,
         /* 0x2F */ PLACEHOLDER,
         /* 0x30 */ PLACEHOLDER,
-        /* 0x31 */ PLACEHOLDER,
+        /* 0x31 */ LD_SP_N16,
         /* 0x32 */ PLACEHOLDER,
         /* 0x33 */ PLACEHOLDER,
         /* 0x34 */ PLACEHOLDER,
@@ -128,7 +152,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x3B */ PLACEHOLDER,
         /* 0x3C */ PLACEHOLDER,
         /* 0x3D */ PLACEHOLDER,
-        /* 0x3E */ PLACEHOLDER,
+        /* 0x3E */ LD_A_N8,
         /* 0x3F */ PLACEHOLDER,
         /* 0x40 */ PLACEHOLDER,
         /* 0x41 */ PLACEHOLDER,
@@ -324,9 +348,9 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xFF */ PLACEHOLDER,
     ],
     cb: [
-        /* 0x00 */ NOOP,
-        /* 0x01 */ LD_BC_N16,
-        /* 0x02 */ LD_BC_A,
+        /* 0x00 */ PLACEHOLDER,
+        /* 0x01 */ PLACEHOLDER,
+        /* 0x02 */ PLACEHOLDER,
         /* 0x03 */ PLACEHOLDER,
         /* 0x04 */ PLACEHOLDER,
         /* 0x05 */ PLACEHOLDER,

@@ -1,4 +1,5 @@
 pub mod header;
+mod mbc;
 
 use anyhow::{Context, Result, anyhow};
 use dialoguer::Select;
@@ -6,17 +7,17 @@ use std::fs::{self, DirEntry};
 use std::{env::current_dir, path::PathBuf};
 
 use crate::cart::header::{CartridgeHeader, licensee::Licensee};
+use crate::cart::mbc::Mbc;
 
 // const MAX_CART_SIZE: usize = 1024 * 1024;
 const HEADER_END: usize = 0x150;
 
-// TODO: This will be owned by the MemoryBus struct
-
 pub struct Cartridge {
     pub data: Vec<u8>,
     pub header: CartridgeHeader,
+    pub mbc: Mbc,
     // loaded: bool,
-    // rom_bank: uszie // Determine which ROM bank is available to CPU
+    // rom_bank: usize // Determine which ROM bank is available to CPU
     // HM GB has 32 ROM banks (512KiB) and 1 8KiB bank of Cartridge RAM
     // ram: // Not entirely sure how this works yet
 }
@@ -33,6 +34,7 @@ impl Cartridge {
             Ok(Self {
                 data,
                 header, // TODO: Method for feeding in header data
+                mbc: Mbc::default(),
             })
         } else {
             Err(anyhow!(
