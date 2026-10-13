@@ -56,6 +56,28 @@ impl Cpu {
 
     // CPU Generic Operations
 
+    fn routine_dec_r16(&mut self, register: &str) {
+        self.clock.advance_clock(4);
+        match register {
+            "bc" => {
+                let bc = self.register.get_bc();
+                self.register.set_bc(bc - 1);
+            }
+            "de" => {
+                let de = self.register.get_de();
+                self.register.set_de(de - 1);
+            }
+            "hl" => {
+                let hl = self.register.get_hl();
+                self.register.set_hl(hl - 1);
+            }
+            "sp" => self.register.sp -= 1,
+            _ => panic!("Attempted to decrement invalid 16bit register."),
+        };
+
+        self.clock.advance_clock(4);
+    }
+
     fn routine_ld_r16_n16(&mut self, bus: &mut MemoryBus, register: &str) {
         self.clock.advance_clock(4);
         let lo = bus.read(self.register.pc) as u16;
@@ -70,13 +92,52 @@ impl Cpu {
         match register {
             "bc" => self.register.set_bc(val),
             "de" => self.register.set_de(val),
-            "sp" => self.register.sp = val,
             "hl" => self.register.set_hl(val),
+            "sp" => self.register.sp = val,
             _ => panic!("Attempted to load to invalid 16bit register."),
         }
     }
 
     // CPU Instructions
+    pub fn call_a16(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let lo = bus.read(self.register.pc);
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let hi = bus.read(self.register.pc);
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        self.register.sp -= 1;
+
+        self.clock.advance_clock(4);
+        bus.write(self.register.sp, hi);
+
+        self.clock.advance_clock(4);
+        self.register.sp -= 1;
+        bus.write(self.register.sp, lo);
+
+        self.clock.advance_clock(4);
+        self.register.pc = ((hi as u16) << 8) | lo as u16;
+    }
+
+    pub fn dec_bc(&mut self, _bus: &mut MemoryBus) {
+        self.routine_dec_r16("bc");
+    }
+
+    pub fn dec_de(&mut self, _bus: &mut MemoryBus) {
+        self.routine_dec_r16("de");
+    }
+
+    pub fn dec_hl(&mut self, _bus: &mut MemoryBus) {
+        self.routine_dec_r16("hl");
+    }
+
+    pub fn dec_sp(&mut self, _bus: &mut MemoryBus) {
+        self.routine_dec_r16("sp");
+    }
+
     pub fn di(&mut self, _bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
         self.ime = false;
@@ -126,6 +187,15 @@ impl Cpu {
 
     pub fn ld_de_n16(&mut self, bus: &mut MemoryBus) {
         self.routine_ld_r16_n16(bus, "de");
+    }
+
+    pub fn ld_hli_a(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let hl = self.register.get_hl();
+        bus.write(hl, self.register.a);
+
+        self.clock.advance_clock(4);
+        self.register.set_hl(hl + 1);
     }
 
     pub fn ld_hl_n16(&mut self, bus: &mut MemoryBus) {

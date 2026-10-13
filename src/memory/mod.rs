@@ -57,8 +57,8 @@ impl MemoryBus {
             0x6000..=0x7FFF => self.cart.mbc.set_mode(val),
             0x8000..=0x9FFF => self.vram[addr as usize - 0x8000] = val,
             0xA000..=0xBFFF => todo!("Implement writes for Cartridge SRAM; addr: {:#x?}", addr),
-            0xC000..=0xCFFF => self.wram[addr as usize - 0xC000] = val,
-            0xD000..=0xDFFF => todo!("Implement write logic for addr: {:#x?}", addr),
+            // If CGB mode, must modify 0xD000-0xDFFF for switchable banks
+            0xC000..=0xDFFF => self.wram[addr as usize - 0xC000] = val,
             0xE000..=0xFDFF => self.wram[addr as usize - 0xE000] = val, // Echo RAM writes are effectively 0xC000-0xDDFF
             0xFE00..=0xFE9F => self.oam[addr as usize - 0xFE00] = val,
             0xFEA0..=0xFEFF => panic!("Writes to address block 0xFEA0-0xFEFF are forbidden"),

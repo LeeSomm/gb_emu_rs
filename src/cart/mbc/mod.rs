@@ -1,5 +1,3 @@
-use crate::cart::mbc::BankingMode::Advanced;
-
 #[derive(Default)]
 pub struct Mbc {
     pub ramg: bool,

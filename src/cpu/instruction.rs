@@ -1,5 +1,3 @@
-use std::collections::HashMap;
-
 use crate::memory::MemoryBus;
 
 use super::Cpu;
@@ -14,6 +12,36 @@ pub struct CpuInstruction {
     pub operand_length: u8, // In bytes
     pub operation: fn(&mut Cpu, &mut MemoryBus),
 }
+
+pub const CALL_A16: CpuInstruction = CpuInstruction {
+    disassembly: "CALL a16",
+    operand_length: 2,
+    operation: Cpu::call_a16,
+};
+
+pub const DEC_BC: CpuInstruction = CpuInstruction {
+    disassembly: "DEC BC",
+    operand_length: 0,
+    operation: Cpu::dec_bc,
+};
+
+pub const DEC_DE: CpuInstruction = CpuInstruction {
+    disassembly: "DEC DE",
+    operand_length: 0,
+    operation: Cpu::dec_de,
+};
+
+pub const DEC_HL: CpuInstruction = CpuInstruction {
+    disassembly: "DEC HL",
+    operand_length: 0,
+    operation: Cpu::dec_hl,
+};
+
+pub const DEC_SP: CpuInstruction = CpuInstruction {
+    disassembly: "DEC SP",
+    operand_length: 0,
+    operation: Cpu::dec_sp,
+};
 
 pub const DI: CpuInstruction = CpuInstruction {
     disassembly: "DI",
@@ -55,6 +83,12 @@ pub const LD_DE_N16: CpuInstruction = CpuInstruction {
     disassembly: "LD DE, n16",
     operand_length: 2,
     operation: Cpu::ld_de_n16,
+};
+
+pub const LD_HLI_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD [HL+], A",
+    operand_length: 0,
+    operation: Cpu::ld_hli_a,
 };
 
 pub const LD_HL_N16: CpuInstruction = CpuInstruction {
@@ -101,7 +135,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x08 */ PLACEHOLDER,
         /* 0x09 */ PLACEHOLDER,
         /* 0x0A */ PLACEHOLDER,
-        /* 0x0B */ PLACEHOLDER,
+        /* 0x0B */ DEC_BC,
         /* 0x0C */ PLACEHOLDER,
         /* 0x0D */ PLACEHOLDER,
         /* 0x0E */ PLACEHOLDER,
@@ -117,14 +151,14 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x18 */ PLACEHOLDER,
         /* 0x19 */ PLACEHOLDER,
         /* 0x1A */ PLACEHOLDER,
-        /* 0x1B */ PLACEHOLDER,
+        /* 0x1B */ DEC_DE,
         /* 0x1C */ PLACEHOLDER,
         /* 0x1D */ PLACEHOLDER,
         /* 0x1E */ PLACEHOLDER,
         /* 0x1F */ PLACEHOLDER,
         /* 0x20 */ PLACEHOLDER,
         /* 0x21 */ LD_HL_N16,
-        /* 0x22 */ PLACEHOLDER,
+        /* 0x22 */ LD_HLI_A,
         /* 0x23 */ PLACEHOLDER,
         /* 0x24 */ PLACEHOLDER,
         /* 0x25 */ PLACEHOLDER,
@@ -133,7 +167,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x28 */ PLACEHOLDER,
         /* 0x29 */ PLACEHOLDER,
         /* 0x2A */ PLACEHOLDER,
-        /* 0x2B */ PLACEHOLDER,
+        /* 0x2B */ DEC_HL,
         /* 0x2C */ PLACEHOLDER,
         /* 0x2D */ PLACEHOLDER,
         /* 0x2E */ PLACEHOLDER,
@@ -149,7 +183,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x38 */ PLACEHOLDER,
         /* 0x39 */ PLACEHOLDER,
         /* 0x3A */ PLACEHOLDER,
-        /* 0x3B */ PLACEHOLDER,
+        /* 0x3B */ DEC_SP,
         /* 0x3C */ PLACEHOLDER,
         /* 0x3D */ PLACEHOLDER,
         /* 0x3E */ LD_A_N8,
@@ -295,7 +329,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xCA */ PLACEHOLDER,
         /* 0xCB */ PLACEHOLDER,
         /* 0xCC */ PLACEHOLDER,
-        /* 0xCD */ PLACEHOLDER,
+        /* 0xCD */ CALL_A16,
         /* 0xCE */ PLACEHOLDER,
         /* 0xCF */ PLACEHOLDER,
         /* 0xD0 */ PLACEHOLDER,
