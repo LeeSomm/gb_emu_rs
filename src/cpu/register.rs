@@ -82,6 +82,10 @@ impl Register {
         [self.h, self.l] = val.to_be_bytes()
     }
 
+    pub fn clear_flags(&mut self) {
+        self.f ^= self.f;
+    }
+
     pub fn get_flag_z_zero(&self) -> u8 {
         // Bit mask for 7th bit
         0b10000000 & self.f

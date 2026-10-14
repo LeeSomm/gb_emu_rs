@@ -1,6 +1,7 @@
 pub mod clock;
 pub mod instruction;
 pub mod register;
+pub mod routine;
 
 use clock::Clock;
 use register::Register;
@@ -52,50 +53,6 @@ impl Cpu {
 
     fn inc_pc(&mut self) {
         self.register.pc += 1;
-    }
-
-    // CPU Generic Operations
-
-    fn routine_dec_r16(&mut self, register: &str) {
-        self.clock.advance_clock(4);
-        match register {
-            "bc" => {
-                let bc = self.register.get_bc();
-                self.register.set_bc(bc - 1);
-            }
-            "de" => {
-                let de = self.register.get_de();
-                self.register.set_de(de - 1);
-            }
-            "hl" => {
-                let hl = self.register.get_hl();
-                self.register.set_hl(hl - 1);
-            }
-            "sp" => self.register.sp -= 1,
-            _ => panic!("Attempted to decrement invalid 16bit register."),
-        };
-
-        self.clock.advance_clock(4);
-    }
-
-    fn routine_ld_r16_n16(&mut self, bus: &mut MemoryBus, register: &str) {
-        self.clock.advance_clock(4);
-        let lo = bus.read(self.register.pc) as u16;
-        self.inc_pc();
-
-        self.clock.advance_clock(4);
-        let hi = bus.read(self.register.pc) as u16;
-        self.inc_pc();
-
-        self.clock.advance_clock(4);
-        let val = (hi << 8) | lo;
-        match register {
-            "bc" => self.register.set_bc(val),
-            "de" => self.register.set_de(val),
-            "hl" => self.register.set_hl(val),
-            "sp" => self.register.sp = val,
-            _ => panic!("Attempted to load to invalid 16bit register."),
-        }
     }
 
     // CPU Instructions
@@ -155,6 +112,37 @@ impl Cpu {
         println!("Jumping to: {:#x?}", self.register.pc);
     }
 
+    // JR Instructions
+    pub fn jr_nz_e8(&mut self, bus: &mut MemoryBus) {
+        let e: i8 = bus.read(self.register.pc) as i8;
+        self.inc_pc();
+        self.routine_jr_cc_e8("nz", e);
+    }
+
+    pub fn ld_a_b(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8("a", "b");
+    }
+
+    pub fn ld_a_c(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8("a", "c");
+    }
+
+    pub fn ld_a_d(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8("a", "d");
+    }
+
+    pub fn ld_a_e(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8("a", "e");
+    }
+
+    pub fn ld_a_h(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8("a", "h");
+    }
+
+    pub fn ld_a_l(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8("a", "l");
+    }
+
     pub fn ld_a_n8(&mut self, bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
         let val = bus.read(self.register.pc);
@@ -210,9 +198,62 @@ impl Cpu {
         self.clock.advance_clock(4);
     }
 
+    pub fn or_a_a(&mut self, _bus: &mut MemoryBus) {
+        self.routine_or_a_r8(self.register.a);
+    }
+
+    pub fn or_a_b(&mut self, _bus: &mut MemoryBus) {
+        self.routine_or_a_r8(self.register.b);
+    }
+
+    pub fn or_a_c(&mut self, _bus: &mut MemoryBus) {
+        self.routine_or_a_r8(self.register.c);
+    }
+
+    pub fn or_a_d(&mut self, _bus: &mut MemoryBus) {
+        self.routine_or_a_r8(self.register.d);
+    }
+
+    pub fn or_a_e(&mut self, _bus: &mut MemoryBus) {
+        self.routine_or_a_r8(self.register.e);
+    }
+
+    pub fn or_a_h(&mut self, _bus: &mut MemoryBus) {
+        self.routine_or_a_r8(self.register.h);
+    }
+
+    pub fn or_a_l(&mut self, _bus: &mut MemoryBus) {
+        self.routine_or_a_r8(self.register.l);
+    }
+
+    pub fn or_a_hl(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let val = bus.read(self.register.get_hl());
+
+        self.clock.advance_clock(4);
+        self.register.a |= val;
+        self.register.clear_flags();
+        if self.register.a == 0 {
+            self.register.set_flag_z_zero();
+        }
+    }
+
+    pub fn or_a_n8(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let val = bus.read(self.register.pc);
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        self.register.a |= val;
+        if self.register.a == 0 {
+            self.register.set_flag_z_zero();
+        }
+    }
+
     pub fn xor_a_a(&mut self, _bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
         self.register.a = 0; // XOR'ing a value against itself will always be 0
+        self.register.clear_flags();
         self.register.set_flag_z_zero();
     }
 }
