@@ -1,4 +1,4 @@
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Mbc {
     pub ramg: bool,
     pub bank1: u8,
@@ -6,7 +6,7 @@ pub struct Mbc {
     pub mode: BankingMode,
 }
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub enum BankingMode {
     #[default]
     Locked,

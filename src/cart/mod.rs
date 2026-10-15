@@ -16,6 +16,7 @@ pub struct Cartridge {
     pub data: Vec<u8>,
     pub header: CartridgeHeader,
     pub mbc: Mbc,
+    pub ram: Vec<u8>,
     // loaded: bool,
     // rom_bank: usize // Determine which ROM bank is available to CPU
     // HM GB has 32 ROM banks (512KiB) and 1 8KiB bank of Cartridge RAM
@@ -35,6 +36,7 @@ impl Cartridge {
                 data,
                 header, // TODO: Method for feeding in header data
                 mbc: Mbc::default(),
+                ram: vec![0; 8192], // ! Note: Hardcoded to 8 KiB. Other ROMs will require this to be updated.
             })
         } else {
             Err(anyhow!(

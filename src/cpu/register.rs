@@ -79,7 +79,17 @@ impl Register {
     }
 
     pub fn set_hl(&mut self, val: u16) {
-        [self.h, self.l] = val.to_be_bytes()
+        [self.h, self.l] = val.to_be_bytes();
+    }
+
+    pub fn inc_hl(&mut self) {
+        let val: u16 = self.get_hl().wrapping_add(1);
+        [self.h, self.l] = val.to_be_bytes();
+    }
+
+    pub fn dec_hl(&mut self) {
+        let val: u16 = self.get_hl().wrapping_sub(1);
+        [self.h, self.l] = val.to_be_bytes();
     }
 
     pub fn clear_flags(&mut self) {

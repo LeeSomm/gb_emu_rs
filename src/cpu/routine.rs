@@ -19,18 +19,18 @@ impl Cpu {
         self.clock.advance_clock(4);
         match register {
             "bc" => {
-                let bc = self.register.get_bc();
-                self.register.set_bc(bc - 1);
+                let val = self.register.get_bc().wrapping_sub(1);
+                self.register.set_bc(val);
             }
             "de" => {
-                let de = self.register.get_de();
-                self.register.set_de(de - 1);
+                let val = self.register.get_de().wrapping_sub(1);
+                self.register.set_de(val);
             }
             "hl" => {
-                let hl = self.register.get_hl();
-                self.register.set_hl(hl - 1);
+                let val = self.register.get_hl().wrapping_sub(1);
+                self.register.set_hl(val);
             }
-            "sp" => self.register.sp -= 1,
+            "sp" => self.register.sp = self.register.sp.wrapping_sub(1),
             _ => panic!("Attempted to decrement invalid 16bit register."),
         };
 

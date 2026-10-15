@@ -52,7 +52,7 @@ impl Cpu {
     }
 
     fn inc_pc(&mut self) {
-        self.register.pc += 1;
+        self.register.pc = self.register.pc.wrapping_add(1);
     }
 
     // CPU Instructions
@@ -183,11 +183,39 @@ impl Cpu {
         bus.write(hl, self.register.a);
 
         self.clock.advance_clock(4);
-        self.register.set_hl(hl + 1);
+        self.register.inc_hl();
     }
 
     pub fn ld_hl_n16(&mut self, bus: &mut MemoryBus) {
         self.routine_ld_r16_n16(bus, "hl");
+    }
+
+    pub fn ld_l_a(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8("l", "a");
+    }
+
+    pub fn ld_l_b(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8("l", "b");
+    }
+
+    pub fn ld_l_c(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8("l", "c");
+    }
+
+    pub fn ld_l_d(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8("l", "d");
+    }
+
+    pub fn ld_l_e(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8("l", "e");
+    }
+
+    pub fn ld_l_h(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8("l", "h");
+    }
+
+    pub fn ld_l_l(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8("l", "l");
     }
 
     pub fn ld_sp_n16(&mut self, bus: &mut MemoryBus) {
@@ -248,6 +276,21 @@ impl Cpu {
         if self.register.a == 0 {
             self.register.set_flag_z_zero();
         }
+    }
+
+    pub fn ret(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let lo = bus.read(self.register.sp) as u16;
+        self.register.sp += 1;
+
+        self.clock.advance_clock(4);
+        let hi = bus.read(self.register.sp) as u16;
+        self.register.sp += 1;
+
+        self.clock.advance_clock(4);
+        self.register.pc = (hi << 8) | lo;
+
+        self.clock.advance_clock(4);
     }
 
     pub fn xor_a_a(&mut self, _bus: &mut MemoryBus) {

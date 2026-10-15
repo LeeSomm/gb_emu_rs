@@ -139,6 +139,48 @@ pub const LD_HL_N16: CpuInstruction = CpuInstruction {
     operation: Cpu::ld_hl_n16,
 };
 
+pub const LD_L_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD L, A",
+    operand_length: 0,
+    operation: Cpu::ld_l_a,
+};
+
+pub const LD_L_B: CpuInstruction = CpuInstruction {
+    disassembly: "LD L, B",
+    operand_length: 0,
+    operation: Cpu::ld_l_b,
+};
+
+pub const LD_L_C: CpuInstruction = CpuInstruction {
+    disassembly: "LD L, C",
+    operand_length: 0,
+    operation: Cpu::ld_l_c,
+};
+
+pub const LD_L_D: CpuInstruction = CpuInstruction {
+    disassembly: "LD L, D",
+    operand_length: 0,
+    operation: Cpu::ld_l_d,
+};
+
+pub const LD_L_E: CpuInstruction = CpuInstruction {
+    disassembly: "LD L, E",
+    operand_length: 0,
+    operation: Cpu::ld_l_e,
+};
+
+pub const LD_L_H: CpuInstruction = CpuInstruction {
+    disassembly: "LD L, H",
+    operand_length: 0,
+    operation: Cpu::ld_l_h,
+};
+
+pub const LD_L_L: CpuInstruction = CpuInstruction {
+    disassembly: "LD L, L",
+    operand_length: 0,
+    operation: Cpu::ld_l_l,
+};
+
 pub const LD_SP_N16: CpuInstruction = CpuInstruction {
     disassembly: "LD SP, n16",
     operand_length: 2,
@@ -330,14 +372,14 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x65 */ PLACEHOLDER,
         /* 0x66 */ PLACEHOLDER,
         /* 0x67 */ PLACEHOLDER,
-        /* 0x68 */ PLACEHOLDER,
-        /* 0x69 */ PLACEHOLDER,
-        /* 0x6A */ PLACEHOLDER,
-        /* 0x6B */ PLACEHOLDER,
-        /* 0x6C */ PLACEHOLDER,
-        /* 0x6D */ PLACEHOLDER,
+        /* 0x68 */ LD_L_B,
+        /* 0x69 */ LD_L_C,
+        /* 0x6A */ LD_L_D,
+        /* 0x6B */ LD_L_E,
+        /* 0x6C */ LD_L_H,
+        /* 0x6D */ LD_L_L,
         /* 0x6E */ PLACEHOLDER,
-        /* 0x6F */ PLACEHOLDER,
+        /* 0x6F */ LD_L_A,
         /* 0x70 */ PLACEHOLDER,
         /* 0x71 */ PLACEHOLDER,
         /* 0x72 */ PLACEHOLDER,

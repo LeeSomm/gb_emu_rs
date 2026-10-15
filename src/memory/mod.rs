@@ -30,19 +30,18 @@ impl MemoryBus {
                 if self.cart.header.cartridge_type == 0x0 {
                     return self.cart.data[addr as usize];
                 } else if self.cart.header.cartridge_type == 0x3 {
-                    // TODO: Implement read from switchable bank
-                    return 1;
+                    todo!("Implement read from switchable bank");
                 } else {
                     panic!("Unsupported cartridge type")
                 }
             }
             0x8000..=0x9FFF => todo!("Implement read for: {:#x?}", addr),
             0xA000..=0xBFFF => todo!("Implement read for: {:#x?}", addr),
-            0xC000..=0xCFFF => todo!("Implement read for: {:#x?}", addr),
-            0xD000..=0xDFFF => todo!("Implement read for: {:#x?}", addr),
+            // If CGB mode, must modify 0xD000-0xDFFF for switchable banks
+            0xC000..=0xDFFF => self.wram[addr as usize - 0xC000],
             0xE000..=0xFDFF => todo!("Implement read for: {:#x?}", addr),
             0xFE00..=0xFE9F => todo!("Implement read for: {:#x?}", addr),
-            0xFEA0..=0xFEFF => todo!("Implement read for: {:#x?}", addr),
+            0xFEA0..=0xFEFF => 0, // Unusable memory location
             0xFF00..=0xFF7F => todo!("Implement read for: {:#x?}", addr),
             0xFF80..=0xFFFE => todo!("Implement read for: {:#x?}", addr),
             0xFFFF => self.ie,
@@ -56,15 +55,32 @@ impl MemoryBus {
             0x4000..=0x5FFF => self.cart.mbc.set_bank2(val),
             0x6000..=0x7FFF => self.cart.mbc.set_mode(val),
             0x8000..=0x9FFF => self.vram[addr as usize - 0x8000] = val,
-            0xA000..=0xBFFF => todo!("Implement writes for Cartridge SRAM; addr: {:#x?}", addr),
+            0xA000..=0xBFFF => self.cart_ram_write(addr, val),
             // If CGB mode, must modify 0xD000-0xDFFF for switchable banks
             0xC000..=0xDFFF => self.wram[addr as usize - 0xC000] = val,
             0xE000..=0xFDFF => self.wram[addr as usize - 0xE000] = val, // Echo RAM writes are effectively 0xC000-0xDDFF
             0xFE00..=0xFE9F => self.oam[addr as usize - 0xFE00] = val,
-            0xFEA0..=0xFEFF => panic!("Writes to address block 0xFEA0-0xFEFF are forbidden"),
+            0xFEA0..=0xFEFF => (), // Writes to this location have no effect
             0xFF00..=0xFF7F => self.io[addr as usize - 0xFF00] = val,
             0xFF80..=0xFFFE => self.hram[addr as usize - 0xFF80] = val,
             0xFFFF => self.ie = val,
+        };
+        println!("{:?}", self.cart.mbc);
+    }
+
+    fn cart_ram_write(&mut self, addr: u16, val: u8) {
+        if !self.cart.mbc.ramg {
+            ()
+        } else {
+            todo!("Implement writes for Cartridge RAM; addr: {:#x?}", addr)
+        }
+    }
+
+    fn cart_ram_read(&self, addr: u16) -> u8 {
+        if !self.cart.mbc.ramg {
+            0xFF
+        } else {
+            todo!("Implement writes for Cartridge RAM; addr: {:#x?}", addr)
         }
     }
 }
