@@ -4,7 +4,7 @@ pub mod register;
 pub mod routine;
 
 use clock::Clock;
-use register::Register;
+use register::{Register, Register8, Register16};
 
 use crate::memory::MemoryBus;
 
@@ -80,24 +80,70 @@ impl Cpu {
     }
 
     pub fn dec_bc(&mut self, _bus: &mut MemoryBus) {
-        self.routine_dec_r16("bc");
+        self.routine_dec_r16(Register16::BC);
     }
 
     pub fn dec_de(&mut self, _bus: &mut MemoryBus) {
-        self.routine_dec_r16("de");
+        self.routine_dec_r16(Register16::DE);
     }
 
     pub fn dec_hl(&mut self, _bus: &mut MemoryBus) {
-        self.routine_dec_r16("hl");
+        self.routine_dec_r16(Register16::HL);
     }
 
     pub fn dec_sp(&mut self, _bus: &mut MemoryBus) {
-        self.routine_dec_r16("sp");
+        self.routine_dec_r16(Register16::SP);
     }
 
     pub fn di(&mut self, _bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
         self.ime = false;
+    }
+
+    pub fn inc_a(&mut self, _bus: &mut MemoryBus) {
+        self.routine_inc_r8(Register8::A);
+    }
+
+    pub fn inc_b(&mut self, _bus: &mut MemoryBus) {
+        self.routine_inc_r8(Register8::B);
+    }
+
+    pub fn inc_bc(&mut self, _bus: &mut MemoryBus) {
+        self.routine_inc_r16(Register16::BC)
+    }
+
+    pub fn inc_c(&mut self, _bus: &mut MemoryBus) {
+        self.routine_inc_r8(Register8::C);
+    }
+
+    pub fn inc_d(&mut self, _bus: &mut MemoryBus) {
+        self.routine_inc_r8(Register8::D);
+    }
+
+    pub fn inc_de(&mut self, _bus: &mut MemoryBus) {
+        self.routine_inc_r16(Register16::DE)
+    }
+
+    pub fn inc_e(&mut self, _bus: &mut MemoryBus) {
+        self.routine_inc_r8(Register8::E);
+    }
+
+    pub fn inc_h(&mut self, _bus: &mut MemoryBus) {
+        self.routine_inc_r8(Register8::H);
+    }
+
+    pub fn inc_hl(&mut self, _bus: &mut MemoryBus) {
+        self.routine_inc_r16(Register16::HL)
+    }
+
+    pub fn inc_hl_indirect(&mut self, bus: &mut MemoryBus) {}
+
+    pub fn inc_l(&mut self, _bus: &mut MemoryBus) {
+        self.routine_inc_r8(Register8::L);
+    }
+
+    pub fn inc_sp(&mut self, _bus: &mut MemoryBus) {
+        self.routine_inc_r16(Register16::SP)
     }
 
     pub fn jp_a16(&mut self, bus: &mut MemoryBus) {
@@ -120,36 +166,31 @@ impl Cpu {
     }
 
     pub fn ld_a_b(&mut self, _bus: &mut MemoryBus) {
-        self.routine_ld_r8_r8("a", "b");
+        self.routine_ld_r8_r8(Register8::A, Register8::B);
     }
 
     pub fn ld_a_c(&mut self, _bus: &mut MemoryBus) {
-        self.routine_ld_r8_r8("a", "c");
+        self.routine_ld_r8_r8(Register8::A, Register8::C);
     }
 
     pub fn ld_a_d(&mut self, _bus: &mut MemoryBus) {
-        self.routine_ld_r8_r8("a", "d");
+        self.routine_ld_r8_r8(Register8::A, Register8::D);
     }
 
     pub fn ld_a_e(&mut self, _bus: &mut MemoryBus) {
-        self.routine_ld_r8_r8("a", "e");
+        self.routine_ld_r8_r8(Register8::A, Register8::E);
     }
 
     pub fn ld_a_h(&mut self, _bus: &mut MemoryBus) {
-        self.routine_ld_r8_r8("a", "h");
+        self.routine_ld_r8_r8(Register8::A, Register8::H);
     }
 
     pub fn ld_a_l(&mut self, _bus: &mut MemoryBus) {
-        self.routine_ld_r8_r8("a", "l");
+        self.routine_ld_r8_r8(Register8::A, Register8::L);
     }
 
     pub fn ld_a_n8(&mut self, bus: &mut MemoryBus) {
-        self.clock.advance_clock(4);
-        let val = bus.read(self.register.pc);
-        self.inc_pc();
-
-        self.clock.advance_clock(4);
-        self.register.a = val;
+        self.routine_ld_r8_n8(bus, Register8::A);
     }
 
     pub fn ld_a16_a(&mut self, bus: &mut MemoryBus) {
@@ -169,12 +210,40 @@ impl Cpu {
         self.clock.advance_clock(4);
     }
 
+    pub fn ld_b_n8(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r8_n8(bus, Register8::B);
+    }
+
     pub fn ld_bc_n16(&mut self, bus: &mut MemoryBus) {
-        self.routine_ld_r16_n16(bus, "bc");
+        self.routine_ld_r16_n16(bus, Register16::BC);
+    }
+
+    pub fn ld_bc_a(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_a16_r8(bus, self.register.get_bc(), Register8::A);
+    }
+
+    pub fn ld_c_n8(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r8_n8(bus, Register8::C);
+    }
+
+    pub fn ld_d_n8(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r8_n8(bus, Register8::D);
     }
 
     pub fn ld_de_n16(&mut self, bus: &mut MemoryBus) {
-        self.routine_ld_r16_n16(bus, "de");
+        self.routine_ld_r16_n16(bus, Register16::DE);
+    }
+
+    pub fn ld_de_a(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_a16_r8(bus, self.register.get_de(), Register8::A);
+    }
+
+    pub fn ld_e_n8(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r8_n8(bus, Register8::E);
+    }
+
+    pub fn ld_h_n8(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r8_n8(bus, Register8::H);
     }
 
     pub fn ld_hli_a(&mut self, bus: &mut MemoryBus) {
@@ -187,39 +256,43 @@ impl Cpu {
     }
 
     pub fn ld_hl_n16(&mut self, bus: &mut MemoryBus) {
-        self.routine_ld_r16_n16(bus, "hl");
+        self.routine_ld_r16_n16(bus, Register16::HL);
     }
 
     pub fn ld_l_a(&mut self, _bus: &mut MemoryBus) {
-        self.routine_ld_r8_r8("l", "a");
+        self.routine_ld_r8_r8(Register8::L, Register8::A);
     }
 
     pub fn ld_l_b(&mut self, _bus: &mut MemoryBus) {
-        self.routine_ld_r8_r8("l", "b");
+        self.routine_ld_r8_r8(Register8::L, Register8::B);
     }
 
     pub fn ld_l_c(&mut self, _bus: &mut MemoryBus) {
-        self.routine_ld_r8_r8("l", "c");
+        self.routine_ld_r8_r8(Register8::L, Register8::C);
     }
 
     pub fn ld_l_d(&mut self, _bus: &mut MemoryBus) {
-        self.routine_ld_r8_r8("l", "d");
+        self.routine_ld_r8_r8(Register8::L, Register8::D);
     }
 
     pub fn ld_l_e(&mut self, _bus: &mut MemoryBus) {
-        self.routine_ld_r8_r8("l", "e");
+        self.routine_ld_r8_r8(Register8::L, Register8::E);
     }
 
     pub fn ld_l_h(&mut self, _bus: &mut MemoryBus) {
-        self.routine_ld_r8_r8("l", "h");
+        self.routine_ld_r8_r8(Register8::L, Register8::H);
     }
 
     pub fn ld_l_l(&mut self, _bus: &mut MemoryBus) {
-        self.routine_ld_r8_r8("l", "l");
+        self.routine_ld_r8_r8(Register8::L, Register8::L);
+    }
+
+    pub fn ld_l_n8(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r8_n8(bus, Register8::L);
     }
 
     pub fn ld_sp_n16(&mut self, bus: &mut MemoryBus) {
-        self.routine_ld_r16_n16(bus, "sp");
+        self.routine_ld_r16_n16(bus, Register16::SP);
     }
 
     pub fn noop(&mut self, _bus: &mut MemoryBus) {

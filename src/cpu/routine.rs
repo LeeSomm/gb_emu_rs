@@ -1,4 +1,5 @@
 use crate::cpu::Cpu;
+use crate::cpu::register::{Register8, Register16};
 use crate::memory::MemoryBus;
 
 impl Cpu {
@@ -15,54 +16,66 @@ impl Cpu {
         todo!()
     }
 
-    pub fn routine_dec_r16(&mut self, register: &str) {
+    pub fn routine_dec_r16(&mut self, reg: Register16) {
         self.clock.advance_clock(4);
-        match register {
-            "bc" => {
-                let val = self.register.get_bc().wrapping_sub(1);
-                self.register.set_bc(val);
-            }
-            "de" => {
-                let val = self.register.get_de().wrapping_sub(1);
-                self.register.set_de(val);
-            }
-            "hl" => {
-                let val = self.register.get_hl().wrapping_sub(1);
-                self.register.set_hl(val);
-            }
-            "sp" => self.register.sp = self.register.sp.wrapping_sub(1),
-            _ => panic!("Attempted to decrement invalid 16bit register."),
-        };
+        let val = self.register.read_r16(reg.clone()).wrapping_sub(1);
 
         self.clock.advance_clock(4);
+        self.register.write_r16(reg, val);
     }
 
-    pub fn routine_ld_r8_r8(&mut self, dst: &str, src: &str) {
+    pub fn routine_inc_r8(&mut self, reg: Register8) {
         self.clock.advance_clock(4);
-        let src = match src {
-            "a" => self.register.a,
-            "b" => self.register.b,
-            "c" => self.register.c,
-            "d" => self.register.d,
-            "e" => self.register.e,
-            "h" => self.register.h,
-            "l" => self.register.l,
-            _ => panic!("Attempted to load from invalid 8bit register"),
-        };
+        let mut val = self.register.read_r8(reg.clone());
 
-        match dst {
-            "a" => self.register.a = src,
-            "b" => self.register.b = src,
-            "c" => self.register.c = src,
-            "d" => self.register.d = src,
-            "e" => self.register.e = src,
-            "h" => self.register.h = src,
-            "l" => self.register.l = src,
-            _ => panic!("Attempted to load into invalid 8bit register"),
-        };
+        // If bottom 4 bits are set, inc will cause overflow from bit 3.
+        if (val & 0x0F) == 0x0F {
+            self.register.set_flag_h_half_carry();
+        } else {
+            self.register.clear_flag_h_half_carry();
+        }
+        self.register.clear_flag_n_subtraction();
+        val = val.wrapping_add(1);
+        if val == 0 {
+            self.register.set_flag_z_zero();
+        } else {
+            self.register.clear_flag_z_zero();
+        }
+
+        self.register.write_r8(reg, val);
     }
 
-    pub fn routine_ld_r16_n16(&mut self, bus: &mut MemoryBus, register: &str) {
+    pub fn routine_inc_r16(&mut self, reg: Register16) {
+        self.clock.advance_clock(4);
+        let val = self.register.read_r16(reg.clone()).wrapping_add(1);
+
+        self.clock.advance_clock(4);
+        self.register.write_r16(reg, val);
+    }
+
+    pub fn routine_ld_a16_r8(&mut self, bus: &mut MemoryBus, addr: u16, src: Register8) {
+        self.clock.advance_clock(4);
+        let val = self.register.read_r8(src);
+
+        self.clock.advance_clock(4);
+        bus.write(addr, val);
+    }
+
+    pub fn routine_ld_r8_r8(&mut self, dst: Register8, src: Register8) {
+        self.clock.advance_clock(4);
+        let val = self.register.read_r8(src);
+        self.register.write_r8(dst, val);
+    }
+
+    pub fn routine_ld_r8_n8(&mut self, bus: &MemoryBus, dst: Register8) {
+        self.clock.advance_clock(4);
+        self.register.write_r8(dst, bus.read(self.register.pc));
+
+        self.clock.advance_clock(4);
+        self.inc_pc();
+    }
+
+    pub fn routine_ld_r16_n16(&mut self, bus: &mut MemoryBus, reg: Register16) {
         self.clock.advance_clock(4);
         let lo = bus.read(self.register.pc) as u16;
         self.inc_pc();
@@ -73,13 +86,7 @@ impl Cpu {
 
         self.clock.advance_clock(4);
         let val = (hi << 8) | lo;
-        match register {
-            "bc" => self.register.set_bc(val),
-            "de" => self.register.set_de(val),
-            "hl" => self.register.set_hl(val),
-            "sp" => self.register.sp = val,
-            _ => panic!("Attempted to load to invalid 16bit register."),
-        }
+        self.register.write_r16(reg, val);
     }
 
     pub fn routine_jr_cc_e8(&mut self, cc: &str, e: i8) {

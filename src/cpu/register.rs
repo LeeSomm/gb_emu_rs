@@ -1,3 +1,25 @@
+#[derive(Clone)]
+pub enum Register8 {
+    A,
+    // F is never manipulated directly as an 8bit register
+    B,
+    C,
+    D,
+    E,
+    H,
+    L,
+}
+
+#[derive(Clone)]
+pub enum Register16 {
+    AF,
+    BC,
+    DE,
+    HL,
+    SP,
+    // PC is never manipulated directly as a 16bit register
+}
+
 pub struct Register {
     /// Accumulator
     pub a: u8,
@@ -48,6 +70,50 @@ impl Register {
         self.set_hl(0x014d);
         self.sp = 0xfffe;
         self.pc = 0x0100; // Address of next instruction
+    }
+
+    pub fn read_r8(&self, reg: Register8) -> u8 {
+        match reg {
+            Register8::A => self.a,
+            Register8::B => self.b,
+            Register8::C => self.c,
+            Register8::D => self.d,
+            Register8::E => self.e,
+            Register8::H => self.h,
+            Register8::L => self.l,
+        }
+    }
+
+    pub fn write_r8(&mut self, reg: Register8, val: u8) {
+        match reg {
+            Register8::A => self.a = val,
+            Register8::B => self.b = val,
+            Register8::C => self.c = val,
+            Register8::D => self.d = val,
+            Register8::E => self.e = val,
+            Register8::H => self.h = val,
+            Register8::L => self.l = val,
+        }
+    }
+
+    pub fn read_r16(&self, reg: Register16) -> u16 {
+        match reg {
+            Register16::AF => self.get_af(),
+            Register16::BC => self.get_bc(),
+            Register16::DE => self.get_de(),
+            Register16::HL => self.get_hl(),
+            Register16::SP => self.sp,
+        }
+    }
+
+    pub fn write_r16(&mut self, reg: Register16, val: u16) {
+        match reg {
+            Register16::AF => self.set_af(val),
+            Register16::BC => self.set_bc(val),
+            Register16::DE => self.set_de(val),
+            Register16::HL => self.set_hl(val),
+            Register16::SP => self.sp = val,
+        }
     }
 
     pub fn get_af(&self) -> u16 {
@@ -114,13 +180,37 @@ impl Register {
         0b01000000 & self.f
     }
 
-    pub fn get_flag_h_halfcarry(&self) -> u8 {
+    pub fn set_flag_n_subtraction(&mut self) {
+        self.f |= 0b01000000;
+    }
+
+    pub fn clear_flag_n_subtraction(&mut self) {
+        self.f &= 0b10111111;
+    }
+
+    pub fn get_flag_h_half_carry(&self) -> u8 {
         // Bit mask for 5th bit
         0b00100000 & self.f
+    }
+
+    pub fn set_flag_h_half_carry(&mut self) {
+        self.f |= 0b00100000;
+    }
+
+    pub fn clear_flag_h_half_carry(&mut self) {
+        self.f &= 0b11011111;
     }
 
     pub fn get_flag_c_carry(&self) -> u8 {
         // Bit mask for 4th bit
         0b00010000 & self.f
+    }
+
+    pub fn set_flag_c_carry(&mut self) {
+        self.f |= 0b00010000;
+    }
+
+    pub fn clear_flag_c_carry(&mut self) {
+        self.f &= 0b11101111;
     }
 }
