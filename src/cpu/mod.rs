@@ -56,6 +56,22 @@ impl Cpu {
     }
 
     // CPU Instructions
+    pub fn add_hl_bc(&mut self, _bus: &mut MemoryBus) {
+        self.routine_add_hl_r16(Register16::BC);
+    }
+
+    pub fn add_hl_de(&mut self, _bus: &mut MemoryBus) {
+        self.routine_add_hl_r16(Register16::DE);
+    }
+
+    pub fn add_hl_hl(&mut self, _bus: &mut MemoryBus) {
+        self.routine_add_hl_r16(Register16::HL);
+    }
+
+    pub fn add_hl_sp(&mut self, _bus: &mut MemoryBus) {
+        self.routine_add_hl_r16(Register16::SP);
+    }
+
     pub fn call_a16(&mut self, bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
         let lo = bus.read(self.register.pc);
@@ -165,6 +181,11 @@ impl Cpu {
         self.routine_jr_cc_e8("nz", e);
     }
 
+    // LD R8, R8/n8
+    pub fn ld_a_a(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::A, Register8::A);
+    }
+
     pub fn ld_a_b(&mut self, _bus: &mut MemoryBus) {
         self.routine_ld_r8_r8(Register8::A, Register8::B);
     }
@@ -193,70 +214,164 @@ impl Cpu {
         self.routine_ld_r8_n8(bus, Register8::A);
     }
 
-    pub fn ld_a16_a(&mut self, bus: &mut MemoryBus) {
-        // Load the 8bit value from register A into the 16bit address
-        self.clock.advance_clock(4);
-        let lo = bus.read(self.register.pc) as u16;
-        self.inc_pc();
+    pub fn ld_b_a(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::B, Register8::A);
+    }
 
-        self.clock.advance_clock(4);
-        let hi = bus.read(self.register.pc) as u16;
-        self.inc_pc();
+    pub fn ld_b_b(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::B, Register8::B);
+    }
 
-        self.clock.advance_clock(4);
-        let addr = (hi << 8) | lo;
-        bus.write(addr, self.register.a);
+    pub fn ld_b_c(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::B, Register8::C);
+    }
 
-        self.clock.advance_clock(4);
+    pub fn ld_b_d(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::B, Register8::D);
+    }
+
+    pub fn ld_b_e(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::B, Register8::E);
+    }
+
+    pub fn ld_b_h(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::B, Register8::H);
+    }
+
+    pub fn ld_b_l(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::B, Register8::L);
     }
 
     pub fn ld_b_n8(&mut self, bus: &mut MemoryBus) {
         self.routine_ld_r8_n8(bus, Register8::B);
     }
 
-    pub fn ld_bc_n16(&mut self, bus: &mut MemoryBus) {
-        self.routine_ld_r16_n16(bus, Register16::BC);
+    pub fn ld_c_a(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::C, Register8::A);
     }
 
-    pub fn ld_bc_a(&mut self, bus: &mut MemoryBus) {
-        self.routine_ld_a16_r8(bus, self.register.get_bc(), Register8::A);
+    pub fn ld_c_b(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::C, Register8::B);
+    }
+
+    pub fn ld_c_c(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::C, Register8::C);
+    }
+
+    pub fn ld_c_d(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::C, Register8::D);
+    }
+
+    pub fn ld_c_e(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::C, Register8::E);
+    }
+
+    pub fn ld_c_h(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::C, Register8::H);
+    }
+
+    pub fn ld_c_l(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::C, Register8::L);
     }
 
     pub fn ld_c_n8(&mut self, bus: &mut MemoryBus) {
         self.routine_ld_r8_n8(bus, Register8::C);
     }
 
+    pub fn ld_d_a(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::D, Register8::A);
+    }
+
+    pub fn ld_d_b(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::D, Register8::B);
+    }
+
+    pub fn ld_d_c(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::D, Register8::C);
+    }
+
+    pub fn ld_d_d(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::D, Register8::D);
+    }
+
+    pub fn ld_d_e(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::D, Register8::E);
+    }
+
+    pub fn ld_d_h(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::D, Register8::H);
+    }
+
+    pub fn ld_d_l(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::D, Register8::L);
+    }
+
     pub fn ld_d_n8(&mut self, bus: &mut MemoryBus) {
         self.routine_ld_r8_n8(bus, Register8::D);
     }
 
-    pub fn ld_de_n16(&mut self, bus: &mut MemoryBus) {
-        self.routine_ld_r16_n16(bus, Register16::DE);
+    pub fn ld_e_a(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::E, Register8::A);
     }
 
-    pub fn ld_de_a(&mut self, bus: &mut MemoryBus) {
-        self.routine_ld_a16_r8(bus, self.register.get_de(), Register8::A);
+    pub fn ld_e_b(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::E, Register8::B);
+    }
+
+    pub fn ld_e_c(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::E, Register8::C);
+    }
+
+    pub fn ld_e_d(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::E, Register8::D);
+    }
+
+    pub fn ld_e_e(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::E, Register8::E);
+    }
+
+    pub fn ld_e_h(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::E, Register8::H);
+    }
+
+    pub fn ld_e_l(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::E, Register8::L);
     }
 
     pub fn ld_e_n8(&mut self, bus: &mut MemoryBus) {
         self.routine_ld_r8_n8(bus, Register8::E);
     }
 
+    pub fn ld_h_a(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::H, Register8::A);
+    }
+
+    pub fn ld_h_b(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::H, Register8::B);
+    }
+
+    pub fn ld_h_c(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::H, Register8::C);
+    }
+
+    pub fn ld_h_d(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::H, Register8::D);
+    }
+
+    pub fn ld_h_e(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::H, Register8::E);
+    }
+
+    pub fn ld_h_h(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::H, Register8::H);
+    }
+
+    pub fn ld_h_l(&mut self, _bus: &mut MemoryBus) {
+        self.routine_ld_r8_r8(Register8::H, Register8::L);
+    }
+
     pub fn ld_h_n8(&mut self, bus: &mut MemoryBus) {
         self.routine_ld_r8_n8(bus, Register8::H);
-    }
-
-    pub fn ld_hli_a(&mut self, bus: &mut MemoryBus) {
-        self.clock.advance_clock(4);
-        let hl = self.register.get_hl();
-        bus.write(hl, self.register.a);
-
-        self.clock.advance_clock(4);
-        self.register.inc_hl();
-    }
-
-    pub fn ld_hl_n16(&mut self, bus: &mut MemoryBus) {
-        self.routine_ld_r16_n16(bus, Register16::HL);
     }
 
     pub fn ld_l_a(&mut self, _bus: &mut MemoryBus) {
@@ -289,6 +404,52 @@ impl Cpu {
 
     pub fn ld_l_n8(&mut self, bus: &mut MemoryBus) {
         self.routine_ld_r8_n8(bus, Register8::L);
+    }
+
+    pub fn ld_a16_a(&mut self, bus: &mut MemoryBus) {
+        // Load the 8bit value from register A into the 16bit address
+        self.clock.advance_clock(4);
+        let lo = bus.read(self.register.pc) as u16;
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let hi = bus.read(self.register.pc) as u16;
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let addr = (hi << 8) | lo;
+        bus.write(addr, self.register.a);
+
+        self.clock.advance_clock(4);
+    }
+
+    pub fn ld_bc_n16(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r16_n16(bus, Register16::BC);
+    }
+
+    pub fn ld_bc_a(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_a16_r8(bus, self.register.get_bc(), Register8::A);
+    }
+
+    pub fn ld_de_n16(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r16_n16(bus, Register16::DE);
+    }
+
+    pub fn ld_de_a(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_a16_r8(bus, self.register.get_de(), Register8::A);
+    }
+
+    pub fn ld_hli_a(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let hl = self.register.get_hl();
+        bus.write(hl, self.register.a);
+
+        self.clock.advance_clock(4);
+        self.register.inc_hl();
+    }
+
+    pub fn ld_hl_n16(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r16_n16(bus, Register16::HL);
     }
 
     pub fn ld_sp_n16(&mut self, bus: &mut MemoryBus) {

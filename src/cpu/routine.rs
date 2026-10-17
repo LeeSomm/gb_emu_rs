@@ -8,6 +8,29 @@ impl Cpu {
         todo!()
     }
 
+    pub fn routine_add_hl_r16(&mut self, reg: Register16) {
+        self.clock.advance_clock(4);
+        let val = self.register.get_hl();
+        let reg_val = self.register.read_r16(reg);
+        let half_carry = (val & 0x0FFF) + (reg_val & 0x0FFF) > 0x0FFF;
+        let (val, carry) = val.overflowing_add(reg_val);
+
+        self.clock.advance_clock(4);
+        self.register.set_hl(val);
+        self.register.clear_flag_n_subtraction();
+        if carry {
+            self.register.set_flag_c_carry();
+        } else {
+            self.register.clear_flag_c_carry();
+        }
+
+        if half_carry {
+            self.register.set_flag_h_half_carry();
+        } else {
+            self.register.clear_flag_h_half_carry();
+        }
+    }
+
     pub fn routine_adc_a_r8(&mut self, r8: u8) {
         todo!()
     }

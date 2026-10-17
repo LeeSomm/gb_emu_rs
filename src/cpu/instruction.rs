@@ -13,6 +13,30 @@ pub struct CpuInstruction {
     pub operation: fn(&mut Cpu, &mut MemoryBus),
 }
 
+pub const ADD_HL_BC: CpuInstruction = CpuInstruction {
+    disassembly: "ADD HL, BC",
+    operand_length: 0,
+    operation: Cpu::add_hl_bc,
+};
+
+pub const ADD_HL_DE: CpuInstruction = CpuInstruction {
+    disassembly: "ADD HL, DE",
+    operand_length: 0,
+    operation: Cpu::add_hl_de,
+};
+
+pub const ADD_HL_HL: CpuInstruction = CpuInstruction {
+    disassembly: "ADD HL, HL",
+    operand_length: 0,
+    operation: Cpu::add_hl_hl,
+};
+
+pub const ADD_HL_SP: CpuInstruction = CpuInstruction {
+    disassembly: "ADD HL, SP",
+    operand_length: 0,
+    operation: Cpu::add_hl_sp,
+};
+
 pub const CALL_A16: CpuInstruction = CpuInstruction {
     disassembly: "CALL a16",
     operand_length: 2,
@@ -133,6 +157,12 @@ pub const JR_NZ_E8: CpuInstruction = CpuInstruction {
     operation: Cpu::jr_nz_e8,
 };
 
+pub const LD_A_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD A, A",
+    operand_length: 0,
+    operation: Cpu::ld_a_a,
+};
+
 pub const LD_A_B: CpuInstruction = CpuInstruction {
     disassembly: "LD A, B",
     operand_length: 0,
@@ -175,10 +205,46 @@ pub const LD_A_N8: CpuInstruction = CpuInstruction {
     operation: Cpu::ld_a_n8,
 };
 
-pub const LD_A16_A: CpuInstruction = CpuInstruction {
-    disassembly: "LD [a16], A",
-    operand_length: 2,
-    operation: Cpu::ld_a16_a,
+pub const LD_B_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD B, A",
+    operand_length: 0,
+    operation: Cpu::ld_b_a,
+};
+
+pub const LD_B_B: CpuInstruction = CpuInstruction {
+    disassembly: "LD B, B",
+    operand_length: 0,
+    operation: Cpu::ld_b_b,
+};
+
+pub const LD_B_C: CpuInstruction = CpuInstruction {
+    disassembly: "LD B, C",
+    operand_length: 0,
+    operation: Cpu::ld_b_c,
+};
+
+pub const LD_B_D: CpuInstruction = CpuInstruction {
+    disassembly: "LD B, D",
+    operand_length: 0,
+    operation: Cpu::ld_b_d,
+};
+
+pub const LD_B_E: CpuInstruction = CpuInstruction {
+    disassembly: "LD B, E",
+    operand_length: 0,
+    operation: Cpu::ld_b_e,
+};
+
+pub const LD_B_H: CpuInstruction = CpuInstruction {
+    disassembly: "LD B, H",
+    operand_length: 0,
+    operation: Cpu::ld_b_h,
+};
+
+pub const LD_B_L: CpuInstruction = CpuInstruction {
+    disassembly: "LD B, L",
+    operand_length: 0,
+    operation: Cpu::ld_b_l,
 };
 
 pub const LD_B_N8: CpuInstruction = CpuInstruction {
@@ -187,16 +253,46 @@ pub const LD_B_N8: CpuInstruction = CpuInstruction {
     operation: Cpu::ld_b_n8,
 };
 
-pub const LD_BC_N16: CpuInstruction = CpuInstruction {
-    disassembly: "LD BC, n16",
-    operand_length: 2,
-    operation: Cpu::ld_bc_n16,
+pub const LD_C_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD C, A",
+    operand_length: 0,
+    operation: Cpu::ld_c_a,
 };
 
-pub const LD_BC_A: CpuInstruction = CpuInstruction {
-    disassembly: "LD BC, A",
+pub const LD_C_B: CpuInstruction = CpuInstruction {
+    disassembly: "LD C, B",
     operand_length: 0,
-    operation: Cpu::ld_bc_a,
+    operation: Cpu::ld_c_b,
+};
+
+pub const LD_C_C: CpuInstruction = CpuInstruction {
+    disassembly: "LD C, C",
+    operand_length: 0,
+    operation: Cpu::ld_c_c,
+};
+
+pub const LD_C_D: CpuInstruction = CpuInstruction {
+    disassembly: "LD C, D",
+    operand_length: 0,
+    operation: Cpu::ld_c_d,
+};
+
+pub const LD_C_E: CpuInstruction = CpuInstruction {
+    disassembly: "LD C, E",
+    operand_length: 0,
+    operation: Cpu::ld_c_e,
+};
+
+pub const LD_C_H: CpuInstruction = CpuInstruction {
+    disassembly: "LD C, H",
+    operand_length: 0,
+    operation: Cpu::ld_c_h,
+};
+
+pub const LD_C_L: CpuInstruction = CpuInstruction {
+    disassembly: "LD C, L",
+    operand_length: 0,
+    operation: Cpu::ld_c_l,
 };
 
 pub const LD_C_N8: CpuInstruction = CpuInstruction {
@@ -205,22 +301,94 @@ pub const LD_C_N8: CpuInstruction = CpuInstruction {
     operation: Cpu::ld_c_n8,
 };
 
+pub const LD_D_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD D, A",
+    operand_length: 0,
+    operation: Cpu::ld_d_a,
+};
+
+pub const LD_D_B: CpuInstruction = CpuInstruction {
+    disassembly: "LD D, B",
+    operand_length: 0,
+    operation: Cpu::ld_d_b,
+};
+
+pub const LD_D_C: CpuInstruction = CpuInstruction {
+    disassembly: "LD D, C",
+    operand_length: 0,
+    operation: Cpu::ld_d_c,
+};
+
+pub const LD_D_D: CpuInstruction = CpuInstruction {
+    disassembly: "LD D, D",
+    operand_length: 0,
+    operation: Cpu::ld_d_d,
+};
+
+pub const LD_D_E: CpuInstruction = CpuInstruction {
+    disassembly: "LD D, E",
+    operand_length: 0,
+    operation: Cpu::ld_d_e,
+};
+
+pub const LD_D_H: CpuInstruction = CpuInstruction {
+    disassembly: "LD D, H",
+    operand_length: 0,
+    operation: Cpu::ld_d_h,
+};
+
+pub const LD_D_L: CpuInstruction = CpuInstruction {
+    disassembly: "LD D, L",
+    operand_length: 0,
+    operation: Cpu::ld_d_l,
+};
+
 pub const LD_D_N8: CpuInstruction = CpuInstruction {
     disassembly: "LD D, n8",
     operand_length: 1,
     operation: Cpu::ld_d_n8,
 };
 
-pub const LD_DE_N16: CpuInstruction = CpuInstruction {
-    disassembly: "LD DE, n16",
-    operand_length: 2,
-    operation: Cpu::ld_de_n16,
+pub const LD_E_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD E, A",
+    operand_length: 0,
+    operation: Cpu::ld_e_a,
 };
 
-pub const LD_DE_A: CpuInstruction = CpuInstruction {
-    disassembly: "LD DE, A",
+pub const LD_E_B: CpuInstruction = CpuInstruction {
+    disassembly: "LD E, B",
     operand_length: 0,
-    operation: Cpu::ld_de_a,
+    operation: Cpu::ld_e_b,
+};
+
+pub const LD_E_C: CpuInstruction = CpuInstruction {
+    disassembly: "LD E, C",
+    operand_length: 0,
+    operation: Cpu::ld_e_c,
+};
+
+pub const LD_E_D: CpuInstruction = CpuInstruction {
+    disassembly: "LD E, D",
+    operand_length: 0,
+    operation: Cpu::ld_e_d,
+};
+
+pub const LD_E_E: CpuInstruction = CpuInstruction {
+    disassembly: "LD E, E",
+    operand_length: 0,
+    operation: Cpu::ld_e_e,
+};
+
+pub const LD_E_H: CpuInstruction = CpuInstruction {
+    disassembly: "LD E, H",
+    operand_length: 0,
+    operation: Cpu::ld_e_h,
+};
+
+pub const LD_E_L: CpuInstruction = CpuInstruction {
+    disassembly: "LD E, L",
+    operand_length: 0,
+    operation: Cpu::ld_e_l,
 };
 
 pub const LD_E_N8: CpuInstruction = CpuInstruction {
@@ -229,22 +397,52 @@ pub const LD_E_N8: CpuInstruction = CpuInstruction {
     operation: Cpu::ld_e_n8,
 };
 
+pub const LD_H_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD H, A",
+    operand_length: 0,
+    operation: Cpu::ld_h_a,
+};
+
+pub const LD_H_B: CpuInstruction = CpuInstruction {
+    disassembly: "LD H, B",
+    operand_length: 0,
+    operation: Cpu::ld_h_b,
+};
+
+pub const LD_H_C: CpuInstruction = CpuInstruction {
+    disassembly: "LD H, C",
+    operand_length: 0,
+    operation: Cpu::ld_h_c,
+};
+
+pub const LD_H_D: CpuInstruction = CpuInstruction {
+    disassembly: "LD H, D",
+    operand_length: 0,
+    operation: Cpu::ld_h_d,
+};
+
+pub const LD_H_E: CpuInstruction = CpuInstruction {
+    disassembly: "LD H, E",
+    operand_length: 0,
+    operation: Cpu::ld_h_e,
+};
+
+pub const LD_H_H: CpuInstruction = CpuInstruction {
+    disassembly: "LD H, H",
+    operand_length: 0,
+    operation: Cpu::ld_h_h,
+};
+
+pub const LD_H_L: CpuInstruction = CpuInstruction {
+    disassembly: "LD H, L",
+    operand_length: 0,
+    operation: Cpu::ld_h_l,
+};
+
 pub const LD_H_N8: CpuInstruction = CpuInstruction {
     disassembly: "LD H, n8",
     operand_length: 1,
     operation: Cpu::ld_h_n8,
-};
-
-pub const LD_HLI_A: CpuInstruction = CpuInstruction {
-    disassembly: "LD [HL+], A",
-    operand_length: 0,
-    operation: Cpu::ld_hli_a,
-};
-
-pub const LD_HL_N16: CpuInstruction = CpuInstruction {
-    disassembly: "LD HL, n16",
-    operand_length: 2,
-    operation: Cpu::ld_hl_n16,
 };
 
 pub const LD_L_A: CpuInstruction = CpuInstruction {
@@ -293,6 +491,48 @@ pub const LD_L_N8: CpuInstruction = CpuInstruction {
     disassembly: "LD L, n8",
     operand_length: 1,
     operation: Cpu::ld_l_n8,
+};
+
+pub const LD_A16_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD [a16], A",
+    operand_length: 2,
+    operation: Cpu::ld_a16_a,
+};
+
+pub const LD_BC_N16: CpuInstruction = CpuInstruction {
+    disassembly: "LD BC, n16",
+    operand_length: 2,
+    operation: Cpu::ld_bc_n16,
+};
+
+pub const LD_BC_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD [BC], A",
+    operand_length: 0,
+    operation: Cpu::ld_bc_a,
+};
+
+pub const LD_DE_N16: CpuInstruction = CpuInstruction {
+    disassembly: "LD DE, n16",
+    operand_length: 2,
+    operation: Cpu::ld_de_n16,
+};
+
+pub const LD_DE_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD DE, A",
+    operand_length: 0,
+    operation: Cpu::ld_de_a,
+};
+
+pub const LD_HLI_A: CpuInstruction = CpuInstruction {
+    disassembly: "LD [HL+], A",
+    operand_length: 0,
+    operation: Cpu::ld_hli_a,
+};
+
+pub const LD_HL_N16: CpuInstruction = CpuInstruction {
+    disassembly: "LD HL, n16",
+    operand_length: 2,
+    operation: Cpu::ld_hl_n16,
 };
 
 pub const LD_SP_N16: CpuInstruction = CpuInstruction {
@@ -391,7 +631,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x06 */ LD_B_N8,
         /* 0x07 */ PLACEHOLDER,
         /* 0x08 */ PLACEHOLDER,
-        /* 0x09 */ PLACEHOLDER,
+        /* 0x09 */ ADD_HL_BC,
         /* 0x0A */ PLACEHOLDER,
         /* 0x0B */ DEC_BC,
         /* 0x0C */ INC_C,
@@ -407,7 +647,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x16 */ LD_D_N8,
         /* 0x17 */ PLACEHOLDER,
         /* 0x18 */ PLACEHOLDER,
-        /* 0x19 */ PLACEHOLDER,
+        /* 0x19 */ ADD_HL_DE,
         /* 0x1A */ PLACEHOLDER,
         /* 0x1B */ DEC_DE,
         /* 0x1C */ INC_E,
@@ -423,7 +663,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x26 */ LD_H_N8,
         /* 0x27 */ PLACEHOLDER,
         /* 0x28 */ PLACEHOLDER,
-        /* 0x29 */ PLACEHOLDER,
+        /* 0x29 */ ADD_HL_HL,
         /* 0x2A */ PLACEHOLDER,
         /* 0x2B */ DEC_HL,
         /* 0x2C */ INC_L,
@@ -439,53 +679,53 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x36 */ PLACEHOLDER,
         /* 0x37 */ PLACEHOLDER,
         /* 0x38 */ PLACEHOLDER,
-        /* 0x39 */ PLACEHOLDER,
+        /* 0x39 */ ADD_HL_SP,
         /* 0x3A */ PLACEHOLDER,
         /* 0x3B */ DEC_SP,
         /* 0x3C */ INC_A,
         /* 0x3D */ PLACEHOLDER,
         /* 0x3E */ LD_A_N8,
         /* 0x3F */ PLACEHOLDER,
-        /* 0x40 */ PLACEHOLDER,
-        /* 0x41 */ PLACEHOLDER,
-        /* 0x42 */ PLACEHOLDER,
-        /* 0x43 */ PLACEHOLDER,
-        /* 0x44 */ PLACEHOLDER,
-        /* 0x45 */ PLACEHOLDER,
+        /* 0x40 */ LD_B_B,
+        /* 0x41 */ LD_B_C,
+        /* 0x42 */ LD_B_D,
+        /* 0x43 */ LD_B_E,
+        /* 0x44 */ LD_B_H,
+        /* 0x45 */ LD_B_L,
         /* 0x46 */ PLACEHOLDER,
-        /* 0x47 */ PLACEHOLDER,
-        /* 0x48 */ PLACEHOLDER,
-        /* 0x49 */ PLACEHOLDER,
-        /* 0x4A */ PLACEHOLDER,
-        /* 0x4B */ PLACEHOLDER,
-        /* 0x4C */ PLACEHOLDER,
-        /* 0x4D */ PLACEHOLDER,
+        /* 0x47 */ LD_B_A,
+        /* 0x48 */ LD_C_B,
+        /* 0x49 */ LD_C_C,
+        /* 0x4A */ LD_C_D,
+        /* 0x4B */ LD_C_E,
+        /* 0x4C */ LD_C_H,
+        /* 0x4D */ LD_C_L,
         /* 0x4E */ PLACEHOLDER,
-        /* 0x4F */ PLACEHOLDER,
-        /* 0x50 */ PLACEHOLDER,
-        /* 0x51 */ PLACEHOLDER,
-        /* 0x52 */ PLACEHOLDER,
-        /* 0x53 */ PLACEHOLDER,
-        /* 0x54 */ PLACEHOLDER,
-        /* 0x55 */ PLACEHOLDER,
+        /* 0x4F */ LD_C_A,
+        /* 0x50 */ LD_D_B,
+        /* 0x51 */ LD_D_C,
+        /* 0x52 */ LD_D_D,
+        /* 0x53 */ LD_D_E,
+        /* 0x54 */ LD_D_H,
+        /* 0x55 */ LD_D_L,
         /* 0x56 */ PLACEHOLDER,
-        /* 0x57 */ PLACEHOLDER,
-        /* 0x58 */ PLACEHOLDER,
-        /* 0x59 */ PLACEHOLDER,
-        /* 0x5A */ PLACEHOLDER,
-        /* 0x5B */ PLACEHOLDER,
-        /* 0x5C */ PLACEHOLDER,
-        /* 0x5D */ PLACEHOLDER,
+        /* 0x57 */ LD_D_A,
+        /* 0x58 */ LD_E_B,
+        /* 0x59 */ LD_E_C,
+        /* 0x5A */ LD_E_D,
+        /* 0x5B */ LD_E_E,
+        /* 0x5C */ LD_E_H,
+        /* 0x5D */ LD_E_L,
         /* 0x5E */ PLACEHOLDER,
-        /* 0x5F */ PLACEHOLDER,
-        /* 0x60 */ PLACEHOLDER,
-        /* 0x61 */ PLACEHOLDER,
-        /* 0x62 */ PLACEHOLDER,
-        /* 0x63 */ PLACEHOLDER,
-        /* 0x64 */ PLACEHOLDER,
-        /* 0x65 */ PLACEHOLDER,
+        /* 0x5F */ LD_E_A,
+        /* 0x60 */ LD_H_B,
+        /* 0x61 */ LD_H_C,
+        /* 0x62 */ LD_H_D,
+        /* 0x63 */ LD_H_E,
+        /* 0x64 */ LD_H_H,
+        /* 0x65 */ LD_H_L,
         /* 0x66 */ PLACEHOLDER,
-        /* 0x67 */ PLACEHOLDER,
+        /* 0x67 */ LD_H_A,
         /* 0x68 */ LD_L_B,
         /* 0x69 */ LD_L_C,
         /* 0x6A */ LD_L_D,
@@ -509,7 +749,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x7C */ LD_A_H,
         /* 0x7D */ LD_A_L,
         /* 0x7E */ PLACEHOLDER,
-        /* 0x7F */ PLACEHOLDER,
+        /* 0x7F */ LD_A_A,
         /* 0x80 */ PLACEHOLDER,
         /* 0x81 */ PLACEHOLDER,
         /* 0x82 */ PLACEHOLDER,
