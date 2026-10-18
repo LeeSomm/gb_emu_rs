@@ -39,6 +39,27 @@ impl Cpu {
         todo!()
     }
 
+    pub fn routine_dec_r8(&mut self, reg: Register8) {
+        self.clock.advance_clock(4);
+        let mut val = self.register.read_r8(reg.clone());
+
+        // Check half-carry flag
+        if (val & 0x0F) == 0 {
+            self.register.set_flag_h_half_carry();
+        } else {
+            self.register.clear_flag_h_half_carry();
+        }
+        self.register.set_flag_n_subtraction();
+        val = val.wrapping_sub(1);
+        if val == 0 {
+            self.register.set_flag_z_zero();
+        } else {
+            self.register.clear_flag_z_zero();
+        }
+
+        self.register.write_r8(reg, val);
+    }
+
     pub fn routine_dec_r16(&mut self, reg: Register16) {
         self.clock.advance_clock(4);
         let val = self.register.read_r16(reg.clone()).wrapping_sub(1);
@@ -76,7 +97,7 @@ impl Cpu {
         self.register.write_r16(reg, val);
     }
 
-    pub fn routine_ld_a16_r8(&mut self, bus: &mut MemoryBus, addr: u16, src: Register8) {
+    pub fn routine_ld_a16_indirect_r8(&mut self, bus: &mut MemoryBus, addr: u16, src: Register8) {
         self.clock.advance_clock(4);
         let val = self.register.read_r8(src);
 
