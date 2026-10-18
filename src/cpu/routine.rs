@@ -111,6 +111,19 @@ impl Cpu {
         self.register.write_r8(dst, val);
     }
 
+    pub fn routine_ld_r8_r16_indirect(
+        &mut self,
+        bus: &mut MemoryBus,
+        dst: Register8,
+        src: Register16,
+    ) {
+        self.clock.advance_clock(4);
+        let val = bus.read(self.register.read_r16(src));
+
+        self.clock.advance_clock(4);
+        self.register.write_r8(dst, val);
+    }
+
     pub fn routine_ld_r8_n8(&mut self, bus: &MemoryBus, dst: Register8) {
         self.clock.advance_clock(4);
         self.register.write_r8(dst, bus.read(self.register.pc));
@@ -167,5 +180,19 @@ impl Cpu {
 
     pub fn routine_xor_a_r8(&mut self, r8: u8) {
         todo!()
+    }
+
+    pub fn routine_pop_r16(&mut self, bus: &mut MemoryBus, reg: Register16) {
+        self.clock.advance_clock(4);
+        let lo = bus.read(self.register.sp) as u16;
+        self.register.sp += 1;
+
+        self.clock.advance_clock(4);
+        let hi = bus.read(self.register.sp) as u16;
+        self.register.sp += 1;
+
+        self.clock.advance_clock(4);
+        let val = (hi << 8) | lo;
+        self.register.write_r16(reg, val);
     }
 }
