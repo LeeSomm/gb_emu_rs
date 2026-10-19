@@ -9,8 +9,8 @@ pub struct Mbc {
 #[derive(Default, Debug)]
 pub enum BankingMode {
     #[default]
-    Locked,
-    Advanced,
+    Locked, // Mode 0b0
+    Advanced, // Mode 0b1
 }
 
 impl Mbc {

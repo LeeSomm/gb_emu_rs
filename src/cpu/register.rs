@@ -20,6 +20,13 @@ pub enum Register16 {
     // PC is never manipulated directly as a 16bit register
 }
 
+pub enum FlagCondition {
+    Z,
+    NZ,
+    C,
+    NC,
+}
+
 pub struct Register {
     /// Accumulator
     pub a: u8,

@@ -4,7 +4,7 @@ pub mod register;
 pub mod routine;
 
 use clock::Clock;
-use register::{Register, Register8, Register16};
+use register::{FlagCondition, Register, Register8, Register16};
 
 use crate::memory::MemoryBus;
 
@@ -93,6 +93,94 @@ impl Cpu {
 
         self.clock.advance_clock(4);
         self.register.pc = ((hi as u16) << 8) | lo as u16;
+    }
+
+    // CP A, r8/n8
+    pub fn cp_a_a(&mut self, _bus: &mut MemoryBus) {
+        self.routine_cp_a_r8(Register8::A);
+    }
+
+    pub fn cp_a_b(&mut self, _bus: &mut MemoryBus) {
+        self.routine_cp_a_r8(Register8::B);
+    }
+
+    pub fn cp_a_c(&mut self, _bus: &mut MemoryBus) {
+        self.routine_cp_a_r8(Register8::C);
+    }
+
+    pub fn cp_a_d(&mut self, _bus: &mut MemoryBus) {
+        self.routine_cp_a_r8(Register8::D);
+    }
+
+    pub fn cp_a_e(&mut self, _bus: &mut MemoryBus) {
+        self.routine_cp_a_r8(Register8::E);
+    }
+
+    pub fn cp_a_h(&mut self, _bus: &mut MemoryBus) {
+        self.routine_cp_a_r8(Register8::H);
+    }
+
+    pub fn cp_a_l(&mut self, _bus: &mut MemoryBus) {
+        self.routine_cp_a_r8(Register8::L);
+    }
+
+    pub fn cp_a_hl_indirect(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let val = bus.read(self.register.get_hl());
+
+        self.clock.advance_clock(4);
+        let half_carry = (self.register.a & 0x0F) < val & 0x0F;
+        let (result, carry) = self.register.a.overflowing_sub(val);
+
+        if result == 0 {
+            self.register.set_flag_z_zero();
+        } else {
+            self.register.clear_flag_z_zero();
+        }
+
+        if carry {
+            self.register.set_flag_c_carry();
+        } else {
+            self.register.clear_flag_c_carry();
+        }
+
+        if half_carry {
+            self.register.set_flag_h_half_carry();
+        } else {
+            self.register.clear_flag_h_half_carry();
+        }
+
+        self.register.set_flag_n_subtraction();
+    }
+
+    pub fn cp_a_n8(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let val = bus.read(self.register.pc);
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let half_carry = (self.register.a & 0x0F) < val & 0x0F;
+        let (result, carry) = self.register.a.overflowing_sub(val);
+
+        if result == 0 {
+            self.register.set_flag_z_zero();
+        } else {
+            self.register.clear_flag_z_zero();
+        }
+
+        if carry {
+            self.register.set_flag_c_carry();
+        } else {
+            self.register.clear_flag_c_carry();
+        }
+
+        if half_carry {
+            self.register.set_flag_h_half_carry();
+        } else {
+            self.register.clear_flag_h_half_carry();
+        }
+
+        self.register.set_flag_n_subtraction();
     }
 
     // DEC r8/n8
@@ -197,6 +285,7 @@ impl Cpu {
         self.routine_inc_r16(Register16::SP)
     }
 
+    // JP Instructions
     pub fn jp_a16(&mut self, bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
         let lo = bus.read(self.register.pc) as u16;
@@ -209,11 +298,34 @@ impl Cpu {
         println!("Jumping to: {:#x?}", self.register.pc);
     }
 
+    pub fn jp_hl(&mut self, _bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        self.register.pc = self.register.get_hl();
+    }
+
     // JR Instructions
+    pub fn jr_c_e8(&mut self, bus: &mut MemoryBus) {
+        let e: i8 = bus.read(self.register.pc) as i8;
+        self.inc_pc();
+        self.routine_jr_cc_e8(FlagCondition::C, e);
+    }
+
+    pub fn jr_nc_e8(&mut self, bus: &mut MemoryBus) {
+        let e: i8 = bus.read(self.register.pc) as i8;
+        self.inc_pc();
+        self.routine_jr_cc_e8(FlagCondition::NC, e);
+    }
+
+    pub fn jr_z_e8(&mut self, bus: &mut MemoryBus) {
+        let e: i8 = bus.read(self.register.pc) as i8;
+        self.inc_pc();
+        self.routine_jr_cc_e8(FlagCondition::Z, e);
+    }
+
     pub fn jr_nz_e8(&mut self, bus: &mut MemoryBus) {
         let e: i8 = bus.read(self.register.pc) as i8;
         self.inc_pc();
-        self.routine_jr_cc_e8("nz", e);
+        self.routine_jr_cc_e8(FlagCondition::NZ, e);
     }
 
     // LD R8, R8/n8
@@ -441,7 +553,7 @@ impl Cpu {
         self.routine_ld_r8_n8(bus, Register8::L);
     }
 
-    // LD r8, [r16]
+    // LD r8, [r16/a16]
     pub fn ld_a_bc_indirect(&mut self, bus: &mut MemoryBus) {
         self.routine_ld_r8_r16_indirect(bus, Register8::A, Register16::BC);
     }
@@ -472,12 +584,41 @@ impl Cpu {
         self.register.dec_hl();
     }
 
+    pub fn ld_a_a16_indirect(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let lo = bus.read(self.register.pc) as u16;
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let hi = bus.read(self.register.pc) as u16;
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let addr = (hi << 8) | lo;
+        let val = bus.read(addr);
+
+        self.clock.advance_clock(4);
+        self.register.a = val;
+    }
+
+    pub fn ld_b_hl_indirect(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r8_r16_indirect(bus, Register8::B, Register16::HL);
+    }
+
     pub fn ld_c_hl_indirect(&mut self, bus: &mut MemoryBus) {
         self.routine_ld_r8_r16_indirect(bus, Register8::C, Register16::HL);
     }
 
+    pub fn ld_d_hl_indirect(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r8_r16_indirect(bus, Register8::D, Register16::HL);
+    }
+
     pub fn ld_e_hl_indirect(&mut self, bus: &mut MemoryBus) {
         self.routine_ld_r8_r16_indirect(bus, Register8::E, Register16::HL);
+    }
+
+    pub fn ld_h_hl_indirect(&mut self, bus: &mut MemoryBus) {
+        self.routine_ld_r8_r16_indirect(bus, Register8::H, Register16::HL);
     }
 
     pub fn ld_l_hl_indirect(&mut self, bus: &mut MemoryBus) {
@@ -657,6 +798,22 @@ impl Cpu {
         self.clock.advance_clock(4);
     }
 
+    pub fn ret_z(&mut self, bus: &mut MemoryBus) {
+        self.routine_ret_cc(bus, FlagCondition::Z)
+    }
+
+    pub fn ret_nz(&mut self, bus: &mut MemoryBus) {
+        self.routine_ret_cc(bus, FlagCondition::NZ)
+    }
+
+    pub fn ret_c(&mut self, bus: &mut MemoryBus) {
+        self.routine_ret_cc(bus, FlagCondition::C)
+    }
+
+    pub fn ret_nc(&mut self, bus: &mut MemoryBus) {
+        self.routine_ret_cc(bus, FlagCondition::NC)
+    }
+
     // Rotate Registers
     pub fn rlca(&mut self, _bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
@@ -669,6 +826,95 @@ impl Cpu {
         self.register.a = val;
     }
 
+    // SUB A
+    pub fn sub_a_a(&mut self, _bus: &mut MemoryBus) {
+        self.routine_sub_a_r8(Register8::A);
+    }
+
+    pub fn sub_a_b(&mut self, _bus: &mut MemoryBus) {
+        self.routine_sub_a_r8(Register8::B);
+    }
+
+    pub fn sub_a_c(&mut self, _bus: &mut MemoryBus) {
+        self.routine_sub_a_r8(Register8::C);
+    }
+
+    pub fn sub_a_d(&mut self, _bus: &mut MemoryBus) {
+        self.routine_sub_a_r8(Register8::D);
+    }
+
+    pub fn sub_a_e(&mut self, _bus: &mut MemoryBus) {
+        self.routine_sub_a_r8(Register8::E);
+    }
+
+    pub fn sub_a_h(&mut self, _bus: &mut MemoryBus) {
+        self.routine_sub_a_r8(Register8::H);
+    }
+
+    pub fn sub_a_l(&mut self, _bus: &mut MemoryBus) {
+        self.routine_sub_a_r8(Register8::L);
+    }
+
+    pub fn sub_a_hl_indirect(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let val = bus.read(self.register.get_hl());
+
+        self.clock.advance_clock(4);
+        let half_carry = (self.register.a & 0x0F) < val & 0x0F;
+        let (result, carry) = self.register.a.overflowing_sub(val);
+
+        if result == 0 {
+            self.register.set_flag_z_zero();
+        } else {
+            self.register.clear_flag_z_zero();
+        }
+
+        if carry {
+            self.register.set_flag_c_carry();
+        } else {
+            self.register.clear_flag_c_carry();
+        }
+
+        if half_carry {
+            self.register.set_flag_h_half_carry();
+        } else {
+            self.register.clear_flag_h_half_carry();
+        }
+
+        self.register.set_flag_n_subtraction();
+    }
+
+    pub fn sub_a_n8(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let val = bus.read(self.register.pc);
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let half_carry = (self.register.a & 0x0F) < val & 0x0F;
+        let (result, carry) = self.register.a.overflowing_sub(val);
+
+        if result == 0 {
+            self.register.set_flag_z_zero();
+        } else {
+            self.register.clear_flag_z_zero();
+        }
+
+        if carry {
+            self.register.set_flag_c_carry();
+        } else {
+            self.register.clear_flag_c_carry();
+        }
+
+        if half_carry {
+            self.register.set_flag_h_half_carry();
+        } else {
+            self.register.clear_flag_h_half_carry();
+        }
+
+        self.register.set_flag_n_subtraction();
+    }
+
+    // XOR A
     pub fn xor_a_a(&mut self, _bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
         self.register.a = 0; // XOR'ing a value against itself will always be 0

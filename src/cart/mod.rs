@@ -1,5 +1,5 @@
 pub mod header;
-mod mbc;
+pub mod mbc;
 
 use anyhow::{Context, Result, anyhow};
 use dialoguer::Select;
@@ -78,6 +78,10 @@ impl Cartridge {
         println!("Global Checksum Lo: {:02X?}", {
             self.header.global_checksum_lo
         });
+    }
+
+    pub fn cart_data_len(&self) -> usize {
+        self.data.len()
     }
 }
 
