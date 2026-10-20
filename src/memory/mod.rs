@@ -34,7 +34,7 @@ impl MemoryBus {
             0xFE00..=0xFE9F => todo!("Implement read for: {:#x?}", addr),
             0xFEA0..=0xFEFF => 0, // Unusable memory location
             0xFF00..=0xFF7F => todo!("Implement read for: {:#x?}", addr),
-            0xFF80..=0xFFFE => todo!("Implement read for: {:#x?}", addr),
+            0xFF80..=0xFFFE => self.hram[addr as usize - 0xFF80],
             0xFFFF => self.ie,
         }
     }

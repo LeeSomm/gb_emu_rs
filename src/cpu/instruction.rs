@@ -13,6 +13,62 @@ pub struct CpuInstruction {
     pub operation: fn(&mut Cpu, &mut MemoryBus),
 }
 
+// ADD r8, r8/n8
+pub const ADD_A_A: CpuInstruction = CpuInstruction {
+    disassembly: "ADD A, A",
+    operand_length: 0,
+    operation: Cpu::add_a_a,
+};
+
+pub const ADD_A_B: CpuInstruction = CpuInstruction {
+    disassembly: "ADD A, B",
+    operand_length: 0,
+    operation: Cpu::add_a_b,
+};
+
+pub const ADD_A_C: CpuInstruction = CpuInstruction {
+    disassembly: "ADD A, C",
+    operand_length: 0,
+    operation: Cpu::add_a_c,
+};
+
+pub const ADD_A_D: CpuInstruction = CpuInstruction {
+    disassembly: "ADD A, D",
+    operand_length: 0,
+    operation: Cpu::add_a_d,
+};
+
+pub const ADD_A_E: CpuInstruction = CpuInstruction {
+    disassembly: "ADD A, E",
+    operand_length: 0,
+    operation: Cpu::add_a_e,
+};
+
+pub const ADD_A_H: CpuInstruction = CpuInstruction {
+    disassembly: "ADD A, H",
+    operand_length: 0,
+    operation: Cpu::add_a_h,
+};
+
+pub const ADD_A_L: CpuInstruction = CpuInstruction {
+    disassembly: "ADD A, L",
+    operand_length: 0,
+    operation: Cpu::add_a_l,
+};
+
+pub const ADD_A_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "ADD A, [HL]",
+    operand_length: 0,
+    operation: Cpu::add_a_hl_indirect,
+};
+
+pub const ADD_A_N8: CpuInstruction = CpuInstruction {
+    disassembly: "ADD A, n8",
+    operand_length: 1,
+    operation: Cpu::add_a_n8,
+};
+
+// ADD r16, r16
 pub const ADD_HL_BC: CpuInstruction = CpuInstruction {
     disassembly: "ADD HL, BC",
     operand_length: 0,
@@ -755,6 +811,31 @@ pub const LD_SP_N16: CpuInstruction = CpuInstruction {
     operation: Cpu::ld_sp_n16,
 };
 
+// LDH
+pub const LDH_A8_INDIRECT_A: CpuInstruction = CpuInstruction {
+    disassembly: "LDH [a8], A",
+    operand_length: 1,
+    operation: Cpu::ldh_a8_indirect_a,
+};
+
+pub const LDH_A_A8_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "LDH A, [a8]",
+    operand_length: 1,
+    operation: Cpu::ldh_a_a8_indirect,
+};
+
+pub const LDH_C_INDIRECT_A: CpuInstruction = CpuInstruction {
+    disassembly: "LDH [C], A",
+    operand_length: 1,
+    operation: Cpu::ldh_c_indirect_a,
+};
+
+pub const LDH_A_C_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "LDH A, [C]",
+    operand_length: 1,
+    operation: Cpu::ldh_a_c_indirect,
+};
+
 // NOOP
 pub const NOOP: CpuInstruction = CpuInstruction {
     disassembly: "NOP",
@@ -1078,14 +1159,14 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x7D */ LD_A_L,
         /* 0x7E */ LD_A_HL_INDIRECT,
         /* 0x7F */ LD_A_A,
-        /* 0x80 */ PLACEHOLDER,
-        /* 0x81 */ PLACEHOLDER,
-        /* 0x82 */ PLACEHOLDER,
-        /* 0x83 */ PLACEHOLDER,
-        /* 0x84 */ PLACEHOLDER,
-        /* 0x85 */ PLACEHOLDER,
-        /* 0x86 */ PLACEHOLDER,
-        /* 0x87 */ PLACEHOLDER,
+        /* 0x80 */ ADD_A_B,
+        /* 0x81 */ ADD_A_C,
+        /* 0x82 */ ADD_A_D,
+        /* 0x83 */ ADD_A_E,
+        /* 0x84 */ ADD_A_H,
+        /* 0x85 */ ADD_A_L,
+        /* 0x86 */ ADD_A_HL_INDIRECT,
+        /* 0x87 */ ADD_A_A,
         /* 0x88 */ PLACEHOLDER,
         /* 0x89 */ PLACEHOLDER,
         /* 0x8A */ PLACEHOLDER,
@@ -1148,7 +1229,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xC3 */ JP_A16,
         /* 0xC4 */ PLACEHOLDER,
         /* 0xC5 */ PLACEHOLDER,
-        /* 0xC6 */ PLACEHOLDER,
+        /* 0xC6 */ ADD_A_N8,
         /* 0xC7 */ PLACEHOLDER,
         /* 0xC8 */ RET_Z,
         /* 0xC9 */ RET,
@@ -1174,9 +1255,9 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xDD */ PLACEHOLDER,
         /* 0xDE */ PLACEHOLDER,
         /* 0xDF */ PLACEHOLDER,
-        /* 0xE0 */ PLACEHOLDER,
+        /* 0xE0 */ LDH_A8_INDIRECT_A,
         /* 0xE1 */ POP_HL,
-        /* 0xE2 */ PLACEHOLDER,
+        /* 0xE2 */ LDH_C_INDIRECT_A,
         /* 0xE3 */ PLACEHOLDER,
         /* 0xE4 */ PLACEHOLDER,
         /* 0xE5 */ PLACEHOLDER,
@@ -1190,9 +1271,9 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xED */ PLACEHOLDER,
         /* 0xEE */ PLACEHOLDER,
         /* 0xEF */ PLACEHOLDER,
-        /* 0xF0 */ PLACEHOLDER,
+        /* 0xF0 */ LDH_A_A8_INDIRECT,
         /* 0xF1 */ POP_AF,
-        /* 0xF2 */ PLACEHOLDER,
+        /* 0xF2 */ LDH_A_C_INDIRECT,
         /* 0xF3 */ DI,
         /* 0xF4 */ PLACEHOLDER,
         /* 0xF5 */ PLACEHOLDER,

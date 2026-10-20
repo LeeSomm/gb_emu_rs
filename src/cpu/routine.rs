@@ -4,8 +4,31 @@ use crate::memory::MemoryBus;
 
 impl Cpu {
     // CPU Generic Operations
-    pub fn routine_add_a_r8(&mut self, r8: u8) {
-        todo!()
+    pub fn routine_add_a_r8(&mut self, reg: Register8) {
+        self.clock.advance_clock(4);
+        let val = self.register.read_r8(reg);
+        let half_carry = (self.register.a & 0x0F) + (val & 0x0F) > 0x0F;
+        let (result, carry) = self.register.a.overflowing_add(val);
+
+        if result == 0 {
+            self.register.set_flag_z_zero();
+        } else {
+            self.register.clear_flag_z_zero();
+        }
+
+        if carry {
+            self.register.set_flag_c_carry();
+        } else {
+            self.register.clear_flag_c_carry();
+        }
+
+        if half_carry {
+            self.register.set_flag_h_half_carry();
+        } else {
+            self.register.clear_flag_h_half_carry();
+        }
+
+        self.register.clear_flag_n_subtraction();
     }
 
     pub fn routine_add_hl_r16(&mut self, reg: Register16) {
