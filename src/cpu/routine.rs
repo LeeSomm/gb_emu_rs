@@ -4,6 +4,37 @@ use crate::memory::MemoryBus;
 
 impl Cpu {
     // CPU Generic Operations
+    pub fn routine_adc_a_r8(&mut self, reg: Register8) {
+        self.clock.advance_clock(4);
+        let val = self.register.read_r8(reg);
+        let c = self.register.get_flag_c_carry();
+        let half_carry = (self.register.a & 0x0F) + (val & 0x0F) + c > 0x0F;
+        let (tmp_result, carry1) = self.register.a.overflowing_add(val);
+        let (result, carry2) = tmp_result.overflowing_add(c);
+
+        if result == 0 {
+            self.register.set_flag_z_zero();
+        } else {
+            self.register.clear_flag_z_zero();
+        }
+
+        if carry1 || carry2 {
+            self.register.set_flag_c_carry();
+        } else {
+            self.register.clear_flag_c_carry();
+        }
+
+        if half_carry {
+            self.register.set_flag_h_half_carry();
+        } else {
+            self.register.clear_flag_h_half_carry();
+        }
+
+        self.register.clear_flag_n_subtraction();
+
+        self.register.a = result;
+    }
+
     pub fn routine_add_a_r8(&mut self, reg: Register8) {
         self.clock.advance_clock(4);
         let val = self.register.read_r8(reg);
@@ -29,6 +60,8 @@ impl Cpu {
         }
 
         self.register.clear_flag_n_subtraction();
+
+        self.register.a = result;
     }
 
     pub fn routine_add_hl_r16(&mut self, reg: Register16) {
@@ -52,10 +85,6 @@ impl Cpu {
         } else {
             self.register.clear_flag_h_half_carry();
         }
-    }
-
-    pub fn routine_adc_a_r8(&mut self, r8: u8) {
-        todo!()
     }
 
     pub fn routine_cp_a_r8(&mut self, reg: Register8) {
@@ -317,10 +346,39 @@ impl Cpu {
         }
 
         self.register.set_flag_n_subtraction();
+
+        self.register.a = result;
     }
 
-    pub fn routine_sbc_a_r8(&mut self, r8: u8) {
-        todo!()
+    pub fn routine_sbc_a_r8(&mut self, reg: Register8) {
+        self.clock.advance_clock(4);
+        let val = self.register.read_r8(reg);
+        let c = self.register.get_flag_c_carry();
+        let half_carry = (self.register.a & 0x0F) < ((val & 0x0F) + c);
+        let (tmp_result, carry1) = self.register.a.overflowing_sub(val);
+        let (result, carry2) = tmp_result.overflowing_sub(c);
+
+        if result == 0 {
+            self.register.set_flag_z_zero();
+        } else {
+            self.register.clear_flag_z_zero();
+        }
+
+        if carry1 || carry2 {
+            self.register.set_flag_c_carry();
+        } else {
+            self.register.clear_flag_c_carry();
+        }
+
+        if half_carry {
+            self.register.set_flag_h_half_carry();
+        } else {
+            self.register.clear_flag_h_half_carry();
+        }
+
+        self.register.set_flag_n_subtraction();
+
+        self.register.a = result;
     }
 
     pub fn routine_xor_a_r8(&mut self, r8: u8) {
