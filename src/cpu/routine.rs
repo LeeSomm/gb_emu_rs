@@ -127,7 +127,7 @@ impl Cpu {
 
     pub fn routine_dec_r8(&mut self, reg: Register8) {
         self.clock.advance_clock(4);
-        let mut val = self.register.read_r8(reg.clone());
+        let mut val = self.register.read_r8(reg);
 
         // Check half-carry flag
         if (val & 0x0F) == 0 {
@@ -148,7 +148,7 @@ impl Cpu {
 
     pub fn routine_dec_r16(&mut self, reg: Register16) {
         self.clock.advance_clock(4);
-        let val = self.register.read_r16(reg.clone()).wrapping_sub(1);
+        let val = self.register.read_r16(reg).wrapping_sub(1);
 
         self.clock.advance_clock(4);
         self.register.write_r16(reg, val);
@@ -156,7 +156,7 @@ impl Cpu {
 
     pub fn routine_inc_r8(&mut self, reg: Register8) {
         self.clock.advance_clock(4);
-        let mut val = self.register.read_r8(reg.clone());
+        let mut val = self.register.read_r8(reg);
 
         // If bottom 4 bits are set, inc will cause overflow from bit 3.
         if (val & 0x0F) == 0x0F {
@@ -177,7 +177,7 @@ impl Cpu {
 
     pub fn routine_inc_r16(&mut self, reg: Register16) {
         self.clock.advance_clock(4);
-        let val = self.register.read_r16(reg.clone()).wrapping_add(1);
+        let val = self.register.read_r16(reg).wrapping_add(1);
 
         self.clock.advance_clock(4);
         self.register.write_r16(reg, val);

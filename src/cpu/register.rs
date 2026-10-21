@@ -1,4 +1,4 @@
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub enum Register8 {
     A,
     // F is never manipulated directly as an 8bit register
@@ -10,7 +10,7 @@ pub enum Register8 {
     L,
 }
 
-#[derive(Clone)]
+#[derive(Clone, Copy)]
 pub enum Register16 {
     AF,
     BC,

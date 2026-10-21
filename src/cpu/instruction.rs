@@ -1601,261 +1601,1798 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xFF */ PLACEHOLDER,
     ],
     cb: [
-        /* 0x00 */ PLACEHOLDER,
-        /* 0x01 */ PLACEHOLDER,
-        /* 0x02 */ PLACEHOLDER,
-        /* 0x03 */ PLACEHOLDER,
-        /* 0x04 */ PLACEHOLDER,
-        /* 0x05 */ PLACEHOLDER,
-        /* 0x06 */ PLACEHOLDER,
-        /* 0x07 */ PLACEHOLDER,
-        /* 0x08 */ PLACEHOLDER,
-        /* 0x09 */ PLACEHOLDER,
-        /* 0x0A */ PLACEHOLDER,
-        /* 0x0B */ PLACEHOLDER,
-        /* 0x0C */ PLACEHOLDER,
-        /* 0x0D */ PLACEHOLDER,
-        /* 0x0E */ PLACEHOLDER,
-        /* 0x0F */ PLACEHOLDER,
-        /* 0x10 */ PLACEHOLDER,
-        /* 0x11 */ PLACEHOLDER,
-        /* 0x12 */ PLACEHOLDER,
-        /* 0x13 */ PLACEHOLDER,
-        /* 0x14 */ PLACEHOLDER,
-        /* 0x15 */ PLACEHOLDER,
-        /* 0x16 */ PLACEHOLDER,
-        /* 0x17 */ PLACEHOLDER,
-        /* 0x18 */ PLACEHOLDER,
-        /* 0x19 */ PLACEHOLDER,
-        /* 0x1A */ PLACEHOLDER,
-        /* 0x1B */ PLACEHOLDER,
-        /* 0x1C */ PLACEHOLDER,
-        /* 0x1D */ PLACEHOLDER,
-        /* 0x1E */ PLACEHOLDER,
-        /* 0x1F */ PLACEHOLDER,
-        /* 0x20 */ PLACEHOLDER,
-        /* 0x21 */ PLACEHOLDER,
-        /* 0x22 */ PLACEHOLDER,
-        /* 0x23 */ PLACEHOLDER,
-        /* 0x24 */ PLACEHOLDER,
-        /* 0x25 */ PLACEHOLDER,
-        /* 0x26 */ PLACEHOLDER,
-        /* 0x27 */ PLACEHOLDER,
-        /* 0x28 */ PLACEHOLDER,
-        /* 0x29 */ PLACEHOLDER,
-        /* 0x2A */ PLACEHOLDER,
-        /* 0x2B */ PLACEHOLDER,
-        /* 0x2C */ PLACEHOLDER,
-        /* 0x2D */ PLACEHOLDER,
-        /* 0x2E */ PLACEHOLDER,
-        /* 0x2F */ PLACEHOLDER,
-        /* 0x30 */ PLACEHOLDER,
-        /* 0x31 */ PLACEHOLDER,
-        /* 0x32 */ PLACEHOLDER,
-        /* 0x33 */ PLACEHOLDER,
-        /* 0x34 */ PLACEHOLDER,
-        /* 0x35 */ PLACEHOLDER,
-        /* 0x36 */ PLACEHOLDER,
-        /* 0x37 */ PLACEHOLDER,
-        /* 0x38 */ PLACEHOLDER,
-        /* 0x39 */ PLACEHOLDER,
-        /* 0x3A */ PLACEHOLDER,
-        /* 0x3B */ PLACEHOLDER,
-        /* 0x3C */ PLACEHOLDER,
-        /* 0x3D */ PLACEHOLDER,
-        /* 0x3E */ PLACEHOLDER,
-        /* 0x3F */ PLACEHOLDER,
-        /* 0x40 */ PLACEHOLDER,
-        /* 0x41 */ PLACEHOLDER,
-        /* 0x42 */ PLACEHOLDER,
-        /* 0x43 */ PLACEHOLDER,
-        /* 0x44 */ PLACEHOLDER,
-        /* 0x45 */ PLACEHOLDER,
-        /* 0x46 */ PLACEHOLDER,
-        /* 0x47 */ PLACEHOLDER,
-        /* 0x48 */ PLACEHOLDER,
-        /* 0x49 */ PLACEHOLDER,
-        /* 0x4A */ PLACEHOLDER,
-        /* 0x4B */ PLACEHOLDER,
-        /* 0x4C */ PLACEHOLDER,
-        /* 0x4D */ PLACEHOLDER,
-        /* 0x4E */ PLACEHOLDER,
-        /* 0x4F */ PLACEHOLDER,
-        /* 0x50 */ PLACEHOLDER,
-        /* 0x51 */ PLACEHOLDER,
-        /* 0x52 */ PLACEHOLDER,
-        /* 0x53 */ PLACEHOLDER,
-        /* 0x54 */ PLACEHOLDER,
-        /* 0x55 */ PLACEHOLDER,
-        /* 0x56 */ PLACEHOLDER,
-        /* 0x57 */ PLACEHOLDER,
-        /* 0x58 */ PLACEHOLDER,
-        /* 0x59 */ PLACEHOLDER,
-        /* 0x5A */ PLACEHOLDER,
-        /* 0x5B */ PLACEHOLDER,
-        /* 0x5C */ PLACEHOLDER,
-        /* 0x5D */ PLACEHOLDER,
-        /* 0x5E */ PLACEHOLDER,
-        /* 0x5F */ PLACEHOLDER,
-        /* 0x60 */ PLACEHOLDER,
-        /* 0x61 */ PLACEHOLDER,
-        /* 0x62 */ PLACEHOLDER,
-        /* 0x63 */ PLACEHOLDER,
-        /* 0x64 */ PLACEHOLDER,
-        /* 0x65 */ PLACEHOLDER,
-        /* 0x66 */ PLACEHOLDER,
-        /* 0x67 */ PLACEHOLDER,
-        /* 0x68 */ PLACEHOLDER,
-        /* 0x69 */ PLACEHOLDER,
-        /* 0x6A */ PLACEHOLDER,
-        /* 0x6B */ PLACEHOLDER,
-        /* 0x6C */ PLACEHOLDER,
-        /* 0x6D */ PLACEHOLDER,
-        /* 0x6E */ PLACEHOLDER,
-        /* 0x6F */ PLACEHOLDER,
-        /* 0x70 */ PLACEHOLDER,
-        /* 0x71 */ PLACEHOLDER,
-        /* 0x72 */ PLACEHOLDER,
-        /* 0x73 */ PLACEHOLDER,
-        /* 0x74 */ PLACEHOLDER,
-        /* 0x75 */ PLACEHOLDER,
-        /* 0x76 */ PLACEHOLDER,
-        /* 0x77 */ PLACEHOLDER,
-        /* 0x78 */ PLACEHOLDER,
-        /* 0x79 */ PLACEHOLDER,
-        /* 0x7A */ PLACEHOLDER,
-        /* 0x7B */ PLACEHOLDER,
-        /* 0x7C */ PLACEHOLDER,
-        /* 0x7D */ PLACEHOLDER,
-        /* 0x7E */ PLACEHOLDER,
-        /* 0x7F */ PLACEHOLDER,
-        /* 0x80 */ PLACEHOLDER,
-        /* 0x81 */ PLACEHOLDER,
-        /* 0x82 */ PLACEHOLDER,
-        /* 0x83 */ PLACEHOLDER,
-        /* 0x84 */ PLACEHOLDER,
-        /* 0x85 */ PLACEHOLDER,
-        /* 0x86 */ PLACEHOLDER,
-        /* 0x87 */ PLACEHOLDER,
-        /* 0x88 */ PLACEHOLDER,
-        /* 0x89 */ PLACEHOLDER,
-        /* 0x8A */ PLACEHOLDER,
-        /* 0x8B */ PLACEHOLDER,
-        /* 0x8C */ PLACEHOLDER,
-        /* 0x8D */ PLACEHOLDER,
-        /* 0x8E */ PLACEHOLDER,
-        /* 0x8F */ PLACEHOLDER,
-        /* 0x90 */ PLACEHOLDER,
-        /* 0x91 */ PLACEHOLDER,
-        /* 0x92 */ PLACEHOLDER,
-        /* 0x93 */ PLACEHOLDER,
-        /* 0x94 */ PLACEHOLDER,
-        /* 0x95 */ PLACEHOLDER,
-        /* 0x96 */ PLACEHOLDER,
-        /* 0x97 */ PLACEHOLDER,
-        /* 0x98 */ PLACEHOLDER,
-        /* 0x99 */ PLACEHOLDER,
-        /* 0x9A */ PLACEHOLDER,
-        /* 0x9B */ PLACEHOLDER,
-        /* 0x9C */ PLACEHOLDER,
-        /* 0x9D */ PLACEHOLDER,
-        /* 0x9E */ PLACEHOLDER,
-        /* 0x9F */ PLACEHOLDER,
-        /* 0xA0 */ PLACEHOLDER,
-        /* 0xA1 */ PLACEHOLDER,
-        /* 0xA2 */ PLACEHOLDER,
-        /* 0xA3 */ PLACEHOLDER,
-        /* 0xA4 */ PLACEHOLDER,
-        /* 0xA5 */ PLACEHOLDER,
-        /* 0xA6 */ PLACEHOLDER,
-        /* 0xA7 */ PLACEHOLDER,
-        /* 0xA8 */ PLACEHOLDER,
-        /* 0xA9 */ PLACEHOLDER,
-        /* 0xAA */ PLACEHOLDER,
-        /* 0xAB */ PLACEHOLDER,
-        /* 0xAC */ PLACEHOLDER,
-        /* 0xAD */ PLACEHOLDER,
-        /* 0xAE */ PLACEHOLDER,
-        /* 0xAF */ PLACEHOLDER,
-        /* 0xB0 */ PLACEHOLDER,
-        /* 0xB1 */ PLACEHOLDER,
-        /* 0xB2 */ PLACEHOLDER,
-        /* 0xB3 */ PLACEHOLDER,
-        /* 0xB4 */ PLACEHOLDER,
-        /* 0xB5 */ PLACEHOLDER,
-        /* 0xB6 */ PLACEHOLDER,
-        /* 0xB7 */ PLACEHOLDER,
-        /* 0xB8 */ PLACEHOLDER,
-        /* 0xB9 */ PLACEHOLDER,
-        /* 0xBA */ PLACEHOLDER,
-        /* 0xBB */ PLACEHOLDER,
-        /* 0xBC */ PLACEHOLDER,
-        /* 0xBD */ PLACEHOLDER,
-        /* 0xBE */ PLACEHOLDER,
-        /* 0xBF */ PLACEHOLDER,
-        /* 0xC0 */ PLACEHOLDER,
-        /* 0xC1 */ PLACEHOLDER,
-        /* 0xC2 */ PLACEHOLDER,
-        /* 0xC3 */ PLACEHOLDER,
-        /* 0xC4 */ PLACEHOLDER,
-        /* 0xC5 */ PLACEHOLDER,
-        /* 0xC6 */ PLACEHOLDER,
-        /* 0xC7 */ PLACEHOLDER,
-        /* 0xC8 */ PLACEHOLDER,
-        /* 0xC9 */ PLACEHOLDER,
-        /* 0xCA */ PLACEHOLDER,
-        /* 0xCB */ PLACEHOLDER,
-        /* 0xCC */ PLACEHOLDER,
-        /* 0xCD */ PLACEHOLDER,
-        /* 0xCE */ PLACEHOLDER,
-        /* 0xCF */ PLACEHOLDER,
-        /* 0xD0 */ PLACEHOLDER,
-        /* 0xD1 */ PLACEHOLDER,
-        /* 0xD2 */ PLACEHOLDER,
-        /* 0xD3 */ PLACEHOLDER,
-        /* 0xD4 */ PLACEHOLDER,
-        /* 0xD5 */ PLACEHOLDER,
-        /* 0xD6 */ PLACEHOLDER,
-        /* 0xD7 */ PLACEHOLDER,
-        /* 0xD8 */ PLACEHOLDER,
-        /* 0xD9 */ PLACEHOLDER,
-        /* 0xDA */ PLACEHOLDER,
-        /* 0xDB */ PLACEHOLDER,
-        /* 0xDC */ PLACEHOLDER,
-        /* 0xDD */ PLACEHOLDER,
-        /* 0xDE */ PLACEHOLDER,
-        /* 0xDF */ PLACEHOLDER,
-        /* 0xE0 */ PLACEHOLDER,
-        /* 0xE1 */ PLACEHOLDER,
-        /* 0xE2 */ PLACEHOLDER,
-        /* 0xE3 */ PLACEHOLDER,
-        /* 0xE4 */ PLACEHOLDER,
-        /* 0xE5 */ PLACEHOLDER,
-        /* 0xE6 */ PLACEHOLDER,
-        /* 0xE7 */ PLACEHOLDER,
-        /* 0xE8 */ PLACEHOLDER,
-        /* 0xE9 */ PLACEHOLDER,
-        /* 0xEA */ PLACEHOLDER,
-        /* 0xEB */ PLACEHOLDER,
-        /* 0xEC */ PLACEHOLDER,
-        /* 0xED */ PLACEHOLDER,
-        /* 0xEE */ PLACEHOLDER,
-        /* 0xEF */ PLACEHOLDER,
-        /* 0xF0 */ PLACEHOLDER,
-        /* 0xF1 */ PLACEHOLDER,
-        /* 0xF2 */ PLACEHOLDER,
-        /* 0xF3 */ PLACEHOLDER,
-        /* 0xF4 */ PLACEHOLDER,
-        /* 0xF5 */ PLACEHOLDER,
-        /* 0xF6 */ PLACEHOLDER,
-        /* 0xF7 */ PLACEHOLDER,
-        /* 0xF8 */ PLACEHOLDER,
-        /* 0xF9 */ PLACEHOLDER,
-        /* 0xFA */ PLACEHOLDER,
-        /* 0xFB */ PLACEHOLDER,
-        /* 0xFC */ PLACEHOLDER,
-        /* 0xFD */ PLACEHOLDER,
-        /* 0xFE */ PLACEHOLDER,
-        /* 0xFF */ PLACEHOLDER,
+        /* 0x00 */ RLC_B,
+        /* 0x01 */ RLC_C,
+        /* 0x02 */ RLC_D,
+        /* 0x03 */ RLC_E,
+        /* 0x04 */ RLC_H,
+        /* 0x05 */ RLC_L,
+        /* 0x06 */ RLC_HL_INDIRECT,
+        /* 0x07 */ RLC_A,
+        /* 0x08 */ RRC_B,
+        /* 0x09 */ RRC_C,
+        /* 0x0A */ RRC_D,
+        /* 0x0B */ RRC_E,
+        /* 0x0C */ RRC_H,
+        /* 0x0D */ RRC_L,
+        /* 0x0E */ RRC_HL_INDIRECT,
+        /* 0x0F */ RRC_A,
+        /* 0x10 */ RL_B,
+        /* 0x11 */ RL_C,
+        /* 0x12 */ RL_D,
+        /* 0x13 */ RL_E,
+        /* 0x14 */ RL_H,
+        /* 0x15 */ RL_L,
+        /* 0x16 */ RL_HL_INDIRECT,
+        /* 0x17 */ RL_A,
+        /* 0x18 */ RR_B,
+        /* 0x19 */ RR_C,
+        /* 0x1A */ RR_D,
+        /* 0x1B */ RR_E,
+        /* 0x1C */ RR_H,
+        /* 0x1D */ RR_L,
+        /* 0x1E */ RR_HL_INDIRECT,
+        /* 0x1F */ RR_A,
+        /* 0x20 */ SLA_B,
+        /* 0x21 */ SLA_C,
+        /* 0x22 */ SLA_D,
+        /* 0x23 */ SLA_E,
+        /* 0x24 */ SLA_H,
+        /* 0x25 */ SLA_L,
+        /* 0x26 */ SLA_HL_INDIRECT,
+        /* 0x27 */ SLA_A,
+        /* 0x28 */ SRA_B,
+        /* 0x29 */ SRA_C,
+        /* 0x2A */ SRA_D,
+        /* 0x2B */ SRA_E,
+        /* 0x2C */ SRA_H,
+        /* 0x2D */ SRA_L,
+        /* 0x2E */ SRA_HL_INDIRECT,
+        /* 0x2F */ SRA_A,
+        /* 0x30 */ SWAP_B,
+        /* 0x31 */ SWAP_C,
+        /* 0x32 */ SWAP_D,
+        /* 0x33 */ SWAP_E,
+        /* 0x34 */ SWAP_H,
+        /* 0x35 */ SWAP_L,
+        /* 0x36 */ SWAP_HL_INDIRECT,
+        /* 0x37 */ SWAP_A,
+        /* 0x38 */ SRL_B,
+        /* 0x39 */ SRL_C,
+        /* 0x3A */ SRL_D,
+        /* 0x3B */ SRL_E,
+        /* 0x3C */ SRL_H,
+        /* 0x3D */ SRL_L,
+        /* 0x3E */ SRL_HL_INDIRECT,
+        /* 0x3F */ SRL_A,
+        /* 0x40 */ BIT_0_B,
+        /* 0x41 */ BIT_0_C,
+        /* 0x42 */ BIT_0_D,
+        /* 0x43 */ BIT_0_E,
+        /* 0x44 */ BIT_0_H,
+        /* 0x45 */ BIT_0_L,
+        /* 0x46 */ BIT_0_HL_INDIRECT,
+        /* 0x47 */ BIT_0_A,
+        /* 0x48 */ BIT_1_B,
+        /* 0x49 */ BIT_1_C,
+        /* 0x4A */ BIT_1_D,
+        /* 0x4B */ BIT_1_E,
+        /* 0x4C */ BIT_1_H,
+        /* 0x4D */ BIT_1_L,
+        /* 0x4E */ BIT_1_HL_INDIRECT,
+        /* 0x4F */ BIT_1_A,
+        /* 0x50 */ BIT_2_B,
+        /* 0x51 */ BIT_2_C,
+        /* 0x52 */ BIT_2_D,
+        /* 0x53 */ BIT_2_E,
+        /* 0x54 */ BIT_2_H,
+        /* 0x55 */ BIT_2_L,
+        /* 0x56 */ BIT_2_HL_INDIRECT,
+        /* 0x57 */ BIT_2_A,
+        /* 0x58 */ BIT_3_B,
+        /* 0x59 */ BIT_3_C,
+        /* 0x5A */ BIT_3_D,
+        /* 0x5B */ BIT_3_E,
+        /* 0x5C */ BIT_3_H,
+        /* 0x5D */ BIT_3_L,
+        /* 0x5E */ BIT_3_HL_INDIRECT,
+        /* 0x5F */ BIT_3_A,
+        /* 0x60 */ BIT_4_B,
+        /* 0x61 */ BIT_4_C,
+        /* 0x62 */ BIT_4_D,
+        /* 0x63 */ BIT_4_E,
+        /* 0x64 */ BIT_4_H,
+        /* 0x65 */ BIT_4_L,
+        /* 0x66 */ BIT_4_HL_INDIRECT,
+        /* 0x67 */ BIT_4_A,
+        /* 0x68 */ BIT_5_B,
+        /* 0x69 */ BIT_5_C,
+        /* 0x6A */ BIT_5_D,
+        /* 0x6B */ BIT_5_E,
+        /* 0x6C */ BIT_5_H,
+        /* 0x6D */ BIT_5_L,
+        /* 0x6E */ BIT_5_HL_INDIRECT,
+        /* 0x6F */ BIT_5_A,
+        /* 0x70 */ BIT_6_B,
+        /* 0x71 */ BIT_6_C,
+        /* 0x72 */ BIT_6_D,
+        /* 0x73 */ BIT_6_E,
+        /* 0x74 */ BIT_6_H,
+        /* 0x75 */ BIT_6_L,
+        /* 0x76 */ BIT_6_HL_INDIRECT,
+        /* 0x77 */ BIT_6_A,
+        /* 0x78 */ BIT_7_B,
+        /* 0x79 */ BIT_7_C,
+        /* 0x7A */ BIT_7_D,
+        /* 0x7B */ BIT_7_E,
+        /* 0x7C */ BIT_7_H,
+        /* 0x7D */ BIT_7_L,
+        /* 0x7E */ BIT_7_HL_INDIRECT,
+        /* 0x7F */ BIT_7_A,
+        /* 0x80 */ RES_0_B,
+        /* 0x81 */ RES_0_C,
+        /* 0x82 */ RES_0_D,
+        /* 0x83 */ RES_0_E,
+        /* 0x84 */ RES_0_H,
+        /* 0x85 */ RES_0_L,
+        /* 0x86 */ RES_0_HL_INDIRECT,
+        /* 0x87 */ RES_0_A,
+        /* 0x88 */ RES_1_B,
+        /* 0x89 */ RES_1_C,
+        /* 0x8A */ RES_1_D,
+        /* 0x8B */ RES_1_E,
+        /* 0x8C */ RES_1_H,
+        /* 0x8D */ RES_1_L,
+        /* 0x8E */ RES_1_HL_INDIRECT,
+        /* 0x8F */ RES_1_A,
+        /* 0x90 */ RES_2_B,
+        /* 0x91 */ RES_2_C,
+        /* 0x92 */ RES_2_D,
+        /* 0x93 */ RES_2_E,
+        /* 0x94 */ RES_2_H,
+        /* 0x95 */ RES_2_L,
+        /* 0x96 */ RES_2_HL_INDIRECT,
+        /* 0x97 */ RES_2_A,
+        /* 0x98 */ RES_3_B,
+        /* 0x99 */ RES_3_C,
+        /* 0x9A */ RES_3_D,
+        /* 0x9B */ RES_3_E,
+        /* 0x9C */ RES_3_H,
+        /* 0x9D */ RES_3_L,
+        /* 0x9E */ RES_3_HL_INDIRECT,
+        /* 0x9F */ RES_3_A,
+        /* 0xA0 */ RES_4_B,
+        /* 0xA1 */ RES_4_C,
+        /* 0xA2 */ RES_4_D,
+        /* 0xA3 */ RES_4_E,
+        /* 0xA4 */ RES_4_H,
+        /* 0xA5 */ RES_4_L,
+        /* 0xA6 */ RES_4_HL_INDIRECT,
+        /* 0xA7 */ RES_4_A,
+        /* 0xA8 */ RES_5_B,
+        /* 0xA9 */ RES_5_C,
+        /* 0xAA */ RES_5_D,
+        /* 0xAB */ RES_5_E,
+        /* 0xAC */ RES_5_H,
+        /* 0xAD */ RES_5_L,
+        /* 0xAE */ RES_5_HL_INDIRECT,
+        /* 0xAF */ RES_5_A,
+        /* 0xB0 */ RES_6_B,
+        /* 0xB1 */ RES_6_C,
+        /* 0xB2 */ RES_6_D,
+        /* 0xB3 */ RES_6_E,
+        /* 0xB4 */ RES_6_H,
+        /* 0xB5 */ RES_6_L,
+        /* 0xB6 */ RES_6_HL_INDIRECT,
+        /* 0xB7 */ RES_6_A,
+        /* 0xB8 */ RES_7_B,
+        /* 0xB9 */ RES_7_C,
+        /* 0xBA */ RES_7_D,
+        /* 0xBB */ RES_7_E,
+        /* 0xBC */ RES_7_H,
+        /* 0xBD */ RES_7_L,
+        /* 0xBE */ RES_7_HL_INDIRECT,
+        /* 0xBF */ RES_7_A,
+        /* 0xC0 */ SET_0_B,
+        /* 0xC1 */ SET_0_C,
+        /* 0xC2 */ SET_0_D,
+        /* 0xC3 */ SET_0_E,
+        /* 0xC4 */ SET_0_H,
+        /* 0xC5 */ SET_0_L,
+        /* 0xC6 */ SET_0_HL_INDIRECT,
+        /* 0xC7 */ SET_0_A,
+        /* 0xC8 */ SET_1_B,
+        /* 0xC9 */ SET_1_C,
+        /* 0xCA */ SET_1_D,
+        /* 0xCB */ SET_1_E,
+        /* 0xCC */ SET_1_H,
+        /* 0xCD */ SET_1_L,
+        /* 0xCE */ SET_1_HL_INDIRECT,
+        /* 0xCF */ SET_1_A,
+        /* 0xD0 */ SET_2_B,
+        /* 0xD1 */ SET_2_C,
+        /* 0xD2 */ SET_2_D,
+        /* 0xD3 */ SET_2_E,
+        /* 0xD4 */ SET_2_H,
+        /* 0xD5 */ SET_2_L,
+        /* 0xD6 */ SET_2_HL_INDIRECT,
+        /* 0xD7 */ SET_2_A,
+        /* 0xD8 */ SET_3_B,
+        /* 0xD9 */ SET_3_C,
+        /* 0xDA */ SET_3_D,
+        /* 0xDB */ SET_3_E,
+        /* 0xDC */ SET_3_H,
+        /* 0xDD */ SET_3_L,
+        /* 0xDE */ SET_3_HL_INDIRECT,
+        /* 0xDF */ SET_3_A,
+        /* 0xE0 */ SET_4_B,
+        /* 0xE1 */ SET_4_C,
+        /* 0xE2 */ SET_4_D,
+        /* 0xE3 */ SET_4_E,
+        /* 0xE4 */ SET_4_H,
+        /* 0xE5 */ SET_4_L,
+        /* 0xE6 */ SET_4_HL_INDIRECT,
+        /* 0xE7 */ SET_4_A,
+        /* 0xE8 */ SET_5_B,
+        /* 0xE9 */ SET_5_C,
+        /* 0xEA */ SET_5_D,
+        /* 0xEB */ SET_5_E,
+        /* 0xEC */ SET_5_H,
+        /* 0xED */ SET_5_L,
+        /* 0xEE */ SET_5_HL_INDIRECT,
+        /* 0xEF */ SET_5_A,
+        /* 0xF0 */ SET_6_B,
+        /* 0xF1 */ SET_6_C,
+        /* 0xF2 */ SET_6_D,
+        /* 0xF3 */ SET_6_E,
+        /* 0xF4 */ SET_6_H,
+        /* 0xF5 */ SET_6_L,
+        /* 0xF6 */ SET_6_HL_INDIRECT,
+        /* 0xF7 */ SET_6_A,
+        /* 0xF8 */ SET_7_B,
+        /* 0xF9 */ SET_7_C,
+        /* 0xFA */ SET_7_D,
+        /* 0xFB */ SET_7_E,
+        /* 0xFC */ SET_7_H,
+        /* 0xFD */ SET_7_L,
+        /* 0xFE */ SET_7_HL_INDIRECT,
+        /* 0xFF */ SET_7_A,
     ],
+};
+
+// CB Instructions
+pub const RLC_A: CpuInstruction = CpuInstruction {
+    disassembly: "RLC A",
+    operand_length: 0,
+    operation: Cpu::cb_rlc_a,
+};
+
+pub const RLC_B: CpuInstruction = CpuInstruction {
+    disassembly: "RLC B",
+    operand_length: 0,
+    operation: Cpu::cb_rlc_b,
+};
+
+pub const RLC_C: CpuInstruction = CpuInstruction {
+    disassembly: "RLC C",
+    operand_length: 0,
+    operation: Cpu::cb_rlc_c,
+};
+
+pub const RLC_D: CpuInstruction = CpuInstruction {
+    disassembly: "RLC D",
+    operand_length: 0,
+    operation: Cpu::cb_rlc_d,
+};
+
+pub const RLC_E: CpuInstruction = CpuInstruction {
+    disassembly: "RLC E",
+    operand_length: 0,
+    operation: Cpu::cb_rlc_e,
+};
+
+pub const RLC_H: CpuInstruction = CpuInstruction {
+    disassembly: "RLC H",
+    operand_length: 0,
+    operation: Cpu::cb_rlc_h,
+};
+
+pub const RLC_L: CpuInstruction = CpuInstruction {
+    disassembly: "RLC L",
+    operand_length: 0,
+    operation: Cpu::cb_rlc_l,
+};
+
+pub const RLC_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "RLC [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_rlc_hl_indirect,
+};
+
+pub const RRC_A: CpuInstruction = CpuInstruction {
+    disassembly: "RRC A",
+    operand_length: 0,
+    operation: Cpu::cb_rrc_a,
+};
+
+pub const RRC_B: CpuInstruction = CpuInstruction {
+    disassembly: "RRC B",
+    operand_length: 0,
+    operation: Cpu::cb_rrc_b,
+};
+
+pub const RRC_C: CpuInstruction = CpuInstruction {
+    disassembly: "RRC C",
+    operand_length: 0,
+    operation: Cpu::cb_rrc_c,
+};
+
+pub const RRC_D: CpuInstruction = CpuInstruction {
+    disassembly: "RRC D",
+    operand_length: 0,
+    operation: Cpu::cb_rrc_d,
+};
+
+pub const RRC_E: CpuInstruction = CpuInstruction {
+    disassembly: "RRC E",
+    operand_length: 0,
+    operation: Cpu::cb_rrc_e,
+};
+
+pub const RRC_H: CpuInstruction = CpuInstruction {
+    disassembly: "RRC H",
+    operand_length: 0,
+    operation: Cpu::cb_rrc_h,
+};
+
+pub const RRC_L: CpuInstruction = CpuInstruction {
+    disassembly: "RRC L",
+    operand_length: 0,
+    operation: Cpu::cb_rrc_l,
+};
+
+pub const RRC_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "RRC [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_rrc_hl_indirect,
+};
+
+pub const RL_A: CpuInstruction = CpuInstruction {
+    disassembly: "RL A",
+    operand_length: 0,
+    operation: Cpu::cb_rl_a,
+};
+
+pub const RL_B: CpuInstruction = CpuInstruction {
+    disassembly: "RL B",
+    operand_length: 0,
+    operation: Cpu::cb_rl_b,
+};
+
+pub const RL_C: CpuInstruction = CpuInstruction {
+    disassembly: "RL C",
+    operand_length: 0,
+    operation: Cpu::cb_rl_c,
+};
+
+pub const RL_D: CpuInstruction = CpuInstruction {
+    disassembly: "RL D",
+    operand_length: 0,
+    operation: Cpu::cb_rl_d,
+};
+
+pub const RL_E: CpuInstruction = CpuInstruction {
+    disassembly: "RL E",
+    operand_length: 0,
+    operation: Cpu::cb_rl_e,
+};
+
+pub const RL_H: CpuInstruction = CpuInstruction {
+    disassembly: "RL H",
+    operand_length: 0,
+    operation: Cpu::cb_rl_h,
+};
+
+pub const RL_L: CpuInstruction = CpuInstruction {
+    disassembly: "RL L",
+    operand_length: 0,
+    operation: Cpu::cb_rl_l,
+};
+
+pub const RL_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "RL [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_rl_hl_indirect,
+};
+
+pub const RR_A: CpuInstruction = CpuInstruction {
+    disassembly: "RR A",
+    operand_length: 0,
+    operation: Cpu::cb_rr_a,
+};
+
+pub const RR_B: CpuInstruction = CpuInstruction {
+    disassembly: "RR B",
+    operand_length: 0,
+    operation: Cpu::cb_rr_b,
+};
+
+pub const RR_C: CpuInstruction = CpuInstruction {
+    disassembly: "RR C",
+    operand_length: 0,
+    operation: Cpu::cb_rr_c,
+};
+
+pub const RR_D: CpuInstruction = CpuInstruction {
+    disassembly: "RR D",
+    operand_length: 0,
+    operation: Cpu::cb_rr_d,
+};
+
+pub const RR_E: CpuInstruction = CpuInstruction {
+    disassembly: "RR E",
+    operand_length: 0,
+    operation: Cpu::cb_rr_e,
+};
+
+pub const RR_H: CpuInstruction = CpuInstruction {
+    disassembly: "RR H",
+    operand_length: 0,
+    operation: Cpu::cb_rr_h,
+};
+
+pub const RR_L: CpuInstruction = CpuInstruction {
+    disassembly: "RR L",
+    operand_length: 0,
+    operation: Cpu::cb_rr_l,
+};
+
+pub const RR_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "RR [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_rr_hl_indirect,
+};
+
+pub const SLA_A: CpuInstruction = CpuInstruction {
+    disassembly: "SLA A",
+    operand_length: 0,
+    operation: Cpu::cb_sla_a,
+};
+
+pub const SLA_B: CpuInstruction = CpuInstruction {
+    disassembly: "SLA B",
+    operand_length: 0,
+    operation: Cpu::cb_sla_b,
+};
+
+pub const SLA_C: CpuInstruction = CpuInstruction {
+    disassembly: "SLA C",
+    operand_length: 0,
+    operation: Cpu::cb_sla_c,
+};
+
+pub const SLA_D: CpuInstruction = CpuInstruction {
+    disassembly: "SLA D",
+    operand_length: 0,
+    operation: Cpu::cb_sla_d,
+};
+
+pub const SLA_E: CpuInstruction = CpuInstruction {
+    disassembly: "SLA E",
+    operand_length: 0,
+    operation: Cpu::cb_sla_e,
+};
+
+pub const SLA_H: CpuInstruction = CpuInstruction {
+    disassembly: "SLA H",
+    operand_length: 0,
+    operation: Cpu::cb_sla_h,
+};
+
+pub const SLA_L: CpuInstruction = CpuInstruction {
+    disassembly: "SLA L",
+    operand_length: 0,
+    operation: Cpu::cb_sla_l,
+};
+
+pub const SLA_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "SLA [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_sla_hl_indirect,
+};
+
+pub const SRA_A: CpuInstruction = CpuInstruction {
+    disassembly: "SRA A",
+    operand_length: 0,
+    operation: Cpu::cb_sra_a,
+};
+
+pub const SRA_B: CpuInstruction = CpuInstruction {
+    disassembly: "SRA B",
+    operand_length: 0,
+    operation: Cpu::cb_sra_b,
+};
+
+pub const SRA_C: CpuInstruction = CpuInstruction {
+    disassembly: "SRA C",
+    operand_length: 0,
+    operation: Cpu::cb_sra_c,
+};
+
+pub const SRA_D: CpuInstruction = CpuInstruction {
+    disassembly: "SRA D",
+    operand_length: 0,
+    operation: Cpu::cb_sra_d,
+};
+
+pub const SRA_E: CpuInstruction = CpuInstruction {
+    disassembly: "SRA E",
+    operand_length: 0,
+    operation: Cpu::cb_sra_e,
+};
+
+pub const SRA_H: CpuInstruction = CpuInstruction {
+    disassembly: "SRA H",
+    operand_length: 0,
+    operation: Cpu::cb_sra_h,
+};
+
+pub const SRA_L: CpuInstruction = CpuInstruction {
+    disassembly: "SRA L",
+    operand_length: 0,
+    operation: Cpu::cb_sra_l,
+};
+
+pub const SRA_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "SRA [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_sra_hl_indirect,
+};
+
+pub const SWAP_A: CpuInstruction = CpuInstruction {
+    disassembly: "SWAP A",
+    operand_length: 0,
+    operation: Cpu::cb_swap_a,
+};
+
+pub const SWAP_B: CpuInstruction = CpuInstruction {
+    disassembly: "SWAP B",
+    operand_length: 0,
+    operation: Cpu::cb_swap_b,
+};
+
+pub const SWAP_C: CpuInstruction = CpuInstruction {
+    disassembly: "SWAP C",
+    operand_length: 0,
+    operation: Cpu::cb_swap_c,
+};
+
+pub const SWAP_D: CpuInstruction = CpuInstruction {
+    disassembly: "SWAP D",
+    operand_length: 0,
+    operation: Cpu::cb_swap_d,
+};
+
+pub const SWAP_E: CpuInstruction = CpuInstruction {
+    disassembly: "SWAP E",
+    operand_length: 0,
+    operation: Cpu::cb_swap_e,
+};
+
+pub const SWAP_H: CpuInstruction = CpuInstruction {
+    disassembly: "SWAP H",
+    operand_length: 0,
+    operation: Cpu::cb_swap_h,
+};
+
+pub const SWAP_L: CpuInstruction = CpuInstruction {
+    disassembly: "SWAP L",
+    operand_length: 0,
+    operation: Cpu::cb_swap_l,
+};
+
+pub const SWAP_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "SWAP [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_swap_hl_indirect,
+};
+
+pub const SRL_A: CpuInstruction = CpuInstruction {
+    disassembly: "SRL A",
+    operand_length: 0,
+    operation: Cpu::cb_srl_a,
+};
+
+pub const SRL_B: CpuInstruction = CpuInstruction {
+    disassembly: "SRL B",
+    operand_length: 0,
+    operation: Cpu::cb_srl_b,
+};
+
+pub const SRL_C: CpuInstruction = CpuInstruction {
+    disassembly: "SRL C",
+    operand_length: 0,
+    operation: Cpu::cb_srl_c,
+};
+
+pub const SRL_D: CpuInstruction = CpuInstruction {
+    disassembly: "SRL D",
+    operand_length: 0,
+    operation: Cpu::cb_srl_d,
+};
+
+pub const SRL_E: CpuInstruction = CpuInstruction {
+    disassembly: "SRL E",
+    operand_length: 0,
+    operation: Cpu::cb_srl_e,
+};
+
+pub const SRL_H: CpuInstruction = CpuInstruction {
+    disassembly: "SRL H",
+    operand_length: 0,
+    operation: Cpu::cb_srl_h,
+};
+
+pub const SRL_L: CpuInstruction = CpuInstruction {
+    disassembly: "SRL L",
+    operand_length: 0,
+    operation: Cpu::cb_srl_l,
+};
+
+pub const SRL_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "SRL [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_srl_hl_indirect,
+};
+
+pub const BIT_0_B: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 0, B",
+    operand_length: 0,
+    operation: Cpu::cb_bit_0_b,
+};
+
+pub const BIT_0_C: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 0, C",
+    operand_length: 0,
+    operation: Cpu::cb_bit_0_c,
+};
+
+pub const BIT_0_D: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 0, D",
+    operand_length: 0,
+    operation: Cpu::cb_bit_0_d,
+};
+
+pub const BIT_0_E: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 0, E",
+    operand_length: 0,
+    operation: Cpu::cb_bit_0_e,
+};
+
+pub const BIT_0_H: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 0, H",
+    operand_length: 0,
+    operation: Cpu::cb_bit_0_h,
+};
+
+pub const BIT_0_L: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 0, L",
+    operand_length: 0,
+    operation: Cpu::cb_bit_0_l,
+};
+
+pub const BIT_0_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 0, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_bit_0_hl_indirect,
+};
+
+pub const BIT_0_A: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 0, A",
+    operand_length: 0,
+    operation: Cpu::cb_bit_0_a,
+};
+
+pub const BIT_1_B: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 1, B",
+    operand_length: 0,
+    operation: Cpu::cb_bit_1_b,
+};
+
+pub const BIT_1_C: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 1, C",
+    operand_length: 0,
+    operation: Cpu::cb_bit_1_c,
+};
+
+pub const BIT_1_D: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 1, D",
+    operand_length: 0,
+    operation: Cpu::cb_bit_1_d,
+};
+
+pub const BIT_1_E: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 1, E",
+    operand_length: 0,
+    operation: Cpu::cb_bit_1_e,
+};
+
+pub const BIT_1_H: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 1, H",
+    operand_length: 0,
+    operation: Cpu::cb_bit_1_h,
+};
+
+pub const BIT_1_L: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 1, L",
+    operand_length: 0,
+    operation: Cpu::cb_bit_1_l,
+};
+
+pub const BIT_1_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 1, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_bit_1_hl_indirect,
+};
+
+pub const BIT_1_A: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 1, A",
+    operand_length: 0,
+    operation: Cpu::cb_bit_1_a,
+};
+
+pub const BIT_2_B: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 2, B",
+    operand_length: 0,
+    operation: Cpu::cb_bit_2_b,
+};
+
+pub const BIT_2_C: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 2, C",
+    operand_length: 0,
+    operation: Cpu::cb_bit_2_c,
+};
+
+pub const BIT_2_D: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 2, D",
+    operand_length: 0,
+    operation: Cpu::cb_bit_2_d,
+};
+
+pub const BIT_2_E: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 2, E",
+    operand_length: 0,
+    operation: Cpu::cb_bit_2_e,
+};
+
+pub const BIT_2_H: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 2, H",
+    operand_length: 0,
+    operation: Cpu::cb_bit_2_h,
+};
+
+pub const BIT_2_L: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 2, L",
+    operand_length: 0,
+    operation: Cpu::cb_bit_2_l,
+};
+
+pub const BIT_2_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 2, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_bit_2_hl_indirect,
+};
+
+pub const BIT_2_A: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 2, A",
+    operand_length: 0,
+    operation: Cpu::cb_bit_2_a,
+};
+
+pub const BIT_3_B: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 3, B",
+    operand_length: 0,
+    operation: Cpu::cb_bit_3_b,
+};
+
+pub const BIT_3_C: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 3, C",
+    operand_length: 0,
+    operation: Cpu::cb_bit_3_c,
+};
+
+pub const BIT_3_D: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 3, D",
+    operand_length: 0,
+    operation: Cpu::cb_bit_3_d,
+};
+
+pub const BIT_3_E: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 3, E",
+    operand_length: 0,
+    operation: Cpu::cb_bit_3_e,
+};
+
+pub const BIT_3_H: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 3, H",
+    operand_length: 0,
+    operation: Cpu::cb_bit_3_h,
+};
+
+pub const BIT_3_L: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 3, L",
+    operand_length: 0,
+    operation: Cpu::cb_bit_3_l,
+};
+
+pub const BIT_3_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 3, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_bit_3_hl_indirect,
+};
+
+pub const BIT_3_A: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 3, A",
+    operand_length: 0,
+    operation: Cpu::cb_bit_3_a,
+};
+
+pub const BIT_4_B: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 4, B",
+    operand_length: 0,
+    operation: Cpu::cb_bit_4_b,
+};
+
+pub const BIT_4_C: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 4, C",
+    operand_length: 0,
+    operation: Cpu::cb_bit_4_c,
+};
+
+pub const BIT_4_D: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 4, D",
+    operand_length: 0,
+    operation: Cpu::cb_bit_4_d,
+};
+
+pub const BIT_4_E: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 4, E",
+    operand_length: 0,
+    operation: Cpu::cb_bit_4_e,
+};
+
+pub const BIT_4_H: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 4, H",
+    operand_length: 0,
+    operation: Cpu::cb_bit_4_h,
+};
+
+pub const BIT_4_L: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 4, L",
+    operand_length: 0,
+    operation: Cpu::cb_bit_4_l,
+};
+
+pub const BIT_4_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 4, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_bit_4_hl_indirect,
+};
+
+pub const BIT_4_A: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 4, A",
+    operand_length: 0,
+    operation: Cpu::cb_bit_4_a,
+};
+
+pub const BIT_5_B: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 5, B",
+    operand_length: 0,
+    operation: Cpu::cb_bit_5_b,
+};
+
+pub const BIT_5_C: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 5, C",
+    operand_length: 0,
+    operation: Cpu::cb_bit_5_c,
+};
+
+pub const BIT_5_D: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 5, D",
+    operand_length: 0,
+    operation: Cpu::cb_bit_5_d,
+};
+
+pub const BIT_5_E: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 5, E",
+    operand_length: 0,
+    operation: Cpu::cb_bit_5_e,
+};
+
+pub const BIT_5_H: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 5, H",
+    operand_length: 0,
+    operation: Cpu::cb_bit_5_h,
+};
+
+pub const BIT_5_L: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 5, L",
+    operand_length: 0,
+    operation: Cpu::cb_bit_5_l,
+};
+
+pub const BIT_5_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 5, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_bit_5_hl_indirect,
+};
+
+pub const BIT_5_A: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 5, A",
+    operand_length: 0,
+    operation: Cpu::cb_bit_5_a,
+};
+
+pub const BIT_6_B: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 6, B",
+    operand_length: 0,
+    operation: Cpu::cb_bit_6_b,
+};
+
+pub const BIT_6_C: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 6, C",
+    operand_length: 0,
+    operation: Cpu::cb_bit_6_c,
+};
+
+pub const BIT_6_D: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 6, D",
+    operand_length: 0,
+    operation: Cpu::cb_bit_6_d,
+};
+
+pub const BIT_6_E: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 6, E",
+    operand_length: 0,
+    operation: Cpu::cb_bit_6_e,
+};
+
+pub const BIT_6_H: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 6, H",
+    operand_length: 0,
+    operation: Cpu::cb_bit_6_h,
+};
+
+pub const BIT_6_L: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 6, L",
+    operand_length: 0,
+    operation: Cpu::cb_bit_6_l,
+};
+
+pub const BIT_6_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 6, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_bit_6_hl_indirect,
+};
+
+pub const BIT_6_A: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 6, A",
+    operand_length: 0,
+    operation: Cpu::cb_bit_6_a,
+};
+
+pub const BIT_7_B: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 7, B",
+    operand_length: 0,
+    operation: Cpu::cb_bit_7_b,
+};
+
+pub const BIT_7_C: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 7, C",
+    operand_length: 0,
+    operation: Cpu::cb_bit_7_c,
+};
+
+pub const BIT_7_D: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 7, D",
+    operand_length: 0,
+    operation: Cpu::cb_bit_7_d,
+};
+
+pub const BIT_7_E: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 7, E",
+    operand_length: 0,
+    operation: Cpu::cb_bit_7_e,
+};
+
+pub const BIT_7_H: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 7, H",
+    operand_length: 0,
+    operation: Cpu::cb_bit_7_h,
+};
+
+pub const BIT_7_L: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 7, L",
+    operand_length: 0,
+    operation: Cpu::cb_bit_7_l,
+};
+
+pub const BIT_7_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 7, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_bit_7_hl_indirect,
+};
+
+pub const BIT_7_A: CpuInstruction = CpuInstruction {
+    disassembly: "BIT 7, A",
+    operand_length: 0,
+    operation: Cpu::cb_bit_7_a,
+};
+
+pub const RES_0_B: CpuInstruction = CpuInstruction {
+    disassembly: "RES 0, B",
+    operand_length: 0,
+    operation: Cpu::cb_res_0_b,
+};
+
+pub const RES_0_C: CpuInstruction = CpuInstruction {
+    disassembly: "RES 0, C",
+    operand_length: 0,
+    operation: Cpu::cb_res_0_c,
+};
+
+pub const RES_0_D: CpuInstruction = CpuInstruction {
+    disassembly: "RES 0, D",
+    operand_length: 0,
+    operation: Cpu::cb_res_0_d,
+};
+
+pub const RES_0_E: CpuInstruction = CpuInstruction {
+    disassembly: "RES 0, E",
+    operand_length: 0,
+    operation: Cpu::cb_res_0_e,
+};
+
+pub const RES_0_H: CpuInstruction = CpuInstruction {
+    disassembly: "RES 0, H",
+    operand_length: 0,
+    operation: Cpu::cb_res_0_h,
+};
+
+pub const RES_0_L: CpuInstruction = CpuInstruction {
+    disassembly: "RES 0, L",
+    operand_length: 0,
+    operation: Cpu::cb_res_0_l,
+};
+
+pub const RES_0_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "RES 0, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_res_0_hl_indirect,
+};
+
+pub const RES_0_A: CpuInstruction = CpuInstruction {
+    disassembly: "RES 0, A",
+    operand_length: 0,
+    operation: Cpu::cb_res_0_a,
+};
+
+pub const RES_1_B: CpuInstruction = CpuInstruction {
+    disassembly: "RES 1, B",
+    operand_length: 0,
+    operation: Cpu::cb_res_1_b,
+};
+
+pub const RES_1_C: CpuInstruction = CpuInstruction {
+    disassembly: "RES 1, C",
+    operand_length: 0,
+    operation: Cpu::cb_res_1_c,
+};
+
+pub const RES_1_D: CpuInstruction = CpuInstruction {
+    disassembly: "RES 1, D",
+    operand_length: 0,
+    operation: Cpu::cb_res_1_d,
+};
+
+pub const RES_1_E: CpuInstruction = CpuInstruction {
+    disassembly: "RES 1, E",
+    operand_length: 0,
+    operation: Cpu::cb_res_1_e,
+};
+
+pub const RES_1_H: CpuInstruction = CpuInstruction {
+    disassembly: "RES 1, H",
+    operand_length: 0,
+    operation: Cpu::cb_res_1_h,
+};
+
+pub const RES_1_L: CpuInstruction = CpuInstruction {
+    disassembly: "RES 1, L",
+    operand_length: 0,
+    operation: Cpu::cb_res_1_l,
+};
+
+pub const RES_1_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "RES 1, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_res_1_hl_indirect,
+};
+
+pub const RES_1_A: CpuInstruction = CpuInstruction {
+    disassembly: "RES 1, A",
+    operand_length: 0,
+    operation: Cpu::cb_res_1_a,
+};
+
+pub const RES_2_B: CpuInstruction = CpuInstruction {
+    disassembly: "RES 2, B",
+    operand_length: 0,
+    operation: Cpu::cb_res_2_b,
+};
+
+pub const RES_2_C: CpuInstruction = CpuInstruction {
+    disassembly: "RES 2, C",
+    operand_length: 0,
+    operation: Cpu::cb_res_2_c,
+};
+
+pub const RES_2_D: CpuInstruction = CpuInstruction {
+    disassembly: "RES 2, D",
+    operand_length: 0,
+    operation: Cpu::cb_res_2_d,
+};
+
+pub const RES_2_E: CpuInstruction = CpuInstruction {
+    disassembly: "RES 2, E",
+    operand_length: 0,
+    operation: Cpu::cb_res_2_e,
+};
+
+pub const RES_2_H: CpuInstruction = CpuInstruction {
+    disassembly: "RES 2, H",
+    operand_length: 0,
+    operation: Cpu::cb_res_2_h,
+};
+
+pub const RES_2_L: CpuInstruction = CpuInstruction {
+    disassembly: "RES 2, L",
+    operand_length: 0,
+    operation: Cpu::cb_res_2_l,
+};
+
+pub const RES_2_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "RES 2, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_res_2_hl_indirect,
+};
+
+pub const RES_2_A: CpuInstruction = CpuInstruction {
+    disassembly: "RES 2, A",
+    operand_length: 0,
+    operation: Cpu::cb_res_2_a,
+};
+
+pub const RES_3_B: CpuInstruction = CpuInstruction {
+    disassembly: "RES 3, B",
+    operand_length: 0,
+    operation: Cpu::cb_res_3_b,
+};
+
+pub const RES_3_C: CpuInstruction = CpuInstruction {
+    disassembly: "RES 3, C",
+    operand_length: 0,
+    operation: Cpu::cb_res_3_c,
+};
+
+pub const RES_3_D: CpuInstruction = CpuInstruction {
+    disassembly: "RES 3, D",
+    operand_length: 0,
+    operation: Cpu::cb_res_3_d,
+};
+
+pub const RES_3_E: CpuInstruction = CpuInstruction {
+    disassembly: "RES 3, E",
+    operand_length: 0,
+    operation: Cpu::cb_res_3_e,
+};
+
+pub const RES_3_H: CpuInstruction = CpuInstruction {
+    disassembly: "RES 3, H",
+    operand_length: 0,
+    operation: Cpu::cb_res_3_h,
+};
+
+pub const RES_3_L: CpuInstruction = CpuInstruction {
+    disassembly: "RES 3, L",
+    operand_length: 0,
+    operation: Cpu::cb_res_3_l,
+};
+
+pub const RES_3_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "RES 3, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_res_3_hl_indirect,
+};
+
+pub const RES_3_A: CpuInstruction = CpuInstruction {
+    disassembly: "RES 3, A",
+    operand_length: 0,
+    operation: Cpu::cb_res_3_a,
+};
+
+pub const RES_4_B: CpuInstruction = CpuInstruction {
+    disassembly: "RES 4, B",
+    operand_length: 0,
+    operation: Cpu::cb_res_4_b,
+};
+
+pub const RES_4_C: CpuInstruction = CpuInstruction {
+    disassembly: "RES 4, C",
+    operand_length: 0,
+    operation: Cpu::cb_res_4_c,
+};
+
+pub const RES_4_D: CpuInstruction = CpuInstruction {
+    disassembly: "RES 4, D",
+    operand_length: 0,
+    operation: Cpu::cb_res_4_d,
+};
+
+pub const RES_4_E: CpuInstruction = CpuInstruction {
+    disassembly: "RES 4, E",
+    operand_length: 0,
+    operation: Cpu::cb_res_4_e,
+};
+
+pub const RES_4_H: CpuInstruction = CpuInstruction {
+    disassembly: "RES 4, H",
+    operand_length: 0,
+    operation: Cpu::cb_res_4_h,
+};
+
+pub const RES_4_L: CpuInstruction = CpuInstruction {
+    disassembly: "RES 4, L",
+    operand_length: 0,
+    operation: Cpu::cb_res_4_l,
+};
+
+pub const RES_4_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "RES 4, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_res_4_hl_indirect,
+};
+
+pub const RES_4_A: CpuInstruction = CpuInstruction {
+    disassembly: "RES 4, A",
+    operand_length: 0,
+    operation: Cpu::cb_res_4_a,
+};
+
+pub const RES_5_B: CpuInstruction = CpuInstruction {
+    disassembly: "RES 5, B",
+    operand_length: 0,
+    operation: Cpu::cb_res_5_b,
+};
+
+pub const RES_5_C: CpuInstruction = CpuInstruction {
+    disassembly: "RES 5, C",
+    operand_length: 0,
+    operation: Cpu::cb_res_5_c,
+};
+
+pub const RES_5_D: CpuInstruction = CpuInstruction {
+    disassembly: "RES 5, D",
+    operand_length: 0,
+    operation: Cpu::cb_res_5_d,
+};
+
+pub const RES_5_E: CpuInstruction = CpuInstruction {
+    disassembly: "RES 5, E",
+    operand_length: 0,
+    operation: Cpu::cb_res_5_e,
+};
+
+pub const RES_5_H: CpuInstruction = CpuInstruction {
+    disassembly: "RES 5, H",
+    operand_length: 0,
+    operation: Cpu::cb_res_5_h,
+};
+
+pub const RES_5_L: CpuInstruction = CpuInstruction {
+    disassembly: "RES 5, L",
+    operand_length: 0,
+    operation: Cpu::cb_res_5_l,
+};
+
+pub const RES_5_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "RES 5, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_res_5_hl_indirect,
+};
+
+pub const RES_5_A: CpuInstruction = CpuInstruction {
+    disassembly: "RES 5, A",
+    operand_length: 0,
+    operation: Cpu::cb_res_5_a,
+};
+
+pub const RES_6_B: CpuInstruction = CpuInstruction {
+    disassembly: "RES 6, B",
+    operand_length: 0,
+    operation: Cpu::cb_res_6_b,
+};
+
+pub const RES_6_C: CpuInstruction = CpuInstruction {
+    disassembly: "RES 6, C",
+    operand_length: 0,
+    operation: Cpu::cb_res_6_c,
+};
+
+pub const RES_6_D: CpuInstruction = CpuInstruction {
+    disassembly: "RES 6, D",
+    operand_length: 0,
+    operation: Cpu::cb_res_6_d,
+};
+
+pub const RES_6_E: CpuInstruction = CpuInstruction {
+    disassembly: "RES 6, E",
+    operand_length: 0,
+    operation: Cpu::cb_res_6_e,
+};
+
+pub const RES_6_H: CpuInstruction = CpuInstruction {
+    disassembly: "RES 6, H",
+    operand_length: 0,
+    operation: Cpu::cb_res_6_h,
+};
+
+pub const RES_6_L: CpuInstruction = CpuInstruction {
+    disassembly: "RES 6, L",
+    operand_length: 0,
+    operation: Cpu::cb_res_6_l,
+};
+
+pub const RES_6_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "RES 6, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_res_6_hl_indirect,
+};
+
+pub const RES_6_A: CpuInstruction = CpuInstruction {
+    disassembly: "RES 6, A",
+    operand_length: 0,
+    operation: Cpu::cb_res_6_a,
+};
+
+pub const RES_7_B: CpuInstruction = CpuInstruction {
+    disassembly: "RES 7, B",
+    operand_length: 0,
+    operation: Cpu::cb_res_7_b,
+};
+
+pub const RES_7_C: CpuInstruction = CpuInstruction {
+    disassembly: "RES 7, C",
+    operand_length: 0,
+    operation: Cpu::cb_res_7_c,
+};
+
+pub const RES_7_D: CpuInstruction = CpuInstruction {
+    disassembly: "RES 7, D",
+    operand_length: 0,
+    operation: Cpu::cb_res_7_d,
+};
+
+pub const RES_7_E: CpuInstruction = CpuInstruction {
+    disassembly: "RES 7, E",
+    operand_length: 0,
+    operation: Cpu::cb_res_7_e,
+};
+
+pub const RES_7_H: CpuInstruction = CpuInstruction {
+    disassembly: "RES 7, H",
+    operand_length: 0,
+    operation: Cpu::cb_res_7_h,
+};
+
+pub const RES_7_L: CpuInstruction = CpuInstruction {
+    disassembly: "RES 7, L",
+    operand_length: 0,
+    operation: Cpu::cb_res_7_l,
+};
+
+pub const RES_7_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "RES 7, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_res_7_hl_indirect,
+};
+
+pub const RES_7_A: CpuInstruction = CpuInstruction {
+    disassembly: "RES 7, A",
+    operand_length: 0,
+    operation: Cpu::cb_res_7_a,
+};
+
+pub const SET_0_B: CpuInstruction = CpuInstruction {
+    disassembly: "SET 0, B",
+    operand_length: 0,
+    operation: Cpu::cb_set_0_b,
+};
+
+pub const SET_0_C: CpuInstruction = CpuInstruction {
+    disassembly: "SET 0, C",
+    operand_length: 0,
+    operation: Cpu::cb_set_0_c,
+};
+
+pub const SET_0_D: CpuInstruction = CpuInstruction {
+    disassembly: "SET 0, D",
+    operand_length: 0,
+    operation: Cpu::cb_set_0_d,
+};
+
+pub const SET_0_E: CpuInstruction = CpuInstruction {
+    disassembly: "SET 0, E",
+    operand_length: 0,
+    operation: Cpu::cb_set_0_e,
+};
+
+pub const SET_0_H: CpuInstruction = CpuInstruction {
+    disassembly: "SET 0, H",
+    operand_length: 0,
+    operation: Cpu::cb_set_0_h,
+};
+
+pub const SET_0_L: CpuInstruction = CpuInstruction {
+    disassembly: "SET 0, L",
+    operand_length: 0,
+    operation: Cpu::cb_set_0_l,
+};
+
+pub const SET_0_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "SET 0, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_set_0_hl_indirect,
+};
+
+pub const SET_0_A: CpuInstruction = CpuInstruction {
+    disassembly: "SET 0, A",
+    operand_length: 0,
+    operation: Cpu::cb_set_0_a,
+};
+
+pub const SET_1_B: CpuInstruction = CpuInstruction {
+    disassembly: "SET 1, B",
+    operand_length: 0,
+    operation: Cpu::cb_set_1_b,
+};
+
+pub const SET_1_C: CpuInstruction = CpuInstruction {
+    disassembly: "SET 1, C",
+    operand_length: 0,
+    operation: Cpu::cb_set_1_c,
+};
+
+pub const SET_1_D: CpuInstruction = CpuInstruction {
+    disassembly: "SET 1, D",
+    operand_length: 0,
+    operation: Cpu::cb_set_1_d,
+};
+
+pub const SET_1_E: CpuInstruction = CpuInstruction {
+    disassembly: "SET 1, E",
+    operand_length: 0,
+    operation: Cpu::cb_set_1_e,
+};
+
+pub const SET_1_H: CpuInstruction = CpuInstruction {
+    disassembly: "SET 1, H",
+    operand_length: 0,
+    operation: Cpu::cb_set_1_h,
+};
+
+pub const SET_1_L: CpuInstruction = CpuInstruction {
+    disassembly: "SET 1, L",
+    operand_length: 0,
+    operation: Cpu::cb_set_1_l,
+};
+
+pub const SET_1_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "SET 1, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_set_1_hl_indirect,
+};
+
+pub const SET_1_A: CpuInstruction = CpuInstruction {
+    disassembly: "SET 1, A",
+    operand_length: 0,
+    operation: Cpu::cb_set_1_a,
+};
+
+pub const SET_2_B: CpuInstruction = CpuInstruction {
+    disassembly: "SET 2, B",
+    operand_length: 0,
+    operation: Cpu::cb_set_2_b,
+};
+
+pub const SET_2_C: CpuInstruction = CpuInstruction {
+    disassembly: "SET 2, C",
+    operand_length: 0,
+    operation: Cpu::cb_set_2_c,
+};
+
+pub const SET_2_D: CpuInstruction = CpuInstruction {
+    disassembly: "SET 2, D",
+    operand_length: 0,
+    operation: Cpu::cb_set_2_d,
+};
+
+pub const SET_2_E: CpuInstruction = CpuInstruction {
+    disassembly: "SET 2, E",
+    operand_length: 0,
+    operation: Cpu::cb_set_2_e,
+};
+
+pub const SET_2_H: CpuInstruction = CpuInstruction {
+    disassembly: "SET 2, H",
+    operand_length: 0,
+    operation: Cpu::cb_set_2_h,
+};
+
+pub const SET_2_L: CpuInstruction = CpuInstruction {
+    disassembly: "SET 2, L",
+    operand_length: 0,
+    operation: Cpu::cb_set_2_l,
+};
+
+pub const SET_2_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "SET 2, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_set_2_hl_indirect,
+};
+
+pub const SET_2_A: CpuInstruction = CpuInstruction {
+    disassembly: "SET 2, A",
+    operand_length: 0,
+    operation: Cpu::cb_set_2_a,
+};
+
+pub const SET_3_B: CpuInstruction = CpuInstruction {
+    disassembly: "SET 3, B",
+    operand_length: 0,
+    operation: Cpu::cb_set_3_b,
+};
+
+pub const SET_3_C: CpuInstruction = CpuInstruction {
+    disassembly: "SET 3, C",
+    operand_length: 0,
+    operation: Cpu::cb_set_3_c,
+};
+
+pub const SET_3_D: CpuInstruction = CpuInstruction {
+    disassembly: "SET 3, D",
+    operand_length: 0,
+    operation: Cpu::cb_set_3_d,
+};
+
+pub const SET_3_E: CpuInstruction = CpuInstruction {
+    disassembly: "SET 3, E",
+    operand_length: 0,
+    operation: Cpu::cb_set_3_e,
+};
+
+pub const SET_3_H: CpuInstruction = CpuInstruction {
+    disassembly: "SET 3, H",
+    operand_length: 0,
+    operation: Cpu::cb_set_3_h,
+};
+
+pub const SET_3_L: CpuInstruction = CpuInstruction {
+    disassembly: "SET 3, L",
+    operand_length: 0,
+    operation: Cpu::cb_set_3_l,
+};
+
+pub const SET_3_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "SET 3, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_set_3_hl_indirect,
+};
+
+pub const SET_3_A: CpuInstruction = CpuInstruction {
+    disassembly: "SET 3, A",
+    operand_length: 0,
+    operation: Cpu::cb_set_3_a,
+};
+
+pub const SET_4_B: CpuInstruction = CpuInstruction {
+    disassembly: "SET 4, B",
+    operand_length: 0,
+    operation: Cpu::cb_set_4_b,
+};
+
+pub const SET_4_C: CpuInstruction = CpuInstruction {
+    disassembly: "SET 4, C",
+    operand_length: 0,
+    operation: Cpu::cb_set_4_c,
+};
+
+pub const SET_4_D: CpuInstruction = CpuInstruction {
+    disassembly: "SET 4, D",
+    operand_length: 0,
+    operation: Cpu::cb_set_4_d,
+};
+
+pub const SET_4_E: CpuInstruction = CpuInstruction {
+    disassembly: "SET 4, E",
+    operand_length: 0,
+    operation: Cpu::cb_set_4_e,
+};
+
+pub const SET_4_H: CpuInstruction = CpuInstruction {
+    disassembly: "SET 4, H",
+    operand_length: 0,
+    operation: Cpu::cb_set_4_h,
+};
+
+pub const SET_4_L: CpuInstruction = CpuInstruction {
+    disassembly: "SET 4, L",
+    operand_length: 0,
+    operation: Cpu::cb_set_4_l,
+};
+
+pub const SET_4_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "SET 4, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_set_4_hl_indirect,
+};
+
+pub const SET_4_A: CpuInstruction = CpuInstruction {
+    disassembly: "SET 4, A",
+    operand_length: 0,
+    operation: Cpu::cb_set_4_a,
+};
+
+pub const SET_5_B: CpuInstruction = CpuInstruction {
+    disassembly: "SET 5, B",
+    operand_length: 0,
+    operation: Cpu::cb_set_5_b,
+};
+
+pub const SET_5_C: CpuInstruction = CpuInstruction {
+    disassembly: "SET 5, C",
+    operand_length: 0,
+    operation: Cpu::cb_set_5_c,
+};
+
+pub const SET_5_D: CpuInstruction = CpuInstruction {
+    disassembly: "SET 5, D",
+    operand_length: 0,
+    operation: Cpu::cb_set_5_d,
+};
+
+pub const SET_5_E: CpuInstruction = CpuInstruction {
+    disassembly: "SET 5, E",
+    operand_length: 0,
+    operation: Cpu::cb_set_5_e,
+};
+
+pub const SET_5_H: CpuInstruction = CpuInstruction {
+    disassembly: "SET 5, H",
+    operand_length: 0,
+    operation: Cpu::cb_set_5_h,
+};
+
+pub const SET_5_L: CpuInstruction = CpuInstruction {
+    disassembly: "SET 5, L",
+    operand_length: 0,
+    operation: Cpu::cb_set_5_l,
+};
+
+pub const SET_5_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "SET 5, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_set_5_hl_indirect,
+};
+
+pub const SET_5_A: CpuInstruction = CpuInstruction {
+    disassembly: "SET 5, A",
+    operand_length: 0,
+    operation: Cpu::cb_set_5_a,
+};
+
+pub const SET_6_B: CpuInstruction = CpuInstruction {
+    disassembly: "SET 6, B",
+    operand_length: 0,
+    operation: Cpu::cb_set_6_b,
+};
+
+pub const SET_6_C: CpuInstruction = CpuInstruction {
+    disassembly: "SET 6, C",
+    operand_length: 0,
+    operation: Cpu::cb_set_6_c,
+};
+
+pub const SET_6_D: CpuInstruction = CpuInstruction {
+    disassembly: "SET 6, D",
+    operand_length: 0,
+    operation: Cpu::cb_set_6_d,
+};
+
+pub const SET_6_E: CpuInstruction = CpuInstruction {
+    disassembly: "SET 6, E",
+    operand_length: 0,
+    operation: Cpu::cb_set_6_e,
+};
+
+pub const SET_6_H: CpuInstruction = CpuInstruction {
+    disassembly: "SET 6, H",
+    operand_length: 0,
+    operation: Cpu::cb_set_6_h,
+};
+
+pub const SET_6_L: CpuInstruction = CpuInstruction {
+    disassembly: "SET 6, L",
+    operand_length: 0,
+    operation: Cpu::cb_set_6_l,
+};
+
+pub const SET_6_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "SET 6, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_set_6_hl_indirect,
+};
+
+pub const SET_6_A: CpuInstruction = CpuInstruction {
+    disassembly: "SET 6, A",
+    operand_length: 0,
+    operation: Cpu::cb_set_6_a,
+};
+
+pub const SET_7_B: CpuInstruction = CpuInstruction {
+    disassembly: "SET 7, B",
+    operand_length: 0,
+    operation: Cpu::cb_set_7_b,
+};
+
+pub const SET_7_C: CpuInstruction = CpuInstruction {
+    disassembly: "SET 7, C",
+    operand_length: 0,
+    operation: Cpu::cb_set_7_c,
+};
+
+pub const SET_7_D: CpuInstruction = CpuInstruction {
+    disassembly: "SET 7, D",
+    operand_length: 0,
+    operation: Cpu::cb_set_7_d,
+};
+
+pub const SET_7_E: CpuInstruction = CpuInstruction {
+    disassembly: "SET 7, E",
+    operand_length: 0,
+    operation: Cpu::cb_set_7_e,
+};
+
+pub const SET_7_H: CpuInstruction = CpuInstruction {
+    disassembly: "SET 7, H",
+    operand_length: 0,
+    operation: Cpu::cb_set_7_h,
+};
+
+pub const SET_7_L: CpuInstruction = CpuInstruction {
+    disassembly: "SET 7, L",
+    operand_length: 0,
+    operation: Cpu::cb_set_7_l,
+};
+
+pub const SET_7_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "SET 7, [HL]",
+    operand_length: 0,
+    operation: Cpu::cb_set_7_hl_indirect,
+};
+
+pub const SET_7_A: CpuInstruction = CpuInstruction {
+    disassembly: "SET 7, A",
+    operand_length: 0,
+    operation: Cpu::cb_set_7_a,
 };

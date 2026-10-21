@@ -103,7 +103,7 @@ impl MemoryBus {
         }
     }
 
-    fn cart_ram_write(&mut self, addr: u16, val: u8) {
+    fn cart_ram_write(&mut self, addr: u16, _val: u8) {
         if !self.cart.mbc.ramg {
             ()
         } else {

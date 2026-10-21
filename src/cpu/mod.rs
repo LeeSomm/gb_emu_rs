@@ -1306,7 +1306,7 @@ impl Cpu {
 
     pub fn rra(&mut self, _bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
-        let bit0 = (self.register.a & 0b00000001);
+        let bit0 = self.register.a & 0b00000001;
         let carry_into_7 = self.register.get_flag_c_carry() << 7;
         let val = (self.register.a >> 1) + carry_into_7;
         self.register.clear_flags();
