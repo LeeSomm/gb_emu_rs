@@ -148,6 +148,62 @@ pub const ADD_HL_SP: CpuInstruction = CpuInstruction {
     operation: Cpu::add_hl_sp,
 };
 
+// AND
+pub const AND_A_A: CpuInstruction = CpuInstruction {
+    disassembly: "AND A, A",
+    operand_length: 0,
+    operation: Cpu::and_a_a,
+};
+
+pub const AND_A_B: CpuInstruction = CpuInstruction {
+    disassembly: "AND A, B",
+    operand_length: 0,
+    operation: Cpu::and_a_b,
+};
+
+pub const AND_A_C: CpuInstruction = CpuInstruction {
+    disassembly: "AND A, C",
+    operand_length: 0,
+    operation: Cpu::and_a_c,
+};
+
+pub const AND_A_D: CpuInstruction = CpuInstruction {
+    disassembly: "AND A, D",
+    operand_length: 0,
+    operation: Cpu::and_a_d,
+};
+
+pub const AND_A_E: CpuInstruction = CpuInstruction {
+    disassembly: "AND A, E",
+    operand_length: 0,
+    operation: Cpu::and_a_e,
+};
+
+pub const AND_A_H: CpuInstruction = CpuInstruction {
+    disassembly: "AND A, H",
+    operand_length: 0,
+    operation: Cpu::and_a_h,
+};
+
+pub const AND_A_L: CpuInstruction = CpuInstruction {
+    disassembly: "AND A, L",
+    operand_length: 0,
+    operation: Cpu::and_a_l,
+};
+
+pub const AND_A_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "AND A, [HL]",
+    operand_length: 0,
+    operation: Cpu::and_a_hl_indirect,
+};
+
+pub const AND_A_N8: CpuInstruction = CpuInstruction {
+    disassembly: "AND A, n8",
+    operand_length: 1,
+    operation: Cpu::and_a_n8,
+};
+
+// CALL
 pub const CALL_A16: CpuInstruction = CpuInstruction {
     disassembly: "CALL a16",
     operand_length: 2,
@@ -409,6 +465,30 @@ pub const JP_HL: CpuInstruction = CpuInstruction {
     disassembly: "JP HL",
     operand_length: 0,
     operation: Cpu::jp_hl,
+};
+
+pub const JP_C_A16: CpuInstruction = CpuInstruction {
+    disassembly: "JP C, a16",
+    operand_length: 0,
+    operation: Cpu::jp_c_a16,
+};
+
+pub const JP_NC_A16: CpuInstruction = CpuInstruction {
+    disassembly: "JP NC, a16",
+    operand_length: 0,
+    operation: Cpu::jp_nc_a16,
+};
+
+pub const JP_Z_A16: CpuInstruction = CpuInstruction {
+    disassembly: "JP Z, a16",
+    operand_length: 0,
+    operation: Cpu::jp_z_a16,
+};
+
+pub const JP_NZ_A16: CpuInstruction = CpuInstruction {
+    disassembly: "JP NZ, a16",
+    operand_length: 0,
+    operation: Cpu::jp_nz_a16,
 };
 
 // JR
@@ -1423,14 +1503,14 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0x9D */ SBC_A_L,
         /* 0x9E */ SBC_A_HL_INDIRECT,
         /* 0x9F */ SBC_A_A,
-        /* 0xA0 */ PLACEHOLDER,
-        /* 0xA1 */ PLACEHOLDER,
-        /* 0xA2 */ PLACEHOLDER,
-        /* 0xA3 */ PLACEHOLDER,
-        /* 0xA4 */ PLACEHOLDER,
-        /* 0xA5 */ PLACEHOLDER,
-        /* 0xA6 */ PLACEHOLDER,
-        /* 0xA7 */ PLACEHOLDER,
+        /* 0xA0 */ AND_A_B,
+        /* 0xA1 */ AND_A_C,
+        /* 0xA2 */ AND_A_D,
+        /* 0xA3 */ AND_A_E,
+        /* 0xA4 */ AND_A_H,
+        /* 0xA5 */ AND_A_L,
+        /* 0xA6 */ AND_A_HL_INDIRECT,
+        /* 0xA7 */ AND_A_A,
         /* 0xA8 */ PLACEHOLDER,
         /* 0xA9 */ PLACEHOLDER,
         /* 0xAA */ PLACEHOLDER,
@@ -1457,7 +1537,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xBF */ CP_A_A,
         /* 0xC0 */ RET_NZ,
         /* 0xC1 */ POP_BC,
-        /* 0xC2 */ PLACEHOLDER,
+        /* 0xC2 */ JP_NZ_A16,
         /* 0xC3 */ JP_A16,
         /* 0xC4 */ PLACEHOLDER,
         /* 0xC5 */ PLACEHOLDER,
@@ -1465,7 +1545,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xC7 */ PLACEHOLDER,
         /* 0xC8 */ RET_Z,
         /* 0xC9 */ RET,
-        /* 0xCA */ PLACEHOLDER,
+        /* 0xCA */ JP_Z_A16,
         /* 0xCB */ PLACEHOLDER,
         /* 0xCC */ PLACEHOLDER,
         /* 0xCD */ CALL_A16,
@@ -1473,7 +1553,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xCF */ PLACEHOLDER,
         /* 0xD0 */ RET_NC,
         /* 0xD1 */ POP_DE,
-        /* 0xD2 */ PLACEHOLDER,
+        /* 0xD2 */ JP_NC_A16,
         /* 0xD3 */ PLACEHOLDER,
         /* 0xD4 */ PLACEHOLDER,
         /* 0xD5 */ PLACEHOLDER,
@@ -1481,7 +1561,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xD7 */ PLACEHOLDER,
         /* 0xD8 */ RET_C,
         /* 0xD9 */ PLACEHOLDER,
-        /* 0xDA */ PLACEHOLDER,
+        /* 0xDA */ JP_C_A16,
         /* 0xDB */ PLACEHOLDER,
         /* 0xDC */ PLACEHOLDER,
         /* 0xDD */ PLACEHOLDER,
@@ -1493,7 +1573,7 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xE3 */ PLACEHOLDER,
         /* 0xE4 */ PLACEHOLDER,
         /* 0xE5 */ PLACEHOLDER,
-        /* 0xE6 */ PLACEHOLDER,
+        /* 0xE6 */ AND_A_N8,
         /* 0xE7 */ PLACEHOLDER,
         /* 0xE8 */ PLACEHOLDER,
         /* 0xE9 */ JP_HL,

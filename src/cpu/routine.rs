@@ -87,6 +87,17 @@ impl Cpu {
         }
     }
 
+    pub fn routine_and_a_r8(&mut self, reg: Register8) {
+        self.clock.advance_clock(4);
+        let result = self.register.a & self.register.read_r8(reg);
+        self.register.a = result;
+        self.register.clear_flags();
+        if result == 0 {
+            self.register.set_flag_z_zero();
+        }
+        self.register.set_flag_h_half_carry();
+    }
+
     pub fn routine_cp_a_r8(&mut self, reg: Register8) {
         self.clock.advance_clock(4);
         let val = self.register.read_r8(reg);
@@ -172,6 +183,84 @@ impl Cpu {
         self.register.write_r16(reg, val);
     }
 
+    pub fn routine_jp_cc_a16(&mut self, bus: &mut MemoryBus, cc: FlagCondition) {
+        self.clock.advance_clock(4);
+        let lo = bus.read(self.register.pc) as u16;
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let hi = bus.read(self.register.pc) as u16;
+        self.inc_pc();
+        let addr = (hi << 8) | lo;
+
+        match cc {
+            // Carry
+            FlagCondition::C => {
+                if self.register.get_flag_c_carry() == 1 {
+                    self.clock.advance_clock(4);
+                    self.register.pc = addr;
+                }
+            }
+            // Not Carry
+            FlagCondition::NC => {
+                if self.register.get_flag_c_carry() == 0 {
+                    self.clock.advance_clock(4);
+                    self.register.pc = addr;
+                }
+            }
+            // Zero
+            FlagCondition::Z => {
+                if self.register.get_flag_z_zero() == 1 {
+                    self.clock.advance_clock(4);
+                    self.register.pc = addr;
+                }
+            }
+            // Not Zero
+            FlagCondition::NZ => {
+                if self.register.get_flag_z_zero() == 0 {
+                    self.clock.advance_clock(4);
+                    self.register.pc = addr;
+                }
+            }
+        };
+        self.clock.advance_clock(4);
+    }
+
+    pub fn routine_jr_cc_e8(&mut self, cc: FlagCondition, e: i8) {
+        self.clock.advance_clock(4);
+        match cc {
+            // Carry
+            FlagCondition::C => {
+                if self.register.get_flag_c_carry() == 1 {
+                    self.clock.advance_clock(4);
+                    self.register.pc = self.register.pc.wrapping_add_signed(e as i16);
+                }
+            }
+            // Not Carry
+            FlagCondition::NC => {
+                if self.register.get_flag_c_carry() == 0 {
+                    self.clock.advance_clock(4);
+                    self.register.pc = self.register.pc.wrapping_add_signed(e as i16);
+                }
+            }
+            // Zero
+            FlagCondition::Z => {
+                if self.register.get_flag_z_zero() == 1 {
+                    self.clock.advance_clock(4);
+                    self.register.pc = self.register.pc.wrapping_add_signed(e as i16);
+                }
+            }
+            // Not Zero
+            FlagCondition::NZ => {
+                if self.register.get_flag_z_zero() == 0 {
+                    self.clock.advance_clock(4);
+                    self.register.pc = self.register.pc.wrapping_add_signed(e as i16);
+                }
+            }
+        };
+        self.clock.advance_clock(4);
+    }
+
     pub fn routine_ld_a16_indirect_r8(&mut self, bus: &mut MemoryBus, addr: u16, src: Register8) {
         self.clock.advance_clock(4);
         let val = self.register.read_r8(src);
@@ -219,41 +308,6 @@ impl Cpu {
         self.clock.advance_clock(4);
         let val = (hi << 8) | lo;
         self.register.write_r16(reg, val);
-    }
-
-    pub fn routine_jr_cc_e8(&mut self, cc: FlagCondition, e: i8) {
-        self.clock.advance_clock(4);
-        match cc {
-            // Carry
-            FlagCondition::C => {
-                if self.register.get_flag_c_carry() == 1 {
-                    self.clock.advance_clock(4);
-                    self.register.pc = self.register.pc.wrapping_add_signed(e as i16);
-                }
-            }
-            // Not Carry
-            FlagCondition::NC => {
-                if self.register.get_flag_c_carry() == 0 {
-                    self.clock.advance_clock(4);
-                    self.register.pc = self.register.pc.wrapping_add_signed(e as i16);
-                }
-            }
-            // Zero
-            FlagCondition::Z => {
-                if self.register.get_flag_z_zero() == 1 {
-                    self.clock.advance_clock(4);
-                    self.register.pc = self.register.pc.wrapping_add_signed(e as i16);
-                }
-            }
-            // Not Zero
-            FlagCondition::NZ => {
-                if self.register.get_flag_z_zero() == 0 {
-                    self.clock.advance_clock(4);
-                    self.register.pc = self.register.pc.wrapping_add_signed(e as i16);
-                }
-            }
-        };
-        self.clock.advance_clock(4);
     }
 
     pub fn routine_or_a_r8(&mut self, val: u8) {

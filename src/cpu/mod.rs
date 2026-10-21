@@ -1,3 +1,4 @@
+pub mod cb;
 pub mod clock;
 pub mod instruction;
 pub mod register;
@@ -262,6 +263,65 @@ impl Cpu {
         self.routine_add_hl_r16(Register16::SP);
     }
 
+    // AND
+    pub fn and_a_a(&mut self, _bus: &mut MemoryBus) {
+        self.routine_and_a_r8(Register8::A);
+    }
+
+    pub fn and_a_b(&mut self, _bus: &mut MemoryBus) {
+        self.routine_and_a_r8(Register8::B);
+    }
+
+    pub fn and_a_c(&mut self, _bus: &mut MemoryBus) {
+        self.routine_and_a_r8(Register8::C);
+    }
+
+    pub fn and_a_d(&mut self, _bus: &mut MemoryBus) {
+        self.routine_and_a_r8(Register8::D);
+    }
+
+    pub fn and_a_e(&mut self, _bus: &mut MemoryBus) {
+        self.routine_and_a_r8(Register8::E);
+    }
+
+    pub fn and_a_h(&mut self, _bus: &mut MemoryBus) {
+        self.routine_and_a_r8(Register8::H);
+    }
+
+    pub fn and_a_l(&mut self, _bus: &mut MemoryBus) {
+        self.routine_and_a_r8(Register8::L);
+    }
+
+    pub fn and_a_hl_indirect(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let val = bus.read(self.register.get_hl());
+
+        self.clock.advance_clock(4);
+        let result = self.register.a & val;
+        self.register.a = result;
+        self.register.clear_flags();
+        if result == 0 {
+            self.register.set_flag_z_zero();
+        }
+        self.register.set_flag_h_half_carry();
+    }
+
+    pub fn and_a_n8(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let val = bus.read(self.register.pc);
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let result = self.register.a & val;
+        self.register.a = result;
+        self.register.clear_flags();
+        if result == 0 {
+            self.register.set_flag_z_zero();
+        }
+        self.register.set_flag_h_half_carry();
+    }
+
+    // CALL
     pub fn call_a16(&mut self, bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
         let lo = bus.read(self.register.pc);
@@ -604,6 +664,22 @@ impl Cpu {
     pub fn jp_hl(&mut self, _bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
         self.register.pc = self.register.get_hl();
+    }
+
+    pub fn jp_c_a16(&mut self, bus: &mut MemoryBus) {
+        self.routine_jp_cc_a16(bus, FlagCondition::C);
+    }
+
+    pub fn jp_nc_a16(&mut self, bus: &mut MemoryBus) {
+        self.routine_jp_cc_a16(bus, FlagCondition::NC);
+    }
+
+    pub fn jp_z_a16(&mut self, bus: &mut MemoryBus) {
+        self.routine_jp_cc_a16(bus, FlagCondition::Z);
+    }
+
+    pub fn jp_nz_a16(&mut self, bus: &mut MemoryBus) {
+        self.routine_jp_cc_a16(bus, FlagCondition::NZ);
     }
 
     // JR Instructions
