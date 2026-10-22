@@ -333,6 +333,22 @@ impl Cpu {
         self.register.write_r16(reg, val);
     }
 
+    pub fn routine_rst_n(&mut self, bus: &mut MemoryBus, n8: u8) {
+        self.clock.advance_clock(4);
+        let [hi, lo] = self.register.pc.to_be_bytes();
+
+        self.clock.advance_clock(4);
+        self.register.sp -= 1;
+        bus.write(self.register.sp, hi);
+
+        self.clock.advance_clock(4);
+        self.register.sp -= 1;
+        bus.write(self.register.sp, lo);
+
+        self.clock.advance_clock(4);
+        self.register.pc = n8 as u16;
+    }
+
     pub fn routine_ret_cc(&mut self, bus: &mut MemoryBus, cc: FlagCondition) {
         fn ret_cc_match(cpu: &mut Cpu, bus: &MemoryBus) {
             cpu.clock.advance_clock(4);

@@ -210,6 +210,13 @@ pub const CALL_A16: CpuInstruction = CpuInstruction {
     operation: Cpu::call_a16,
 };
 
+// CB Prefix
+pub const CB: CpuInstruction = CpuInstruction {
+    disassembly: "CB",
+    operand_length: 0,
+    operation: Cpu::cb,
+};
+
 // Carry Flag Instructions
 pub const CCF: CpuInstruction = CpuInstruction {
     disassembly: "CCF",
@@ -1210,6 +1217,55 @@ pub const RRCA: CpuInstruction = CpuInstruction {
     operation: Cpu::rrca,
 };
 
+// RST n
+pub const RST_00: CpuInstruction = CpuInstruction {
+    disassembly: "RST $00",
+    operand_length: 0,
+    operation: Cpu::rst_00,
+};
+
+pub const RST_08: CpuInstruction = CpuInstruction {
+    disassembly: "RST $08",
+    operand_length: 0,
+    operation: Cpu::rst_08,
+};
+
+pub const RST_10: CpuInstruction = CpuInstruction {
+    disassembly: "RST $10",
+    operand_length: 0,
+    operation: Cpu::rst_10,
+};
+
+pub const RST_18: CpuInstruction = CpuInstruction {
+    disassembly: "RST $18",
+    operand_length: 0,
+    operation: Cpu::rst_18,
+};
+
+pub const RST_20: CpuInstruction = CpuInstruction {
+    disassembly: "RST $20",
+    operand_length: 0,
+    operation: Cpu::rst_20,
+};
+
+pub const RST_28: CpuInstruction = CpuInstruction {
+    disassembly: "RST $28",
+    operand_length: 0,
+    operation: Cpu::rst_28,
+};
+
+pub const RST_30: CpuInstruction = CpuInstruction {
+    disassembly: "RST $30",
+    operand_length: 0,
+    operation: Cpu::rst_30,
+};
+
+pub const RST_38: CpuInstruction = CpuInstruction {
+    disassembly: "RST $38",
+    operand_length: 0,
+    operation: Cpu::rst_38,
+};
+
 // STOP
 pub const STOP_N8: CpuInstruction = CpuInstruction {
     disassembly: "STOP n8",
@@ -1542,63 +1598,63 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xC4 */ PLACEHOLDER,
         /* 0xC5 */ PLACEHOLDER,
         /* 0xC6 */ ADD_A_N8,
-        /* 0xC7 */ PLACEHOLDER,
+        /* 0xC7 */ RST_00,
         /* 0xC8 */ RET_Z,
         /* 0xC9 */ RET,
         /* 0xCA */ JP_Z_A16,
-        /* 0xCB */ PLACEHOLDER,
+        /* 0xCB */ CB,
         /* 0xCC */ PLACEHOLDER,
         /* 0xCD */ CALL_A16,
         /* 0xCE */ ADC_A_N8,
-        /* 0xCF */ PLACEHOLDER,
+        /* 0xCF */ RST_08,
         /* 0xD0 */ RET_NC,
         /* 0xD1 */ POP_DE,
         /* 0xD2 */ JP_NC_A16,
-        /* 0xD3 */ PLACEHOLDER,
+        /* 0xD3 */ PLACEHOLDER, // Nonexistent
         /* 0xD4 */ PLACEHOLDER,
         /* 0xD5 */ PLACEHOLDER,
         /* 0xD6 */ SUB_A_N8,
-        /* 0xD7 */ PLACEHOLDER,
+        /* 0xD7 */ RST_10,
         /* 0xD8 */ RET_C,
         /* 0xD9 */ PLACEHOLDER,
         /* 0xDA */ JP_C_A16,
-        /* 0xDB */ PLACEHOLDER,
+        /* 0xDB */ PLACEHOLDER, // Nonexistent
         /* 0xDC */ PLACEHOLDER,
-        /* 0xDD */ PLACEHOLDER,
+        /* 0xDD */ PLACEHOLDER, // Nonexistent
         /* 0xDE */ SBC_A_N8,
-        /* 0xDF */ PLACEHOLDER,
+        /* 0xDF */ RST_18,
         /* 0xE0 */ LDH_A8_INDIRECT_A,
         /* 0xE1 */ POP_HL,
         /* 0xE2 */ LDH_C_INDIRECT_A,
-        /* 0xE3 */ PLACEHOLDER,
-        /* 0xE4 */ PLACEHOLDER,
+        /* 0xE3 */ PLACEHOLDER, // Nonexistent
+        /* 0xE4 */ PLACEHOLDER, // Nonexistent
         /* 0xE5 */ PLACEHOLDER,
         /* 0xE6 */ AND_A_N8,
-        /* 0xE7 */ PLACEHOLDER,
+        /* 0xE7 */ RST_20,
         /* 0xE8 */ PLACEHOLDER,
         /* 0xE9 */ JP_HL,
         /* 0xEA */ LD_A16_INDIRECT_A,
-        /* 0xEB */ PLACEHOLDER,
-        /* 0xEC */ PLACEHOLDER,
-        /* 0xED */ PLACEHOLDER,
+        /* 0xEB */ PLACEHOLDER, // Nonexistent
+        /* 0xEC */ PLACEHOLDER, // Nonexistent
+        /* 0xED */ PLACEHOLDER, // Nonexistent
         /* 0xEE */ PLACEHOLDER,
-        /* 0xEF */ PLACEHOLDER,
+        /* 0xEF */ RST_28,
         /* 0xF0 */ LDH_A_A8_INDIRECT,
         /* 0xF1 */ POP_AF,
         /* 0xF2 */ LDH_A_C_INDIRECT,
         /* 0xF3 */ DI,
-        /* 0xF4 */ PLACEHOLDER,
+        /* 0xF4 */ PLACEHOLDER, // Nonexistent
         /* 0xF5 */ PLACEHOLDER,
         /* 0xF6 */ OR_A_N8,
-        /* 0xF7 */ PLACEHOLDER,
+        /* 0xF7 */ RST_30,
         /* 0xF8 */ PLACEHOLDER,
         /* 0xF9 */ PLACEHOLDER,
         /* 0xFA */ LD_A_A16_INDIRECT,
         /* 0xFB */ PLACEHOLDER,
-        /* 0xFC */ PLACEHOLDER,
-        /* 0xFD */ PLACEHOLDER,
+        /* 0xFC */ PLACEHOLDER, // Nonexistent
+        /* 0xFD */ PLACEHOLDER, // Nonexistent
         /* 0xFE */ CP_A_N8,
-        /* 0xFF */ PLACEHOLDER,
+        /* 0xFF */ RST_38,
     ],
     cb: [
         /* 0x00 */ RLC_B,

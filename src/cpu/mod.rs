@@ -7,13 +7,14 @@ pub mod routine;
 use clock::Clock;
 use register::{FlagCondition, Register, Register8, Register16};
 
-use crate::memory::MemoryBus;
+use crate::{cpu::instruction::CpuInstruction, memory::MemoryBus};
 
 pub struct Cpu {
     pub register: Register,
     pub op_code: u8,
     // pub instr_counter: u32,
     clock: Clock,
+    cb: bool,  // Whether the next operation is from CB Op table
     ime: bool, // Interrupt Master Enable flag
 }
 
@@ -24,6 +25,7 @@ impl Cpu {
             op_code: 0x0,
             // instr_counter: 0x0,
             clock: Clock::default(),
+            cb: bool::default(),
             ime: bool::default(),
         };
         cpu.reset();
@@ -33,7 +35,15 @@ impl Cpu {
     pub fn fetch_and_execute(&mut self, bus: &mut MemoryBus) {
         // Fetch
         self.op_code = bus.read(self.register.pc);
-        let curr_instr = &instruction::INSTRUCTION_SET.normal[self.op_code as usize];
+
+        let curr_instr: &CpuInstruction;
+        if !self.cb {
+            curr_instr = &instruction::INSTRUCTION_SET.normal[self.op_code as usize];
+        } else {
+            curr_instr = &instruction::INSTRUCTION_SET.cb[self.op_code as usize];
+            self.cb = false;
+        }
+
         if curr_instr.disassembly.eq("Not yet implemented") {
             panic!("No instruction configured for {:#2x?}", self.op_code)
         }
@@ -343,6 +353,12 @@ impl Cpu {
 
         self.clock.advance_clock(4);
         self.register.pc = ((hi as u16) << 8) | lo as u16;
+    }
+
+    // CB
+    pub fn cb(&mut self, _bus: &mut MemoryBus) {
+        // Machine cycles handled within CB operation functions
+        self.cb = true;
     }
 
     // Carry Flag Operations
@@ -1247,6 +1263,39 @@ impl Cpu {
 
     pub fn pop_hl(&mut self, bus: &mut MemoryBus) {
         self.routine_pop_r16(bus, Register16::HL);
+    }
+
+    // RST n
+    pub fn rst_00(&mut self, bus: &mut MemoryBus) {
+        self.routine_rst_n(bus, 0x00);
+    }
+
+    pub fn rst_08(&mut self, bus: &mut MemoryBus) {
+        self.routine_rst_n(bus, 0x08);
+    }
+
+    pub fn rst_10(&mut self, bus: &mut MemoryBus) {
+        self.routine_rst_n(bus, 0x10);
+    }
+
+    pub fn rst_18(&mut self, bus: &mut MemoryBus) {
+        self.routine_rst_n(bus, 0x18);
+    }
+
+    pub fn rst_20(&mut self, bus: &mut MemoryBus) {
+        self.routine_rst_n(bus, 0x20);
+    }
+
+    pub fn rst_28(&mut self, bus: &mut MemoryBus) {
+        self.routine_rst_n(bus, 0x28);
+    }
+
+    pub fn rst_30(&mut self, bus: &mut MemoryBus) {
+        self.routine_rst_n(bus, 0x30);
+    }
+
+    pub fn rst_38(&mut self, bus: &mut MemoryBus) {
+        self.routine_rst_n(bus, 0x38);
     }
 
     // Ret
