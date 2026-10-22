@@ -98,6 +98,53 @@ impl Cpu {
         self.register.set_flag_h_half_carry();
     }
 
+    pub fn routine_call_cc_a16(&mut self, bus: &mut MemoryBus, cc: FlagCondition) {
+        fn call_cc_match(cpu: &mut Cpu, bus: &mut MemoryBus, hi: u8, lo: u8) {
+            cpu.clock.advance_clock(4);
+            cpu.register.sp -= 1;
+            bus.write(cpu.register.sp, hi);
+
+            cpu.clock.advance_clock(4);
+            cpu.register.sp -= 1;
+            bus.write(cpu.register.sp, lo);
+
+            cpu.clock.advance_clock(4);
+            cpu.register.pc = ((hi as u16) << 8) | lo as u16;
+        }
+
+        self.clock.advance_clock(4);
+        let lo = bus.read(self.register.pc);
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let hi = bus.read(self.register.pc);
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        match cc {
+            FlagCondition::C => {
+                if self.register.get_flag_c_carry() == 1 {
+                    call_cc_match(self, bus, hi, lo);
+                }
+            }
+            FlagCondition::NC => {
+                if self.register.get_flag_c_carry() == 0 {
+                    call_cc_match(self, bus, hi, lo);
+                }
+            }
+            FlagCondition::Z => {
+                if self.register.get_flag_z_zero() == 1 {
+                    call_cc_match(self, bus, hi, lo);
+                }
+            }
+            FlagCondition::NZ => {
+                if self.register.get_flag_z_zero() == 0 {
+                    call_cc_match(self, bus, hi, lo);
+                }
+            }
+        }
+    }
+
     pub fn routine_cp_a_r8(&mut self, reg: Register8) {
         self.clock.advance_clock(4);
         let val = self.register.read_r8(reg);
@@ -333,6 +380,41 @@ impl Cpu {
         self.register.write_r16(reg, val);
     }
 
+    pub fn routine_push_r16(&mut self, bus: &mut MemoryBus, reg: Register16) {
+        let hi: u8;
+        let lo: u8;
+        match reg {
+            Register16::AF => {
+                hi = self.register.a;
+                lo = self.register.f;
+            }
+            Register16::BC => {
+                hi = self.register.b;
+                lo = self.register.c;
+            }
+            Register16::DE => {
+                hi = self.register.d;
+                lo = self.register.e;
+            }
+            Register16::HL => {
+                hi = self.register.h;
+                lo = self.register.l;
+            }
+            Register16::SP => panic!("Attempted to push from invalid 16bit register."),
+        }
+        self.clock.advance_clock(4);
+        self.register.sp -= 1;
+
+        self.clock.advance_clock(4);
+        bus.write(self.register.sp, hi);
+
+        self.clock.advance_clock(4);
+        self.register.sp -= 1;
+
+        self.clock.advance_clock(4);
+        bus.write(self.register.sp, lo);
+    }
+
     pub fn routine_rst_n(&mut self, bus: &mut MemoryBus, n8: u8) {
         self.clock.advance_clock(4);
         let [hi, lo] = self.register.pc.to_be_bytes();
@@ -451,7 +533,12 @@ impl Cpu {
         self.register.a = result;
     }
 
-    pub fn routine_xor_a_r8(&mut self, r8: u8) {
-        todo!()
+    pub fn routine_xor_a_r8(&mut self, reg: Register8) {
+        self.clock.advance_clock(4);
+        self.register.a = self.register.a ^ self.register.read_r8(reg);
+        self.register.clear_flags();
+        if self.register.a == 0 {
+            self.register.set_flag_z_zero();
+        }
     }
 }

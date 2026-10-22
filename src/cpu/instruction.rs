@@ -148,6 +148,13 @@ pub const ADD_HL_SP: CpuInstruction = CpuInstruction {
     operation: Cpu::add_hl_sp,
 };
 
+// ADD SP, e8 (relative)
+pub const ADD_SP_E8: CpuInstruction = CpuInstruction {
+    disassembly: "ADD SP, e8",
+    operand_length: 1,
+    operation: Cpu::add_sp_e8,
+};
+
 // AND
 pub const AND_A_A: CpuInstruction = CpuInstruction {
     disassembly: "AND A, A",
@@ -208,6 +215,30 @@ pub const CALL_A16: CpuInstruction = CpuInstruction {
     disassembly: "CALL a16",
     operand_length: 2,
     operation: Cpu::call_a16,
+};
+
+pub const CALL_C_A16: CpuInstruction = CpuInstruction {
+    disassembly: "CALL C, a16",
+    operand_length: 2,
+    operation: Cpu::call_c_a16,
+};
+
+pub const CALL_NC_A16: CpuInstruction = CpuInstruction {
+    disassembly: "CALL NC, a16",
+    operand_length: 2,
+    operation: Cpu::call_nc_a16,
+};
+
+pub const CALL_Z_A16: CpuInstruction = CpuInstruction {
+    disassembly: "CALL Z, a16",
+    operand_length: 2,
+    operation: Cpu::call_z_a16,
+};
+
+pub const CALL_NZ_A16: CpuInstruction = CpuInstruction {
+    disassembly: "CALL NZ, a16",
+    operand_length: 2,
+    operation: Cpu::call_nz_a16,
 };
 
 // CB Prefix
@@ -378,6 +409,13 @@ pub const DI: CpuInstruction = CpuInstruction {
     disassembly: "DI",
     operand_length: 0,
     operation: Cpu::di,
+};
+
+// EI
+pub const EI: CpuInstruction = CpuInstruction {
+    disassembly: "EI",
+    operand_length: 0,
+    operation: Cpu::ei,
 };
 
 // HALT
@@ -1024,7 +1062,7 @@ pub const LD_L_HL_INDIRECT: CpuInstruction = CpuInstruction {
     operation: Cpu::ld_l_hl_indirect,
 };
 
-// LD r16, n16
+// LD r16, n16/r16
 pub const LD_BC_N16: CpuInstruction = CpuInstruction {
     disassembly: "LD BC, n16",
     operand_length: 2,
@@ -1047,6 +1085,18 @@ pub const LD_SP_N16: CpuInstruction = CpuInstruction {
     disassembly: "LD SP, n16",
     operand_length: 2,
     operation: Cpu::ld_sp_n16,
+};
+
+pub const LD_SP_HL: CpuInstruction = CpuInstruction {
+    disassembly: "LD SP, HL",
+    operand_length: 0,
+    operation: Cpu::ld_sp_hl,
+};
+
+pub const LD_HL_SP_E8: CpuInstruction = CpuInstruction {
+    disassembly: "LD HL, SP + e8",
+    operand_length: 1,
+    operation: Cpu::ld_hl_sp_e8,
 };
 
 // LDH
@@ -1161,6 +1211,31 @@ pub const POP_HL: CpuInstruction = CpuInstruction {
     operation: Cpu::pop_hl,
 };
 
+// PUSH
+pub const PUSH_AF: CpuInstruction = CpuInstruction {
+    disassembly: "PUSH AF",
+    operand_length: 0,
+    operation: Cpu::push_af,
+};
+
+pub const PUSH_BC: CpuInstruction = CpuInstruction {
+    disassembly: "PUSH BC",
+    operand_length: 0,
+    operation: Cpu::push_bc,
+};
+
+pub const PUSH_DE: CpuInstruction = CpuInstruction {
+    disassembly: "PUSH DE",
+    operand_length: 0,
+    operation: Cpu::push_de,
+};
+
+pub const PUSH_HL: CpuInstruction = CpuInstruction {
+    disassembly: "PUSH HL",
+    operand_length: 0,
+    operation: Cpu::push_hl,
+};
+
 // RET
 pub const RET: CpuInstruction = CpuInstruction {
     disassembly: "RET",
@@ -1190,6 +1265,13 @@ pub const RET_NC: CpuInstruction = CpuInstruction {
     disassembly: "RET NC",
     operand_length: 0,
     operation: Cpu::ret_nc,
+};
+
+// RETI
+pub const RETI: CpuInstruction = CpuInstruction {
+    disassembly: "RETI",
+    operand_length: 0,
+    operation: Cpu::reti,
 };
 
 // Rotate Register
@@ -1390,9 +1472,56 @@ pub const XOR_A_A: CpuInstruction = CpuInstruction {
     operation: Cpu::xor_a_a,
 };
 
-// TODO: Remove when all instructions are implemented.
-pub const PLACEHOLDER: CpuInstruction = CpuInstruction {
-    disassembly: "Not yet implemented",
+pub const XOR_A_B: CpuInstruction = CpuInstruction {
+    disassembly: "XOR A, B",
+    operand_length: 0,
+    operation: Cpu::xor_a_b,
+};
+
+pub const XOR_A_C: CpuInstruction = CpuInstruction {
+    disassembly: "XOR A, C",
+    operand_length: 0,
+    operation: Cpu::xor_a_c,
+};
+
+pub const XOR_A_D: CpuInstruction = CpuInstruction {
+    disassembly: "XOR A, D",
+    operand_length: 0,
+    operation: Cpu::xor_a_d,
+};
+
+pub const XOR_A_E: CpuInstruction = CpuInstruction {
+    disassembly: "XOR A, E",
+    operand_length: 0,
+    operation: Cpu::xor_a_e,
+};
+
+pub const XOR_A_H: CpuInstruction = CpuInstruction {
+    disassembly: "XOR A, H",
+    operand_length: 0,
+    operation: Cpu::xor_a_h,
+};
+
+pub const XOR_A_L: CpuInstruction = CpuInstruction {
+    disassembly: "XOR A, L",
+    operand_length: 0,
+    operation: Cpu::xor_a_l,
+};
+
+pub const XOR_A_HL_INDIRECT: CpuInstruction = CpuInstruction {
+    disassembly: "XOR A, [HL]",
+    operand_length: 0,
+    operation: Cpu::xor_a_hl_indirect,
+};
+
+pub const XOR_A_N8: CpuInstruction = CpuInstruction {
+    disassembly: "XOR A, n8",
+    operand_length: 1,
+    operation: Cpu::xor_a_n8,
+};
+
+pub const NULL_INSTRUCTION: CpuInstruction = CpuInstruction {
+    disassembly: "No Instruction Exists",
     operand_length: 0,
     operation: Cpu::noop,
 };
@@ -1567,13 +1696,13 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xA5 */ AND_A_L,
         /* 0xA6 */ AND_A_HL_INDIRECT,
         /* 0xA7 */ AND_A_A,
-        /* 0xA8 */ PLACEHOLDER,
-        /* 0xA9 */ PLACEHOLDER,
-        /* 0xAA */ PLACEHOLDER,
-        /* 0xAB */ PLACEHOLDER,
-        /* 0xAC */ PLACEHOLDER,
-        /* 0xAD */ PLACEHOLDER,
-        /* 0xAE */ PLACEHOLDER,
+        /* 0xA8 */ XOR_A_B,
+        /* 0xA9 */ XOR_A_C,
+        /* 0xAA */ XOR_A_D,
+        /* 0xAB */ XOR_A_E,
+        /* 0xAC */ XOR_A_H,
+        /* 0xAD */ XOR_A_L,
+        /* 0xAE */ XOR_A_HL_INDIRECT,
         /* 0xAF */ XOR_A_A,
         /* 0xB0 */ OR_A_B,
         /* 0xB1 */ OR_A_C,
@@ -1595,64 +1724,64 @@ pub const INSTRUCTION_SET: InstructionSet = InstructionSet {
         /* 0xC1 */ POP_BC,
         /* 0xC2 */ JP_NZ_A16,
         /* 0xC3 */ JP_A16,
-        /* 0xC4 */ PLACEHOLDER,
-        /* 0xC5 */ PLACEHOLDER,
+        /* 0xC4 */ CALL_NZ_A16,
+        /* 0xC5 */ PUSH_BC,
         /* 0xC6 */ ADD_A_N8,
         /* 0xC7 */ RST_00,
         /* 0xC8 */ RET_Z,
         /* 0xC9 */ RET,
         /* 0xCA */ JP_Z_A16,
         /* 0xCB */ CB,
-        /* 0xCC */ PLACEHOLDER,
+        /* 0xCC */ CALL_Z_A16,
         /* 0xCD */ CALL_A16,
         /* 0xCE */ ADC_A_N8,
         /* 0xCF */ RST_08,
         /* 0xD0 */ RET_NC,
         /* 0xD1 */ POP_DE,
         /* 0xD2 */ JP_NC_A16,
-        /* 0xD3 */ PLACEHOLDER, // Nonexistent
-        /* 0xD4 */ PLACEHOLDER,
-        /* 0xD5 */ PLACEHOLDER,
+        /* 0xD3 */ NULL_INSTRUCTION, // Nonexistent
+        /* 0xD4 */ CALL_NC_A16,
+        /* 0xD5 */ PUSH_DE,
         /* 0xD6 */ SUB_A_N8,
         /* 0xD7 */ RST_10,
         /* 0xD8 */ RET_C,
-        /* 0xD9 */ PLACEHOLDER,
+        /* 0xD9 */ RETI,
         /* 0xDA */ JP_C_A16,
-        /* 0xDB */ PLACEHOLDER, // Nonexistent
-        /* 0xDC */ PLACEHOLDER,
-        /* 0xDD */ PLACEHOLDER, // Nonexistent
+        /* 0xDB */ NULL_INSTRUCTION, // Nonexistent
+        /* 0xDC */ CALL_C_A16,
+        /* 0xDD */ NULL_INSTRUCTION, // Nonexistent
         /* 0xDE */ SBC_A_N8,
         /* 0xDF */ RST_18,
         /* 0xE0 */ LDH_A8_INDIRECT_A,
         /* 0xE1 */ POP_HL,
         /* 0xE2 */ LDH_C_INDIRECT_A,
-        /* 0xE3 */ PLACEHOLDER, // Nonexistent
-        /* 0xE4 */ PLACEHOLDER, // Nonexistent
-        /* 0xE5 */ PLACEHOLDER,
+        /* 0xE3 */ NULL_INSTRUCTION, // Nonexistent
+        /* 0xE4 */ NULL_INSTRUCTION, // Nonexistent
+        /* 0xE5 */ PUSH_HL,
         /* 0xE6 */ AND_A_N8,
         /* 0xE7 */ RST_20,
-        /* 0xE8 */ PLACEHOLDER,
+        /* 0xE8 */ ADD_SP_E8,
         /* 0xE9 */ JP_HL,
         /* 0xEA */ LD_A16_INDIRECT_A,
-        /* 0xEB */ PLACEHOLDER, // Nonexistent
-        /* 0xEC */ PLACEHOLDER, // Nonexistent
-        /* 0xED */ PLACEHOLDER, // Nonexistent
-        /* 0xEE */ PLACEHOLDER,
+        /* 0xEB */ NULL_INSTRUCTION, // Nonexistent
+        /* 0xEC */ NULL_INSTRUCTION, // Nonexistent
+        /* 0xED */ NULL_INSTRUCTION, // Nonexistent
+        /* 0xEE */ XOR_A_N8,
         /* 0xEF */ RST_28,
         /* 0xF0 */ LDH_A_A8_INDIRECT,
         /* 0xF1 */ POP_AF,
         /* 0xF2 */ LDH_A_C_INDIRECT,
         /* 0xF3 */ DI,
-        /* 0xF4 */ PLACEHOLDER, // Nonexistent
-        /* 0xF5 */ PLACEHOLDER,
+        /* 0xF4 */ NULL_INSTRUCTION, // Nonexistent
+        /* 0xF5 */ PUSH_AF,
         /* 0xF6 */ OR_A_N8,
         /* 0xF7 */ RST_30,
-        /* 0xF8 */ PLACEHOLDER,
-        /* 0xF9 */ PLACEHOLDER,
+        /* 0xF8 */ LD_HL_SP_E8,
+        /* 0xF9 */ LD_SP_HL,
         /* 0xFA */ LD_A_A16_INDIRECT,
-        /* 0xFB */ PLACEHOLDER,
-        /* 0xFC */ PLACEHOLDER, // Nonexistent
-        /* 0xFD */ PLACEHOLDER, // Nonexistent
+        /* 0xFB */ EI,
+        /* 0xFC */ NULL_INSTRUCTION, // Nonexistent
+        /* 0xFD */ NULL_INSTRUCTION, // Nonexistent
         /* 0xFE */ CP_A_N8,
         /* 0xFF */ RST_38,
     ],

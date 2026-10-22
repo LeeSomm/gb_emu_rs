@@ -14,8 +14,9 @@ pub struct Cpu {
     pub op_code: u8,
     // pub instr_counter: u32,
     clock: Clock,
-    cb: bool,  // Whether the next operation is from CB Op table
-    ime: bool, // Interrupt Master Enable flag
+    cb: bool,       // Whether the next operation is from CB Op table
+    ime: bool,      // Interrupt Master Enable flag
+    ime_next: bool, // Set IME to true after next operation
 }
 
 impl Cpu {
@@ -27,6 +28,7 @@ impl Cpu {
             clock: Clock::default(),
             cb: bool::default(),
             ime: bool::default(),
+            ime_next: bool::default(),
         };
         cpu.reset();
         cpu
@@ -55,7 +57,13 @@ impl Cpu {
         // Increment program counter
         self.inc_pc();
         // Execute
-        (curr_instr.operation)(self, bus)
+        (curr_instr.operation)(self, bus);
+
+        // IME Next logic
+        if self.ime_next {
+            self.ime_next = false;
+            self.ime = true;
+        }
     }
 
     pub fn reset(&mut self) {
@@ -273,6 +281,34 @@ impl Cpu {
         self.routine_add_hl_r16(Register16::SP);
     }
 
+    // ADD SP, e8
+    pub fn add_sp_e8(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let e = bus.read(self.register.pc); // Will cast as i8 later
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let half_carry = (self.register.sp & 0x0F) + (e & 0x0F) as u16 > 0x0F; // Works w/ u8 b/c 2's Complement
+
+        self.clock.advance_clock(4);
+        let carry = (self.register.sp & 0xFF) + e as u16 > 0xFF;
+
+        self.clock.advance_clock(4);
+        let result = self.register.sp.wrapping_add_signed(e as i8 as i16); // Must cast as i8 first for correct sign extension
+        self.register.clear_flags();
+
+        if carry {
+            self.register.set_flag_c_carry();
+        }
+
+        if half_carry {
+            self.register.set_flag_h_half_carry();
+        }
+
+        self.clock.advance_clock(4);
+        self.register.sp = result;
+    }
+
     // AND
     pub fn and_a_a(&mut self, _bus: &mut MemoryBus) {
         self.routine_and_a_r8(Register8::A);
@@ -353,6 +389,22 @@ impl Cpu {
 
         self.clock.advance_clock(4);
         self.register.pc = ((hi as u16) << 8) | lo as u16;
+    }
+
+    pub fn call_c_a16(&mut self, bus: &mut MemoryBus) {
+        self.routine_call_cc_a16(bus, FlagCondition::C);
+    }
+
+    pub fn call_nc_a16(&mut self, bus: &mut MemoryBus) {
+        self.routine_call_cc_a16(bus, FlagCondition::NC);
+    }
+
+    pub fn call_z_a16(&mut self, bus: &mut MemoryBus) {
+        self.routine_call_cc_a16(bus, FlagCondition::Z);
+    }
+
+    pub fn call_nz_a16(&mut self, bus: &mut MemoryBus) {
+        self.routine_call_cc_a16(bus, FlagCondition::NZ);
     }
 
     // CB
@@ -586,6 +638,12 @@ impl Cpu {
     pub fn di(&mut self, _bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
         self.ime = false;
+    }
+
+    // EI
+    pub fn ei(&mut self, _bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        self.ime_next = true;
     }
 
     // HALT
@@ -1132,7 +1190,7 @@ impl Cpu {
         self.routine_ld_r8_r16_indirect(bus, Register8::L, Register16::HL);
     }
 
-    // LD r16, n16
+    // LD r16, n16/r16
     pub fn ld_bc_n16(&mut self, bus: &mut MemoryBus) {
         self.routine_ld_r16_n16(bus, Register16::BC);
     }
@@ -1147,6 +1205,37 @@ impl Cpu {
 
     pub fn ld_sp_n16(&mut self, bus: &mut MemoryBus) {
         self.routine_ld_r16_n16(bus, Register16::SP);
+    }
+
+    pub fn ld_sp_hl(&mut self, _bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        self.register.sp = self.register.get_hl();
+
+        self.clock.advance_clock(4);
+    }
+
+    pub fn ld_hl_sp_e8(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let e = bus.read(self.register.pc);
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        let half_carry = (self.register.sp & 0x0F) + (e & 0x0F) as u16 > 0x0F; // Works w/ u8 b/c 2's Complement
+        let carry = (self.register.sp & 0xFF) + e as u16 > 0xFF;
+
+        let result = self.register.sp.wrapping_add_signed(e as i8 as i16); // Must cast as i8 first for correct sign extension
+        self.register.clear_flags();
+
+        if carry {
+            self.register.set_flag_c_carry();
+        }
+
+        if half_carry {
+            self.register.set_flag_h_half_carry();
+        }
+
+        self.clock.advance_clock(4);
+        self.register.set_hl(result);
     }
 
     // LDH
@@ -1247,7 +1336,7 @@ impl Cpu {
         }
     }
 
-    // Pop r16
+    // POP r16
     pub fn pop_af(&mut self, bus: &mut MemoryBus) {
         // Note: This overwrites flags
         self.routine_pop_r16(bus, Register16::AF);
@@ -1263,6 +1352,24 @@ impl Cpu {
 
     pub fn pop_hl(&mut self, bus: &mut MemoryBus) {
         self.routine_pop_r16(bus, Register16::HL);
+    }
+
+    // PUSH r16
+    pub fn push_af(&mut self, bus: &mut MemoryBus) {
+        // Note: This overwrites flags
+        self.routine_push_r16(bus, Register16::AF);
+    }
+
+    pub fn push_bc(&mut self, bus: &mut MemoryBus) {
+        self.routine_push_r16(bus, Register16::BC);
+    }
+
+    pub fn push_de(&mut self, bus: &mut MemoryBus) {
+        self.routine_push_r16(bus, Register16::DE);
+    }
+
+    pub fn push_hl(&mut self, bus: &mut MemoryBus) {
+        self.routine_push_r16(bus, Register16::HL);
     }
 
     // RST n
@@ -1298,7 +1405,7 @@ impl Cpu {
         self.routine_rst_n(bus, 0x38);
     }
 
-    // Ret
+    // RET
     pub fn ret(&mut self, bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
         let lo = bus.read(self.register.sp) as u16;
@@ -1328,6 +1435,23 @@ impl Cpu {
 
     pub fn ret_nc(&mut self, bus: &mut MemoryBus) {
         self.routine_ret_cc(bus, FlagCondition::NC)
+    }
+
+    // RETI
+    pub fn reti(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let lo = bus.read(self.register.sp) as u16;
+        self.register.sp += 1;
+
+        self.clock.advance_clock(4);
+        let hi = bus.read(self.register.sp) as u16;
+        self.register.sp += 1;
+
+        self.clock.advance_clock(4);
+        self.register.pc = (hi << 8) | lo;
+
+        self.clock.advance_clock(4);
+        self.ime = true;
     }
 
     // Rotate Registers
@@ -1570,9 +1694,55 @@ impl Cpu {
 
     // XOR A
     pub fn xor_a_a(&mut self, _bus: &mut MemoryBus) {
+        self.routine_xor_a_r8(Register8::A);
+    }
+
+    pub fn xor_a_b(&mut self, _bus: &mut MemoryBus) {
+        self.routine_xor_a_r8(Register8::B);
+    }
+
+    pub fn xor_a_c(&mut self, _bus: &mut MemoryBus) {
+        self.routine_xor_a_r8(Register8::C);
+    }
+
+    pub fn xor_a_d(&mut self, _bus: &mut MemoryBus) {
+        self.routine_xor_a_r8(Register8::D);
+    }
+
+    pub fn xor_a_e(&mut self, _bus: &mut MemoryBus) {
+        self.routine_xor_a_r8(Register8::E);
+    }
+
+    pub fn xor_a_h(&mut self, _bus: &mut MemoryBus) {
+        self.routine_xor_a_r8(Register8::H);
+    }
+
+    pub fn xor_a_l(&mut self, _bus: &mut MemoryBus) {
+        self.routine_xor_a_r8(Register8::L);
+    }
+
+    pub fn xor_a_hl_indirect(&mut self, bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
-        self.register.a = 0; // XOR'ing a value against itself will always be 0
+        let val = bus.read(self.register.get_hl());
+
+        self.clock.advance_clock(4);
+        self.register.a = self.register.a ^ val;
         self.register.clear_flags();
-        self.register.set_flag_z_zero();
+        if self.register.a == 0 {
+            self.register.set_flag_z_zero();
+        }
+    }
+
+    pub fn xor_a_n8(&mut self, bus: &mut MemoryBus) {
+        self.clock.advance_clock(4);
+        let val = bus.read(self.register.pc);
+        self.inc_pc();
+
+        self.clock.advance_clock(4);
+        self.register.a = self.register.a ^ val;
+        self.register.clear_flags();
+        if self.register.a == 0 {
+            self.register.set_flag_z_zero();
+        }
     }
 }
