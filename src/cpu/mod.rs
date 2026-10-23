@@ -50,10 +50,11 @@ impl Cpu {
             panic!("No instruction configured for {:#2x?}", self.op_code)
         }
 
-        println!(
-            "Executing Op Code {:#2x?}: {}",
-            self.op_code, curr_instr.disassembly
-        );
+        // println!(
+        //     "Executing Op Code {:#2x?}: {}",
+        //     self.op_code, curr_instr.disassembly
+        // );
+
         // Increment program counter
         self.inc_pc();
         // Execute
@@ -378,13 +379,13 @@ impl Cpu {
         self.inc_pc();
 
         self.clock.advance_clock(4);
-        self.register.sp -= 1;
+        self.register.sp = self.register.sp.wrapping_sub(1);
 
         self.clock.advance_clock(4);
         bus.write(self.register.sp, hi);
 
         self.clock.advance_clock(4);
-        self.register.sp -= 1;
+        self.register.sp = self.register.sp.wrapping_sub(1);
         bus.write(self.register.sp, lo);
 
         self.clock.advance_clock(4);
@@ -732,7 +733,7 @@ impl Cpu {
         self.clock.advance_clock(4);
         self.register.pc = (hi << 8) | lo;
         self.clock.advance_clock(4);
-        println!("Jumping to: {:#x?}", self.register.pc);
+        // println!("Jumping to: {:#x?}", self.register.pc);
     }
 
     pub fn jp_hl(&mut self, _bus: &mut MemoryBus) {
@@ -1409,11 +1410,11 @@ impl Cpu {
     pub fn ret(&mut self, bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
         let lo = bus.read(self.register.sp) as u16;
-        self.register.sp += 1;
+        self.register.sp = self.register.sp.wrapping_add(1);
 
         self.clock.advance_clock(4);
         let hi = bus.read(self.register.sp) as u16;
-        self.register.sp += 1;
+        self.register.sp = self.register.sp.wrapping_add(1);
 
         self.clock.advance_clock(4);
         self.register.pc = (hi << 8) | lo;
@@ -1441,11 +1442,11 @@ impl Cpu {
     pub fn reti(&mut self, bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
         let lo = bus.read(self.register.sp) as u16;
-        self.register.sp += 1;
+        self.register.sp = self.register.sp.wrapping_add(1);
 
         self.clock.advance_clock(4);
         let hi = bus.read(self.register.sp) as u16;
-        self.register.sp += 1;
+        self.register.sp = self.register.sp.wrapping_add(1);
 
         self.clock.advance_clock(4);
         self.register.pc = (hi << 8) | lo;

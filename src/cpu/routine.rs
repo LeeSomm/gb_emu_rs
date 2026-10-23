@@ -101,11 +101,11 @@ impl Cpu {
     pub fn routine_call_cc_a16(&mut self, bus: &mut MemoryBus, cc: FlagCondition) {
         fn call_cc_match(cpu: &mut Cpu, bus: &mut MemoryBus, hi: u8, lo: u8) {
             cpu.clock.advance_clock(4);
-            cpu.register.sp -= 1;
+            cpu.register.sp = cpu.register.sp.wrapping_sub(1);
             bus.write(cpu.register.sp, hi);
 
             cpu.clock.advance_clock(4);
-            cpu.register.sp -= 1;
+            cpu.register.sp = cpu.register.sp.wrapping_sub(1);
             bus.write(cpu.register.sp, lo);
 
             cpu.clock.advance_clock(4);
@@ -369,11 +369,11 @@ impl Cpu {
     pub fn routine_pop_r16(&mut self, bus: &mut MemoryBus, reg: Register16) {
         self.clock.advance_clock(4);
         let lo = bus.read(self.register.sp) as u16;
-        self.register.sp += 1;
+        self.register.sp = self.register.sp.wrapping_add(1);
 
         self.clock.advance_clock(4);
         let hi = bus.read(self.register.sp) as u16;
-        self.register.sp += 1;
+        self.register.sp = self.register.sp.wrapping_add(1);
 
         self.clock.advance_clock(4);
         let val = (hi << 8) | lo;
@@ -403,13 +403,13 @@ impl Cpu {
             Register16::SP => panic!("Attempted to push from invalid 16bit register."),
         }
         self.clock.advance_clock(4);
-        self.register.sp -= 1;
+        self.register.sp = self.register.sp.wrapping_sub(1);
 
         self.clock.advance_clock(4);
         bus.write(self.register.sp, hi);
 
         self.clock.advance_clock(4);
-        self.register.sp -= 1;
+        self.register.sp = self.register.sp.wrapping_sub(1);
 
         self.clock.advance_clock(4);
         bus.write(self.register.sp, lo);
@@ -420,11 +420,11 @@ impl Cpu {
         let [hi, lo] = self.register.pc.to_be_bytes();
 
         self.clock.advance_clock(4);
-        self.register.sp -= 1;
+        self.register.sp = self.register.sp.wrapping_sub(1);
         bus.write(self.register.sp, hi);
 
         self.clock.advance_clock(4);
-        self.register.sp -= 1;
+        self.register.sp = self.register.sp.wrapping_sub(1);
         bus.write(self.register.sp, lo);
 
         self.clock.advance_clock(4);
@@ -435,11 +435,11 @@ impl Cpu {
         fn ret_cc_match(cpu: &mut Cpu, bus: &MemoryBus) {
             cpu.clock.advance_clock(4);
             let lo = bus.read(cpu.register.sp) as u16;
-            cpu.register.sp += 1;
+            cpu.register.sp = cpu.register.sp.wrapping_add(1);
 
             cpu.clock.advance_clock(4);
             let hi = bus.read(cpu.register.sp) as u16;
-            cpu.register.sp += 1;
+            cpu.register.sp = cpu.register.sp.wrapping_add(1);
 
             cpu.clock.advance_clock(4);
             let addr = (hi << 8) | lo;

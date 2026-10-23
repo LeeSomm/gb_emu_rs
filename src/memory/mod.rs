@@ -1,5 +1,7 @@
 use crate::cart::{Cartridge, mbc::BankingMode};
 
+pub mod io;
+
 pub struct MemoryBus {
     cart: Cartridge,    // Addresses 0x0000-0x7FFF & 0xA000-0xBFFF
     vram: [u8; 0x2000], // Addresses 0x8000-0x9FFF
@@ -26,20 +28,26 @@ impl MemoryBus {
     pub fn read(&self, addr: u16) -> u8 {
         match addr {
             0x0..=0x7FFF => self.cart_rom_read(addr),
-            0x8000..=0x9FFF => todo!("Implement read for: {:#x?}", addr),
+            0x8000..=0x9FFF => self.vram[addr as usize - 0x8000],
             0xA000..=0xBFFF => self.cart_ram_read(addr),
             // If CGB mode, must modify 0xD000-0xDFFF for switchable banks
             0xC000..=0xDFFF => self.wram[addr as usize - 0xC000],
             0xE000..=0xFDFF => self.wram[addr as usize - 0xE000],
-            0xFE00..=0xFE9F => todo!("Implement read for: {:#x?}", addr),
+            0xFE00..=0xFE9F => self.oam[addr as usize - 0xFE00],
             0xFEA0..=0xFEFF => 0, // Unusable memory location
-            0xFF00..=0xFF7F => todo!("Implement read for: {:#x?}", addr),
+            0xFF00..=0xFF7F => self.io[addr as usize - 0xFF00],
             0xFF80..=0xFFFE => self.hram[addr as usize - 0xFF80],
             0xFFFF => self.ie,
         }
     }
 
     pub fn write(&mut self, addr: u16, val: u8) {
+        // For test ROMs to print out results
+        if addr == 0xFF02 && val == 0x81 {
+            let c = self.read(0xFF01);
+            print!("{}", c as char)
+        }
+
         match addr {
             0x0..=0x1FFF => self.cart.mbc.set_ramg(val),
             0x2000..=0x3FFF => self.cart.mbc.set_bank1(val),
@@ -62,33 +70,36 @@ impl MemoryBus {
     fn cart_rom_read(&self, addr: u16) -> u8 {
         // Initial check if addr is within bounds of ROM data
         self.valid_address_check(addr as usize);
-        if self.cart.header.cartridge_type == 0x0 {
+        match self.cart.header.cartridge_type {
             // No MBC
-            return self.cart.data[addr as usize];
-        } else if self.cart.header.cartridge_type == 0x3 {
-            if (0x0..=0x3FFF).contains(&addr) {
-                match self.cart.mbc.mode {
-                    BankingMode::Advanced => {
-                        let addr = ((self.cart.mbc.bank2 as u32) << 19) | (addr as u32);
-                        self.valid_address_check(addr as usize);
-                        return self.cart.data[addr as usize];
-                    }
-                    BankingMode::Locked => {
-                        return self.cart.data[addr as usize];
+            0x0 | 0x8 | 0x9 => return self.cart.data[addr as usize],
+            // MBC 1
+            0x1..=0x3 => {
+                if (0x0..=0x3FFF).contains(&addr) {
+                    match self.cart.mbc.mode {
+                        BankingMode::Advanced => {
+                            let addr = ((self.cart.mbc.bank2 as u32) << 19) | (addr as u32);
+                            self.valid_address_check(addr as usize);
+                            return self.cart.data[addr as usize];
+                        }
+                        BankingMode::Locked => {
+                            return self.cart.data[addr as usize];
+                        }
                     }
                 }
+                // 0x4000..=7FFF (Same behavior in both modes)
+                let addr = ((self.cart.mbc.bank2 as u32) << 19)
+                    | ((self.cart.mbc.bank1 as u32) << 14)
+                    | ((addr & 0x3FFF) as u32);
+                self.valid_address_check(addr as usize);
+                return self.cart.data[addr as usize];
             }
-            // 0x4000..=7FFF (Same behavior in both modes)
-            let addr = ((self.cart.mbc.bank2 as u32) << 19)
-                | ((self.cart.mbc.bank1 as u32) << 14)
-                | ((addr & 0x3FFF) as u32);
-            self.valid_address_check(addr as usize);
-            return self.cart.data[addr as usize];
-        } else {
-            todo!(
-                "Implement MBC logic for Cartridge Type {:?}",
-                self.cart.header.cartridge_type
-            )
+            _ => {
+                todo!(
+                    "Implement MBC logic for Cartridge Type {:?}",
+                    self.cart.header.cartridge_type
+                )
+            }
         }
     }
 
