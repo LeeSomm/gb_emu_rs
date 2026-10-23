@@ -19,7 +19,11 @@ impl GameBoy {
 
     pub fn run(&mut self) {
         while 1 == 1 {
-            self.step();
+            if !self.cpu.halted {
+                self.step();
+            } else {
+                println!("CPU halted.")
+            }
         }
     }
 

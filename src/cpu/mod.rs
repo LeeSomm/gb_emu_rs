@@ -14,9 +14,10 @@ pub struct Cpu {
     pub op_code: u8,
     // pub instr_counter: u32,
     clock: Clock,
-    cb: bool,       // Whether the next operation is from CB Op table
-    ime: bool,      // Interrupt Master Enable flag
-    ime_next: bool, // Set IME to true after next operation
+    cb: bool,         // Whether the next operation is from CB Op table
+    ime: bool,        // Interrupt Master Enable flag
+    ime_next: bool,   // Set IME to true after next operation
+    pub halted: bool, // Do nothing until interrupted
 }
 
 impl Cpu {
@@ -29,6 +30,7 @@ impl Cpu {
             cb: bool::default(),
             ime: bool::default(),
             ime_next: bool::default(),
+            halted: bool::default(),
         };
         cpu.reset();
         cpu
@@ -648,10 +650,23 @@ impl Cpu {
     }
 
     // HALT
-    pub fn halt(&mut self, _bus: &mut MemoryBus) {
+    pub fn halt(&mut self, bus: &mut MemoryBus) {
         self.clock.advance_clock(4);
-        todo!("Implement HALT operation. Requires IME, IE, and IF flags (i.e., I/O)")
         // https://rgbds.gbdev.io/docs/v1.0.4/gbz80.7#HALT
+        // HALT mode is exited when a flag in register IF is set and the corresponding flag in IE is also set,
+        // regardless of the value of IME. The only difference is that IME='1' will make the CPU jump to the
+        // interrupt vector (and clear the IF flag), while IME='0' will only make the CPU continue executing
+        // instructions, but the jump won't be performed (and the IF flag won't be cleared).
+
+        // TODO: I know this is not correctly implemented. Still need interrupt handlers.
+        if self.ime {
+            // self.halted = true;
+        } else {
+            // Check if IE and IF are nonzero, otherwise do nothing and await interrupt
+            while bus.read(0xFFFF) == 0 && bus.read(0xFF0F) == 0 {
+                () // Do nothing, but somehow need to allow for interrupts
+            }
+        }
     }
 
     // INC r8/n8
