@@ -1,6 +1,7 @@
 use crate::cart::{Cartridge, mbc::BankingMode};
 
 pub mod io;
+pub mod timer;
 
 pub struct MemoryBus {
     cart: Cartridge,    // Addresses 0x0000-0x7FFF & 0xA000-0xBFFF

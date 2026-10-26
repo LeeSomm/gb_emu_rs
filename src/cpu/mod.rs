@@ -55,10 +55,10 @@ impl Cpu {
             panic!("No instruction configured for {:#2x?}", self.op_code)
         }
 
-        // println!(
-        //     "Executing Op Code {:#2x?}: {}",
-        //     self.op_code, curr_instr.disassembly
-        // );
+        println!(
+            "Executing Op Code {:#2x?}: {}",
+            self.op_code, curr_instr.disassembly
+        );
 
         // Increment program counter from op-code fetch
         if self.halt_bug {

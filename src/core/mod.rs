@@ -1,4 +1,9 @@
-use crate::{cart::Cartridge, cpu::Cpu, interrupt::interrupt_service_routine, memory::MemoryBus};
+use crate::{
+    cart::Cartridge,
+    cpu::Cpu,
+    interrupt::{get_pending_interrupts, interrupt_service_routine},
+    memory::MemoryBus,
+};
 
 pub struct GameBoy {
     cpu: Cpu,
@@ -18,11 +23,20 @@ impl GameBoy {
     }
 
     pub fn run(&mut self) {
-        while 1 == 1 {
-            if !self.cpu.halted {
+        loop {
+            if self.cpu.halted {
+                if get_pending_interrupts(&self.bus).is_some() {
+                    // Resume CPU operation if pending interrupts found
+                    self.cpu.halted = false;
+                } else {
+                    // TODO: Logic for non-CPU hardware
+                    continue;
+                }
+            }
+
+            if !interrupt_service_routine(&mut self.cpu, &mut self.bus) {
+                // Regular CPU operation when no interrupts are handled
                 self.step();
-            } else {
-                interrupt_service_routine(&mut self.cpu, &mut self.bus);
             }
         }
     }
