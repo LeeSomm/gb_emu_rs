@@ -1,4 +1,5 @@
 use crate::cart::{Cartridge, mbc::BankingMode};
+use io::Io;
 
 pub mod io;
 pub mod timer;
@@ -8,7 +9,7 @@ pub struct MemoryBus {
     vram: [u8; 0x2000], // Addresses 0x8000-0x9FFF
     wram: [u8; 0x2000], // Addresses 0xC000-DFFF & 0xE000-FDFF (via Echo RAM)
     oam: [u8; 0xA0],    // Addresses 0xFE00-0xFE9F
-    io: [u8; 0x80],     // Address 0xFF00-0xFF7F (Consider a dedicated struct)
+    io: Io,             // Address 0xFF00-0xFF7F
     hram: [u8; 0x7F],   // Address 0xFF80-FFFE
     ie: u8,             // Address 0xFFFF
 }
@@ -20,7 +21,7 @@ impl MemoryBus {
             vram: [0; 0x2000],
             wram: [0; 0x2000],
             oam: [0; 0xA0],
-            io: [0; 0x80],
+            io: Io::default(),
             hram: [0; 0x7F],
             ie: 0,
         }
@@ -36,7 +37,7 @@ impl MemoryBus {
             0xE000..=0xFDFF => self.wram[addr as usize - 0xE000],
             0xFE00..=0xFE9F => self.oam[addr as usize - 0xFE00],
             0xFEA0..=0xFEFF => 0, // Unusable memory location
-            0xFF00..=0xFF7F => self.io[addr as usize - 0xFF00],
+            0xFF00..=0xFF7F => self.io.read(addr),
             0xFF80..=0xFFFE => self.hram[addr as usize - 0xFF80],
             0xFFFF => self.ie,
         }
@@ -61,7 +62,7 @@ impl MemoryBus {
             0xE000..=0xFDFF => self.wram[addr as usize - 0xE000] = val, // Echo RAM writes are effectively 0xC000-0xDDFF
             0xFE00..=0xFE9F => self.oam[addr as usize - 0xFE00] = val,
             0xFEA0..=0xFEFF => (), // Writes to this location have no effect
-            0xFF00..=0xFF7F => self.io[addr as usize - 0xFF00] = val,
+            0xFF00..=0xFF7F => self.io.write(addr, val),
             0xFF80..=0xFFFE => self.hram[addr as usize - 0xFF80] = val,
             0xFFFF => self.ie = val,
         };
@@ -129,5 +130,9 @@ impl MemoryBus {
         } else {
             todo!("Implement writes for Cartridge RAM; addr: {:#x?}", addr)
         }
+    }
+
+    pub fn advance_timer(&mut self, cycles: u16) {
+        self.io.timer.advance_timer(cycles);
     }
 }

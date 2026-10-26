@@ -1,11 +1,11 @@
+use crate::memory::timer::Timer;
+
+#[derive(Default)]
 pub struct Io {
     pub joypad: u8,             // 0xFF00
     pub sb: u8,                 // 0xFF01 Serial transfer data
     pub sc: u8,                 // 0xFF02 Serial transfer control
-    pub div: u8,                // 0xFF04 Divider register
-    pub tima: u8,               // 0xFF05 Timer counter
-    pub tma: u8,                // 0xFF06 Timer modulo
-    pub tac: u8,                // 0xFF07 Timer control
+    pub timer: Timer,           // 0xFF04-FF07 Timer Registers
     pub int_flag: u8,           // 0xFF0F Interrupt flag
     pub audio: Audio,           // 0xFF10-FF26 Audio
     pub wave_pattern: [u8; 16], // 0xFF30-FF3F Wave Pattern
@@ -15,15 +15,12 @@ pub struct Io {
 }
 
 impl Io {
-    pub fn read(self, addr: u16) -> u8 {
+    pub fn read(&self, addr: u16) -> u8 {
         match addr {
             0xFF00 => self.joypad,
             0xFF01 => self.sb,
             0xFF02 => self.sc,
-            0xFF04 => self.div,
-            0xFF05 => self.tima,
-            0xFF06 => self.tma,
-            0xFF07 => self.tac,
+            0xFF04..=0xFF07 => self.timer.read(addr),
             0xFF0F => self.int_flag,
             0xFF10..=0xFF26 => self.audio.read(addr),
             0xFF30..=0xFF3F => self.wave_pattern[addr as usize - 0xFF30],
@@ -38,10 +35,7 @@ impl Io {
             0xFF00 => self.joypad = val,
             0xFF01 => self.sb = val,
             0xFF02 => self.sc = val,
-            0xFF04 => self.div = val,
-            0xFF05 => self.tima = val,
-            0xFF06 => self.tma = val,
-            0xFF07 => self.tac = val,
+            0xFF04..=0xFF07 => self.timer.write(addr, val),
             0xFF0F => self.int_flag = val,
             0xFF10..=0xFF26 => self.audio.write(addr, val),
             0xFF30..=0xFF3F => self.wave_pattern[addr as usize - 0xFF30] = val,
@@ -52,6 +46,7 @@ impl Io {
     }
 }
 
+#[derive(Default)]
 pub struct Audio {
     pub nr52: u8,           // 0xFF26 Audio master control
     pub nr51: u8,           // 0xFF25 Sound panning
@@ -78,7 +73,7 @@ pub struct Audio {
 }
 
 impl Audio {
-    pub fn read(self, addr: u16) -> u8 {
+    pub fn read(&self, addr: u16) -> u8 {
         match addr {
             0xFF26 => self.nr52,
             0xFF25 => self.nr51,
@@ -135,6 +130,7 @@ impl Audio {
     }
 }
 
+#[derive(Default)]
 pub struct Lcd {
     pub lcdc: u8,     // 0xFF40 LCD control
     pub stat: u8,     // 0xFF41 LCD status
@@ -151,7 +147,7 @@ pub struct Lcd {
 }
 
 impl Lcd {
-    pub fn read(self, addr: u16) -> u8 {
+    pub fn read(&self, addr: u16) -> u8 {
         match addr {
             0xFF40 => self.lcdc,
             0xFF41 => self.stat,

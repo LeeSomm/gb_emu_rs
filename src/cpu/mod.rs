@@ -1,9 +1,7 @@
-pub mod clock;
 pub mod instruction;
 pub mod operation;
 pub mod register;
 
-use clock::Clock;
 use register::Register;
 
 use crate::{cpu::instruction::CpuInstruction, memory::MemoryBus};
@@ -12,7 +10,6 @@ pub struct Cpu {
     pub register: Register,
     pub op_code: u8,
     // pub instr_counter: u32,
-    pub clock: Clock,
     cb: bool,           // Whether the next operation is from CB Op table
     pub ime: bool,      // Interrupt Master Enable flag
     ime_delay: bool,    // Set IME to true after next operation
@@ -26,7 +23,6 @@ impl Cpu {
             register: Register::new(),
             op_code: 0x0,
             // instr_counter: 0x0,
-            clock: Clock::default(),
             cb: bool::default(),
             ime: bool::default(),
             ime_delay: bool::default(),
