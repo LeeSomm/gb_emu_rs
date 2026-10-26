@@ -43,7 +43,7 @@ pub fn get_pending_interrupts(bus: &MemoryBus) -> Option<Interrupt> {
     let ie = bus.read(IE);
     let int_flag = bus.read(IF);
     let pending = ie & int_flag & 0x1F; // 0x1F is bit mask for 5 bits
-    if pending != 0 {
+    if pending == 0 {
         None
     } else {
         let bit = pending.trailing_zeros();
