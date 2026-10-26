@@ -1,4 +1,4 @@
-use crate::{cart::Cartridge, cpu::Cpu, memory::MemoryBus};
+use crate::{cart::Cartridge, cpu::Cpu, interrupt::interrupt_service_routine, memory::MemoryBus};
 
 pub struct GameBoy {
     cpu: Cpu,
@@ -22,7 +22,7 @@ impl GameBoy {
             if !self.cpu.halted {
                 self.step();
             } else {
-                println!("CPU halted.")
+                interrupt_service_routine(&mut self.cpu, &mut self.bus);
             }
         }
     }
