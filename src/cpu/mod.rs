@@ -34,8 +34,6 @@ impl Cpu {
     }
 
     pub fn fetch_and_execute(&mut self, bus: &mut MemoryBus) {
-        // Interrupts
-
         // Fetch
         self.op_code = bus.read(self.register.pc);
 

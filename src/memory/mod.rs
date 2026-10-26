@@ -1,4 +1,7 @@
-use crate::cart::{Cartridge, mbc::BankingMode};
+use crate::{
+    cart::{Cartridge, mbc::BankingMode},
+    interrupt::{Interrupt, interrupt_flag_raise},
+};
 use io::Io;
 
 pub mod io;
@@ -133,6 +136,8 @@ impl MemoryBus {
     }
 
     pub fn advance_timer(&mut self, cycles: u16) {
-        self.io.timer.advance_timer(cycles);
+        if self.io.timer.advance_timer(cycles) {
+            interrupt_flag_raise(self, Interrupt::Timer);
+        }
     }
 }

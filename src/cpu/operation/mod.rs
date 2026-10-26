@@ -590,8 +590,15 @@ impl Cpu {
         // instructions, but the jump won't be performed (and the IF flag won't be cleared).
 
         if !self.ime && get_pending_interrupts(bus).is_some() {
+            println!("Halt Bug triggered.");
             self.halt_bug = true;
         } else {
+            println!(
+                "Halted.\nIME: {:?}\nIE: {:?}\nIF: {:?}",
+                self.ime,
+                bus.read(0xFFFF),
+                bus.read(0xFF0F)
+            );
             self.halted = true
         }
     }

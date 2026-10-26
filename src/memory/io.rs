@@ -26,7 +26,7 @@ impl Io {
             0xFF30..=0xFF3F => self.wave_pattern[addr as usize - 0xFF30],
             0xFF40..=0xFF4B => self.lcd.read(addr),
             0xFF50 => self.boot_rom,
-            _ => panic!("Attempted to access invalid IO register: {:#x?}", addr),
+            _ => 0xFF, // Unused bits of I/O registers return 1.
         }
     }
 
@@ -41,7 +41,7 @@ impl Io {
             0xFF30..=0xFF3F => self.wave_pattern[addr as usize - 0xFF30] = val,
             0xFF40..=0xFF4B => self.lcd.write(addr, val),
             0xFF50 => self.boot_rom = val,
-            _ => panic!("Attempted to write to invalid IO register: {:#x?}", addr),
+            _ => (), // NOOP
         }
     }
 }

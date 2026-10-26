@@ -1,6 +1,9 @@
 // Note: The CPU clock also serves as the internal hardware
 // divider (u16).
 
+use super::MemoryBus;
+use crate::interrupt::{Interrupt, interrupt_flag_raise};
+
 pub struct Timer {
     timer: u16,   // The actual 16bit timer. div points at top 8 bits.
     pub div: u8,  // 0xFF04 Divider register
@@ -41,16 +44,45 @@ impl Timer {
             }
             0xFF05 => self.tima = val,
             0xFF06 => self.tma = val,
-            0xFF07 => self.tac = val,
+            0xFF07 => self.tac = val & 0b111, // Only bottom 3 bits
             _ => unreachable!(),
         }
     }
 
-    pub fn advance_timer(&mut self, cycles: u16) {
-        let overflow: bool;
-        (self.timer, overflow) = self.timer.overflowing_add(cycles);
+    // Returns true if a timer interrupt is requested
+    pub fn advance_timer(&mut self, cycles: u16) -> bool {
+        let ctrl_bit_mask: u16 = 1 << self.timer_control_bit();
+        let ctrl_bit = self.timer & ctrl_bit_mask;
+
+        self.timer = self.timer.wrapping_add(cycles);
         self.div = (self.timer >> 8) as u8;
 
-        // TODO: Implement overflow logic
+        if self.is_timer_enabled() {
+            if self.timer & ctrl_bit_mask < ctrl_bit {
+                // Control bit overflow (1 -> 0) triggers TIMA increment
+                let tima_overflow: bool;
+                (self.tima, tima_overflow) = self.tima.overflowing_add(1);
+                // println!("TIMA: {:?}", self.tima);
+                if tima_overflow {
+                    self.tima = self.tma;
+                    return true;
+                }
+            }
+        }
+        false
+    }
+
+    fn is_timer_enabled(&self) -> bool {
+        self.tac >> 2 == 1
+    }
+
+    fn timer_control_bit(&self) -> u8 {
+        match self.tac & 0b11 {
+            0x00 => 9, // 1024 clocks
+            0x01 => 3, // 16 clocks
+            0x10 => 5, // 64 clocks
+            0x11 => 7, // 256 clocks
+            _ => unreachable!(),
+        }
     }
 }
