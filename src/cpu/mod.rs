@@ -37,25 +37,26 @@ impl Cpu {
         // Fetch
         self.op_code = bus.read(self.register.pc);
 
-        if !self.cb {
-            println!(
-                "A:{:02X} F:{:02X} B:{:02X} C:{:02X} D:{:02X} E:{:02X} H:{:02X} L:{:02X} SP:{:04X} PC:{:04X} PCMEM:{:02X},{:02X},{:02X},{:02X}",
-                self.register.a,
-                self.register.f,
-                self.register.b,
-                self.register.c,
-                self.register.d,
-                self.register.e,
-                self.register.h,
-                self.register.l,
-                self.register.sp,
-                self.register.pc,
-                bus.read(self.register.pc),
-                bus.read(self.register.pc.wrapping_add(1)),
-                bus.read(self.register.pc.wrapping_add(2)),
-                bus.read(self.register.pc.wrapping_add(3)),
-            );
-        }
+        // Output for debug use with Gameboy Doctor
+        // if !self.cb {
+        //     println!(
+        //         "A:{:02X} F:{:02X} B:{:02X} C:{:02X} D:{:02X} E:{:02X} H:{:02X} L:{:02X} SP:{:04X} PC:{:04X} PCMEM:{:02X},{:02X},{:02X},{:02X}",
+        //         self.register.a,
+        //         self.register.f,
+        //         self.register.b,
+        //         self.register.c,
+        //         self.register.d,
+        //         self.register.e,
+        //         self.register.h,
+        //         self.register.l,
+        //         self.register.sp,
+        //         self.register.pc,
+        //         bus.read(self.register.pc),
+        //         bus.read(self.register.pc.wrapping_add(1)),
+        //         bus.read(self.register.pc.wrapping_add(2)),
+        //         bus.read(self.register.pc.wrapping_add(3)),
+        //     );
+        // }
 
         let curr_instr: &CpuInstruction;
         if !self.cb {

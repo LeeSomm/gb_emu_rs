@@ -1,9 +1,6 @@
 // Note: The CPU clock also serves as the internal hardware
 // divider (u16).
 
-use super::MemoryBus;
-use crate::interrupt::{Interrupt, interrupt_flag_raise};
-
 pub struct Timer {
     timer: u16,   // The actual 16bit timer. div points at top 8 bits.
     pub div: u8,  // 0xFF04 Divider register

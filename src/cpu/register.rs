@@ -128,7 +128,8 @@ impl Register {
     }
 
     pub fn set_af(&mut self, val: u16) {
-        [self.a, self.f] = val.to_be_bytes()
+        let [hi, lo] = val.to_be_bytes();
+        [self.a, self.f] = [hi, lo & 0xF0] // Set lowest 4 bits of F to 0
     }
 
     pub fn get_bc(&self) -> u16 {

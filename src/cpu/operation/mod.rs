@@ -466,39 +466,43 @@ impl Cpu {
     //DAA
     pub fn daa(&mut self, bus: &mut MemoryBus) {
         bus.advance_timer(4);
-        let a_val = self.register.a;
-        let new_val: u8;
-        let n = self.register.get_flag_n_subtraction();
-        let h = self.register.get_flag_h_half_carry();
-        let c = self.register.get_flag_c_carry();
-        self.register.clear_flag_c_carry();
-        self.register.clear_flag_h_half_carry();
-        let mut adj: u8 = 0;
-        if n == 1 {
-            if h == 1 {
-                adj += 0x6;
+        let mut a = self.register.a;
+        let n = self.register.get_flag_n_subtraction() == 1;
+        let h = self.register.get_flag_h_half_carry() == 1;
+        let mut c = self.register.get_flag_c_carry() == 1;
+
+        if !n {
+            // After an addition
+            if c || a > 0x99 {
+                a = a.wrapping_add(0x60);
+                c = true;
             }
-            if c == 1 {
-                adj += 0x60;
+            if h || (a & 0x0F) > 0x09 {
+                a = a.wrapping_add(0x06);
             }
-            new_val = a_val.wrapping_sub(adj);
         } else {
-            if h == 1 || (a_val & 0xF > 0x9) {
-                adj += 0x6;
+            // After a subtraction: only the flags matter
+            if c {
+                a = a.wrapping_sub(0x60);
             }
-            if c == 1 || a_val > 0x99 {
-                adj += 0x60;
-                self.register.set_flag_c_carry();
+            if h {
+                a = a.wrapping_sub(0x06);
             }
-            new_val = a_val.wrapping_add(adj);
         }
 
-        if new_val == 0 {
+        self.register.a = a;
+        if a == 0 {
             self.register.set_flag_z_zero();
         } else {
             self.register.clear_flag_z_zero();
         }
-        self.register.a = new_val;
+        self.register.clear_flag_h_half_carry();
+        if c {
+            self.register.set_flag_c_carry();
+        } else {
+            self.register.clear_flag_c_carry();
+        }
+        // N is left unchanged
     }
 
     // DEC r8/n8
@@ -594,12 +598,12 @@ impl Cpu {
             println!("Halt Bug triggered.");
             self.halt_bug = true;
         } else {
-            println!(
-                "Halted.\nIME: {:?}\nIE: {:?}\nIF: {:?}",
-                self.ime,
-                bus.read(0xFFFF),
-                bus.read(0xFF0F)
-            );
+            // println!(
+            //     "Halted.\nIME: {:?}\nIE: {:?}\nIF: {:?}",
+            //     self.ime,
+            //     bus.read(0xFFFF),
+            //     bus.read(0xFF0F)
+            // );
             self.halted = true
         }
     }
@@ -1313,6 +1317,7 @@ impl Cpu {
 
         bus.advance_timer(4);
         self.register.a |= val;
+        self.register.clear_flags();
         if self.register.a == 0 {
             self.register.set_flag_z_zero();
         }
@@ -1474,8 +1479,8 @@ impl Cpu {
     pub fn rrca(&mut self, bus: &mut MemoryBus) {
         bus.advance_timer(4);
         self.register.clear_flags();
-        let bit0 = (self.register.a & 0b00000001) << 7;
-        let val = (self.register.a >> 1) + bit0;
+        let bit0 = self.register.a & 0b00000001;
+        let val = (self.register.a >> 1) + (bit0 << 7);
         if bit0 == 1 {
             self.register.set_flag_c_carry();
         }
@@ -1640,6 +1645,8 @@ impl Cpu {
         }
 
         self.register.set_flag_n_subtraction();
+
+        self.register.a = result;
     }
 
     pub fn sbc_a_n8(&mut self, bus: &mut MemoryBus) {
@@ -1672,6 +1679,8 @@ impl Cpu {
         }
 
         self.register.set_flag_n_subtraction();
+
+        self.register.a = result;
     }
 
     // XOR A

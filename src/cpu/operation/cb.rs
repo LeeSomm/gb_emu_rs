@@ -280,8 +280,8 @@ impl Cpu {
 
         bus.advance_timer(4);
         self.register.clear_flags();
-        let bit0 = (val & 0b00000001) << 7;
-        let val = (val >> 1) + bit0;
+        let bit0 = val & 0b00000001;
+        let val = (val >> 1) + (bit0 << 7);
 
         bus.advance_timer(4);
         if val == 0 {

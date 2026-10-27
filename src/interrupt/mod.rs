@@ -76,7 +76,6 @@ pub fn interrupt_flag_clear(bus: &mut MemoryBus, interrupt: Interrupt) {
 pub fn interrupt_service_routine(cpu: &mut Cpu, bus: &mut MemoryBus) -> bool {
     // If no pending interrupts, nothing happens
     if let Some(interrupt) = get_pending_interrupts(bus) {
-        println!("Handling interrupt");
         if cpu.ime {
             interrupt_jump_to(cpu, bus, interrupt as u16);
             interrupt_flag_clear(bus, interrupt);

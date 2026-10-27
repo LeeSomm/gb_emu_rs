@@ -48,10 +48,10 @@ impl MemoryBus {
 
     pub fn write(&mut self, addr: u16, val: u8) {
         // For test ROMs to print out results
-        if addr == 0xFF02 && val == 0x81 {
-            let c = self.read(0xFF01);
-            print!("{}", c as char)
-        }
+        // if addr == 0xFF02 && val == 0x81 {
+        //     let c = self.read(0xFF01);
+        //     print!("{}", c as char)
+        // }
 
         match addr {
             0x0..=0x1FFF => self.cart.mbc.set_ramg(val),

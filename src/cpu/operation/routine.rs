@@ -99,47 +99,49 @@ impl Cpu {
     }
 
     pub fn routine_call_cc_a16(&mut self, bus: &mut MemoryBus, cc: FlagCondition) {
-        fn call_cc_match(cpu: &mut Cpu, bus: &mut MemoryBus, hi: u8, lo: u8) {
+        fn call_cc_match(cpu: &mut Cpu, bus: &mut MemoryBus, addr: u16) {
             bus.advance_timer(4);
+            let [pc_hi, pc_lo] = cpu.register.pc.to_be_bytes();
             cpu.register.sp = cpu.register.sp.wrapping_sub(1);
-            bus.write(cpu.register.sp, hi);
+            bus.write(cpu.register.sp, pc_hi);
 
             bus.advance_timer(4);
             cpu.register.sp = cpu.register.sp.wrapping_sub(1);
-            bus.write(cpu.register.sp, lo);
+            bus.write(cpu.register.sp, pc_lo);
 
             bus.advance_timer(4);
-            cpu.register.pc = ((hi as u16) << 8) | lo as u16;
+            cpu.register.pc = addr;
         }
 
         bus.advance_timer(4);
-        let lo = bus.read(self.register.pc);
+        let lo = bus.read(self.register.pc) as u16;
         self.inc_pc();
 
         bus.advance_timer(4);
-        let hi = bus.read(self.register.pc);
+        let hi = bus.read(self.register.pc) as u16;
+        let addr = (hi << 8) | lo;
         self.inc_pc();
 
         bus.advance_timer(4);
         match cc {
             FlagCondition::C => {
                 if self.register.get_flag_c_carry() == 1 {
-                    call_cc_match(self, bus, hi, lo);
+                    call_cc_match(self, bus, addr);
                 }
             }
             FlagCondition::NC => {
                 if self.register.get_flag_c_carry() == 0 {
-                    call_cc_match(self, bus, hi, lo);
+                    call_cc_match(self, bus, addr);
                 }
             }
             FlagCondition::Z => {
                 if self.register.get_flag_z_zero() == 1 {
-                    call_cc_match(self, bus, hi, lo);
+                    call_cc_match(self, bus, addr);
                 }
             }
             FlagCondition::NZ => {
                 if self.register.get_flag_z_zero() == 0 {
-                    call_cc_match(self, bus, hi, lo);
+                    call_cc_match(self, bus, addr);
                 }
             }
         }
