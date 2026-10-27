@@ -1,6 +1,7 @@
 use crate::{
     cart::Cartridge,
     cpu::Cpu,
+    display::Display,
     interrupt::{get_pending_interrupts, interrupt_service_routine},
     memory::MemoryBus,
 };
@@ -8,6 +9,7 @@ use crate::{
 pub struct GameBoy {
     cpu: Cpu,
     bus: MemoryBus,
+    display: Display,
 }
 
 impl GameBoy {
@@ -15,6 +17,7 @@ impl GameBoy {
         GameBoy {
             cpu: Cpu::new(),
             bus: MemoryBus::init(cart),
+            display: Display::init(),
         }
     }
 
