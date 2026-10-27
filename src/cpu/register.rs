@@ -171,7 +171,7 @@ impl Register {
 
     pub fn get_flag_z_zero(&self) -> u8 {
         // Bit mask for 7th bit
-        0b10000000 & self.f
+        (self.f >> 7) & 1
     }
 
     pub fn set_flag_z_zero(&mut self) {
@@ -184,7 +184,7 @@ impl Register {
 
     pub fn get_flag_n_subtraction(&self) -> u8 {
         // Bit mask for 6th bit
-        0b01000000 & self.f
+        (self.f >> 6) & 1
     }
 
     pub fn set_flag_n_subtraction(&mut self) {
@@ -197,7 +197,7 @@ impl Register {
 
     pub fn get_flag_h_half_carry(&self) -> u8 {
         // Bit mask for 5th bit
-        0b00100000 & self.f
+        (self.f >> 5) & 1
     }
 
     pub fn set_flag_h_half_carry(&mut self) {
@@ -210,7 +210,7 @@ impl Register {
 
     pub fn get_flag_c_carry(&self) -> u8 {
         // Bit mask for 4th bit
-        0b00010000 & self.f
+        (self.f >> 4) & 1
     }
 
     pub fn set_flag_c_carry(&mut self) {

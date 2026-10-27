@@ -9,7 +9,7 @@ use crate::{cpu::instruction::CpuInstruction, memory::MemoryBus};
 pub struct Cpu {
     pub register: Register,
     pub op_code: u8,
-    // pub instr_counter: u32,
+    // pub dbg_hits: u64,
     cb: bool,           // Whether the next operation is from CB Op table
     pub ime: bool,      // Interrupt Master Enable flag
     ime_delay: bool,    // Set IME to true after next operation
@@ -22,7 +22,7 @@ impl Cpu {
         let mut cpu = Self {
             register: Register::new(),
             op_code: 0x0,
-            // instr_counter: 0x0,
+            // dbg_hits: 0x0,
             cb: bool::default(),
             ime: bool::default(),
             ime_delay: bool::default(),
@@ -37,6 +37,26 @@ impl Cpu {
         // Fetch
         self.op_code = bus.read(self.register.pc);
 
+        if !self.cb {
+            println!(
+                "A:{:02X} F:{:02X} B:{:02X} C:{:02X} D:{:02X} E:{:02X} H:{:02X} L:{:02X} SP:{:04X} PC:{:04X} PCMEM:{:02X},{:02X},{:02X},{:02X}",
+                self.register.a,
+                self.register.f,
+                self.register.b,
+                self.register.c,
+                self.register.d,
+                self.register.e,
+                self.register.h,
+                self.register.l,
+                self.register.sp,
+                self.register.pc,
+                bus.read(self.register.pc),
+                bus.read(self.register.pc.wrapping_add(1)),
+                bus.read(self.register.pc.wrapping_add(2)),
+                bus.read(self.register.pc.wrapping_add(3)),
+            );
+        }
+
         let curr_instr: &CpuInstruction;
         if !self.cb {
             curr_instr = &instruction::INSTRUCTION_SET.normal[self.op_code as usize];
@@ -49,10 +69,11 @@ impl Cpu {
             panic!("No instruction configured for {:#2x?}", self.op_code)
         }
 
-        println!(
-            "Executing Op Code {:#2x?}: {}",
-            self.op_code, curr_instr.disassembly
-        );
+        // self.register.debug_print_registers();
+        // println!(
+        //     "Executing Op Code {:#2x?}: {}",
+        //     self.op_code, curr_instr.disassembly
+        // );
 
         // Increment program counter from op-code fetch
         if self.halt_bug {

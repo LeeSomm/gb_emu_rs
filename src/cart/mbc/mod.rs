@@ -1,4 +1,4 @@
-#[derive(Default, Debug)]
+#[derive(Debug)]
 pub struct Mbc {
     pub ramg: bool,
     pub bank1: u8,
@@ -11,6 +11,17 @@ pub enum BankingMode {
     #[default]
     Locked, // Mode 0b0
     Advanced, // Mode 0b1
+}
+
+impl Default for Mbc {
+    fn default() -> Self {
+        Self {
+            ramg: bool::default(),
+            bank1: 1, // Must be set to 1
+            bank2: u8::default(),
+            mode: BankingMode::default(),
+        }
+    }
 }
 
 impl Mbc {

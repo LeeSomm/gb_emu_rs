@@ -312,14 +312,15 @@ impl Cpu {
         self.inc_pc();
 
         bus.advance_timer(4);
-        self.register.sp = self.register.sp.wrapping_sub(1);
-
-        bus.advance_timer(4);
-        bus.write(self.register.sp, hi);
+        let [pc_hi, pc_lo] = self.register.pc.to_be_bytes();
 
         bus.advance_timer(4);
         self.register.sp = self.register.sp.wrapping_sub(1);
-        bus.write(self.register.sp, lo);
+        bus.write(self.register.sp, pc_hi);
+
+        bus.advance_timer(4);
+        self.register.sp = self.register.sp.wrapping_sub(1);
+        bus.write(self.register.sp, pc_lo);
 
         bus.advance_timer(4);
         self.register.pc = ((hi as u16) << 8) | lo as u16;
@@ -680,7 +681,35 @@ impl Cpu {
         bus.advance_timer(4);
         let hi = bus.read(self.register.pc) as u16;
         bus.advance_timer(4);
-        self.register.pc = (hi << 8) | lo;
+        let target = (hi << 8) | lo;
+
+        //         println!(
+        //             "JP target={:#06X}, HL={:#06X}, DE={:#06X}, BC={:#06X}",
+        //             target,
+        //             self.register.get_hl(),
+        //             self.register.get_de(),
+        //             self.register.get_bc()
+        //         );
+        //         if target == 0xC000 {
+        //             print!("ROM:  ");
+        //             for addr in 0x4000..0x4010 {
+        //                 print!("{:02X} ", bus.read(addr));
+        //             }
+        //
+        //             print!("\nWRAM: ");
+        //             for addr in 0xC000..0xC010 {
+        //                 print!("{:02X} ", bus.read(addr));
+        //             }
+        //
+        //             print!("HL source: ");
+        //             for addr in 0x5000..0x5010 {
+        //                 print!("{:02X} ", bus.read(addr));
+        //             }
+        //
+        //             println!();
+        //         }
+
+        self.register.pc = target;
         bus.advance_timer(4);
         // println!("Jumping to: {:#x?}", self.register.pc);
     }
@@ -1082,8 +1111,11 @@ impl Cpu {
     }
 
     pub fn ld_a_hli_indirect(&mut self, bus: &mut MemoryBus) {
+        // println!("LD A, [HL+] ran");
+        // println!("SP: {}", self.register.get_hl());
         bus.advance_timer(4);
         let val = bus.read(self.register.read_r16(Register16::HL));
+        // println!("Val: {}", val);
 
         bus.advance_timer(4);
         self.register.write_r8(Register8::A, val);

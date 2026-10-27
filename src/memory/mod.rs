@@ -93,11 +93,12 @@ impl MemoryBus {
                     }
                 }
                 // 0x4000..=7FFF (Same behavior in both modes)
-                let addr = ((self.cart.mbc.bank2 as u32) << 19)
-                    | ((self.cart.mbc.bank1 as u32) << 14)
-                    | ((addr & 0x3FFF) as u32);
-                self.valid_address_check(addr as usize);
-                return self.cart.data[addr as usize];
+                let rom_mask = self.cart.data.len() - 1;
+                let addr = (((self.cart.mbc.bank2 as usize) << 19)
+                    | ((self.cart.mbc.bank1 as usize) << 14)
+                    | (addr as usize & 0x3FFF))
+                    & rom_mask;
+                self.cart.data[addr]
             }
             _ => {
                 todo!(
