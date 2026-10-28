@@ -31,7 +31,6 @@ impl GameBoy {
                 if get_pending_interrupts(&self.bus).is_some() {
                     // Resume CPU operation if pending interrupts found
                     self.cpu.halted = false;
-                    println!("Exiting halt mode.")
                 } else {
                     // TODO: Logic for non-CPU hardware
                     self.bus.advance_timer(4);
@@ -45,6 +44,7 @@ impl GameBoy {
 
                 self.step();
             }
+            self.display.present();
         }
     }
 
