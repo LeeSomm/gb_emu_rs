@@ -1,15 +1,15 @@
 use crate::{
     cart::Cartridge,
     cpu::Cpu,
-    display::Display,
     interrupt::{get_pending_interrupts, interrupt_service_routine},
     memory::MemoryBus,
+    ui::UI,
 };
 
 pub struct GameBoy {
     cpu: Cpu,
     bus: MemoryBus,
-    display: Display,
+    ui: UI,
 }
 
 impl GameBoy {
@@ -17,7 +17,7 @@ impl GameBoy {
         GameBoy {
             cpu: Cpu::new(),
             bus: MemoryBus::init(cart),
-            display: Display::init(),
+            ui: UI::init(),
         }
     }
 
@@ -26,6 +26,9 @@ impl GameBoy {
     }
 
     pub fn run(&mut self) {
+        // Display debug
+        let mut offset = 0;
+
         loop {
             if self.cpu.halted {
                 if get_pending_interrupts(&self.bus).is_some() {
@@ -44,7 +47,11 @@ impl GameBoy {
 
                 self.step();
             }
-            self.display.present();
+            // UI debug
+            self.ui.debug(offset);
+            offset += 1;
+
+            self.ui.present();
         }
     }
 

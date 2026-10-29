@@ -6,6 +6,7 @@ use io::Io;
 
 pub mod io;
 pub mod timer;
+pub mod vram;
 
 pub struct MemoryBus {
     cart: Cartridge,    // Addresses 0x0000-0x7FFF & 0xA000-0xBFFF
@@ -65,7 +66,13 @@ impl MemoryBus {
             0xE000..=0xFDFF => self.wram[addr as usize - 0xE000] = val, // Echo RAM writes are effectively 0xC000-0xDDFF
             0xFE00..=0xFE9F => self.oam[addr as usize - 0xFE00] = val,
             0xFEA0..=0xFEFF => (), // Writes to this location have no effect
-            0xFF00..=0xFF7F => self.io.write(addr, val),
+            0xFF00..=0xFF45 => self.io.write(addr, val),
+            0xFF46 => {
+                // OAM DMA Transfer requires full MemoryBus
+                self.io.lcd.od_trans = val;
+                self.oam_dma_transfer(val);
+            }
+            0xFF47..=0xFF7F => self.io.write(addr, val),
             0xFF80..=0xFFFE => self.hram[addr as usize - 0xFF80] = val,
             0xFFFF => self.ie = val,
         };
@@ -139,6 +146,14 @@ impl MemoryBus {
     pub fn advance_timer(&mut self, cycles: u16) {
         if self.io.timer.advance_timer(cycles) {
             interrupt_flag_raise(self, Interrupt::Timer);
+        }
+    }
+
+    fn oam_dma_transfer(&mut self, page: u8) {
+        let src: u16 = u16::from(page) << 8;
+        for i in 0..0xA0u16 {
+            let byte = self.read(src + i);
+            self.write(0xFE00 + i, byte);
         }
     }
 }

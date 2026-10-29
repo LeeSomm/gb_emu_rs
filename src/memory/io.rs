@@ -173,7 +173,7 @@ impl Lcd {
             0xFF43 => self.scx = val,
             0xFF44 => panic!("Attempted to write to read-only LCD LY register"),
             0xFF45 => self.lyc = val,
-            0xFF46 => self.od_trans = val,
+            0xFF46 => unreachable!("Writes to 0xFF46 handled at MemoryBus level."),
             0xFF47 => self.bgp = val,
             0xFF48 => self.obp0 = val,
             0xFF49 => self.obp1 = val,
