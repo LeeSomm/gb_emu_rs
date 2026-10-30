@@ -36,7 +36,7 @@ impl GameBoy {
                     self.cpu.halted = false;
                 } else {
                     // TODO: Logic for non-CPU hardware
-                    self.bus.advance_timer(4);
+                    self.bus.tick(4);
                     continue;
                 }
             }
@@ -48,8 +48,8 @@ impl GameBoy {
                 self.step();
             }
             // UI debug
-            self.ui.debug(offset);
-            offset += 1;
+            self.ui.debug(&self.bus, offset);
+            // offset = offset.wrapping_add(1);
 
             self.ui.present();
         }

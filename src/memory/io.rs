@@ -1,4 +1,7 @@
-use crate::memory::timer::Timer;
+use crate::{
+    memory::timer::Timer,
+    ppu::{LcdControl, LcdStatus},
+};
 
 #[derive(Default)]
 pub struct Io {
@@ -132,25 +135,25 @@ impl Audio {
 
 #[derive(Default)]
 pub struct Lcd {
-    pub lcdc: u8,     // 0xFF40 LCD control
-    pub stat: u8,     // 0xFF41 LCD status
-    pub scy: u8,      // 0xFF42 Background viewport Y
-    pub scx: u8,      // 0xFF43 Background viewport X
-    pub ly: u8,       // 0xFF44 LCD Y coordinate (read-only)
-    pub lyc: u8,      // 0xFF45 LY compare
-    pub od_trans: u8, // 0xFF46 OAM DMA transfer
-    pub bgp: u8,      // 0xFF47 BG palette data
-    pub obp0: u8,     // 0xFF48 OBJ palette 0 data
-    pub obp1: u8,     // 0xFF49 OBJ palette 1 data
-    pub wy: u8,       // 0xFF4A Window Y position
-    pub wx: u8,       // 0xFF4B Window X position plus 7
+    pub lcdc: LcdControl, // 0xFF40 LCD control
+    pub stat: LcdStatus,  // 0xFF41 LCD status
+    pub scy: u8,          // 0xFF42 Background viewport Y
+    pub scx: u8,          // 0xFF43 Background viewport X
+    pub ly: u8,           // 0xFF44 LCD Y coordinate (read-only)
+    pub lyc: u8,          // 0xFF45 LY compare
+    pub od_trans: u8,     // 0xFF46 OAM DMA transfer
+    pub bgp: u8,          // 0xFF47 BG palette data
+    pub obp0: u8,         // 0xFF48 OBJ palette 0 data
+    pub obp1: u8,         // 0xFF49 OBJ palette 1 data
+    pub wy: u8,           // 0xFF4A Window Y position
+    pub wx: u8,           // 0xFF4B Window X position plus 7
 }
 
 impl Lcd {
     pub fn read(&self, addr: u16) -> u8 {
         match addr {
-            0xFF40 => self.lcdc,
-            0xFF41 => self.stat,
+            0xFF40 => self.lcdc.into_bits(),
+            0xFF41 => self.stat.into_bits(),
             0xFF42 => self.scy,
             0xFF43 => self.scx,
             0xFF44 => 0x90, // TODO: Modify once PPU is implemented
@@ -167,8 +170,8 @@ impl Lcd {
 
     pub fn write(&mut self, addr: u16, val: u8) {
         match addr {
-            0xFF40 => self.lcdc = val,
-            0xFF41 => self.stat = val,
+            0xFF40 => self.lcdc.write_bits(val),
+            0xFF41 => self.stat.write_bits(val),
             0xFF42 => self.scy = val,
             0xFF43 => self.scx = val,
             0xFF44 => panic!("Attempted to write to read-only LCD LY register"),

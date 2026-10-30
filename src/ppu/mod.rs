@@ -1,11 +1,12 @@
 use bitfields::{bitfield, bitflag};
 
 pub struct Tile {
-    pub data: u128, // 8x8 pixel data, 2bits per pixel
+    // Make sure to use from_le_bytes
+    pub data: [u8; 16], // 8x8 pixel data, 2bits per pixel
 }
 
 pub struct TileMap {
-    pub data: [Tile; 16], // Tile maps are 32x32 pixels (16 tiles)
+    pub data: [Tile; 1024], // Tile maps are 32x32 tiles (256 x 256 pixels)
 }
 
 pub struct ObjectAttribute {
@@ -15,6 +16,7 @@ pub struct ObjectAttribute {
     pub flags: u8,
 }
 
+//FF40
 #[bitfield(u8)]
 pub struct LcdControl {
     bg_window_enable: bool, // False = Off, True = On
@@ -36,6 +38,7 @@ pub enum TileMapRef {
     TileMap2 = 1,
 }
 
+// FF41
 #[bitfield(u8)]
 pub struct LcdStatus {
     #[bits(2)]

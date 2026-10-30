@@ -16,6 +16,7 @@ pub struct MemoryBus {
     io: Io,             // Address 0xFF00-0xFF7F
     hram: [u8; 0x7F],   // Address 0xFF80-FFFE
     ie: u8,             // Address 0xFFFF
+                        // ppu: Ppu
 }
 
 impl MemoryBus {
@@ -143,10 +144,11 @@ impl MemoryBus {
         }
     }
 
-    pub fn advance_timer(&mut self, cycles: u16) {
-        if self.io.timer.advance_timer(cycles) {
+    pub fn tick(&mut self, cycles: u16) {
+        if self.io.timer.advance(cycles) {
             interrupt_flag_raise(self, Interrupt::Timer);
         }
+        // self.ppu.advance(cycles);
     }
 
     fn oam_dma_transfer(&mut self, page: u8) {

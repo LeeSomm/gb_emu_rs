@@ -40,10 +40,10 @@ impl Cpu {
     }
 
     pub fn adc_a_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let c = self.register.get_flag_c_carry();
         let half_carry = (self.register.a & 0x0F) + (val & 0x0F) + c > 0x0F;
         let (tmp_result, carry1) = self.register.a.overflowing_add(val);
@@ -73,11 +73,11 @@ impl Cpu {
     }
 
     pub fn adc_a_n8(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.pc);
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let c = self.register.get_flag_c_carry();
         let half_carry = (self.register.a & 0x0F) + (val & 0x0F) + c > 0x0F;
         let (tmp_result, carry1) = self.register.a.overflowing_add(val);
@@ -136,10 +136,10 @@ impl Cpu {
     }
 
     pub fn add_a_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let half_carry = (self.register.a & 0x0F) + (val & 0x0F) > 0x0F;
         let (result, carry) = self.register.a.overflowing_add(val);
 
@@ -167,11 +167,11 @@ impl Cpu {
     }
 
     pub fn add_a_n8(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.pc);
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let half_carry = (self.register.a & 0x0F) + (val & 0x0F) > 0x0F;
         let (result, carry) = self.register.a.overflowing_add(val);
 
@@ -217,17 +217,17 @@ impl Cpu {
 
     // ADD SP, e8
     pub fn add_sp_e8(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let e = bus.read(self.register.pc); // Will cast as i8 later
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let half_carry = (self.register.sp & 0x0F) + (e & 0x0F) as u16 > 0x0F; // Works w/ u8 b/c 2's Complement
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let carry = (self.register.sp & 0xFF) + e as u16 > 0xFF;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let result = self.register.sp.wrapping_add_signed(e as i8 as i16); // Must cast as i8 first for correct sign extension
         self.register.clear_flags();
 
@@ -239,7 +239,7 @@ impl Cpu {
             self.register.set_flag_h_half_carry();
         }
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.sp = result;
     }
 
@@ -273,10 +273,10 @@ impl Cpu {
     }
 
     pub fn and_a_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let result = self.register.a & val;
         self.register.a = result;
         self.register.clear_flags();
@@ -287,11 +287,11 @@ impl Cpu {
     }
 
     pub fn and_a_n8(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.pc);
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let result = self.register.a & val;
         self.register.a = result;
         self.register.clear_flags();
@@ -303,26 +303,26 @@ impl Cpu {
 
     // CALL
     pub fn call_a16(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let lo = bus.read(self.register.pc);
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let hi = bus.read(self.register.pc);
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let [pc_hi, pc_lo] = self.register.pc.to_be_bytes();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.sp = self.register.sp.wrapping_sub(1);
         bus.write(self.register.sp, pc_hi);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.sp = self.register.sp.wrapping_sub(1);
         bus.write(self.register.sp, pc_lo);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.pc = ((hi as u16) << 8) | lo as u16;
     }
 
@@ -350,7 +350,7 @@ impl Cpu {
 
     // Carry Flag Operations
     pub fn ccf(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flag_n_subtraction();
         self.register.clear_flag_h_half_carry();
         if self.register.get_flag_c_carry() == 1 {
@@ -361,7 +361,7 @@ impl Cpu {
     }
 
     pub fn scf(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flag_n_subtraction();
         self.register.clear_flag_h_half_carry();
         self.register.set_flag_c_carry();
@@ -397,10 +397,10 @@ impl Cpu {
     }
 
     pub fn cp_a_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let half_carry = (self.register.a & 0x0F) < val & 0x0F;
         let (result, carry) = self.register.a.overflowing_sub(val);
 
@@ -426,11 +426,11 @@ impl Cpu {
     }
 
     pub fn cp_a_n8(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.pc);
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let half_carry = (self.register.a & 0x0F) < val & 0x0F;
         let (result, carry) = self.register.a.overflowing_sub(val);
 
@@ -457,7 +457,7 @@ impl Cpu {
 
     // CPL
     pub fn cpl(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.set_flag_n_subtraction();
         self.register.set_flag_h_half_carry();
         self.register.a = !self.register.a;
@@ -465,7 +465,7 @@ impl Cpu {
 
     //DAA
     pub fn daa(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let mut a = self.register.a;
         let n = self.register.get_flag_n_subtraction() == 1;
         let h = self.register.get_flag_h_half_carry() == 1;
@@ -535,10 +535,10 @@ impl Cpu {
     }
 
     pub fn dec_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let mut val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         // Check half-carry flag
         if (val & 0x0F) == 0 {
             self.register.set_flag_h_half_carry();
@@ -575,19 +575,19 @@ impl Cpu {
 
     // DI
     pub fn di(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         self.ime = false;
     }
 
     // EI
     pub fn ei(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         self.ime_delay = true;
     }
 
     // HALT
     pub fn halt(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         // https://rgbds.gbdev.io/docs/v1.0.4/gbz80.7#HALT
         // HALT mode is exited when a flag in register IF is set and the corresponding flag in IE is also set,
         // regardless of the value of IME. The only difference is that IME='1' will make the CPU jump to the
@@ -638,10 +638,10 @@ impl Cpu {
     }
 
     pub fn inc_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let mut val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         // If bottom 4 bits are set, inc will cause overflow from bit 3.
         if (val & 0x0F) == 0x0F {
             self.register.set_flag_h_half_carry();
@@ -656,7 +656,7 @@ impl Cpu {
             self.register.clear_flag_z_zero();
         }
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -679,12 +679,12 @@ impl Cpu {
 
     // JP Instructions
     pub fn jp_a16(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let lo = bus.read(self.register.pc) as u16;
         self.inc_pc();
-        bus.advance_timer(4);
+        bus.tick(4);
         let hi = bus.read(self.register.pc) as u16;
-        bus.advance_timer(4);
+        bus.tick(4);
         let target = (hi << 8) | lo;
 
         //         println!(
@@ -714,12 +714,12 @@ impl Cpu {
         //         }
 
         self.register.pc = target;
-        bus.advance_timer(4);
+        bus.tick(4);
         // println!("Jumping to: {:#x?}", self.register.pc);
     }
 
     pub fn jp_hl(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.pc = self.register.get_hl();
     }
 
@@ -741,14 +741,14 @@ impl Cpu {
 
     // JR Instructions
     pub fn jr_e8(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let e: i8 = bus.read(self.register.pc) as i8;
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.pc = self.register.pc.wrapping_add_signed(e as i16);
 
-        bus.advance_timer(4);
+        bus.tick(4);
     }
 
     pub fn jr_c_e8(&mut self, bus: &mut MemoryBus) {
@@ -1003,38 +1003,38 @@ impl Cpu {
     // LD [a16/r16], r8/n8
     pub fn ld_a16_indirect_a(&mut self, bus: &mut MemoryBus) {
         // Load the 8bit value from register A into the 16bit address
-        bus.advance_timer(4);
+        bus.tick(4);
         let lo = bus.read(self.register.pc) as u16;
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let hi = bus.read(self.register.pc) as u16;
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let addr = (hi << 8) | lo;
         bus.write(addr, self.register.a);
 
-        bus.advance_timer(4);
+        bus.tick(4);
     }
 
     pub fn ld_a16_indirect_sp(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let lo = bus.read(self.register.pc) as u16;
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let hi = bus.read(self.register.pc) as u16;
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let addr = (hi << 8) | lo;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let [lsb, msb] = self.register.sp.to_le_bytes();
         bus.write(addr, lsb);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(addr + 1, msb);
     }
 
@@ -1075,29 +1075,29 @@ impl Cpu {
     }
 
     pub fn ld_hl_indirect_n8(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.pc);
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
     pub fn ld_hli_indirect_a(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let hl = self.register.get_hl();
         bus.write(hl, self.register.a);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.inc_hl();
     }
 
     pub fn ld_hld_indirect_a(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let hl = self.register.get_hl();
         bus.write(hl, self.register.a);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.dec_hl();
     }
 
@@ -1117,38 +1117,38 @@ impl Cpu {
     pub fn ld_a_hli_indirect(&mut self, bus: &mut MemoryBus) {
         // println!("LD A, [HL+] ran");
         // println!("SP: {}", self.register.get_hl());
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.read_r16(Register16::HL));
         // println!("Val: {}", val);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.write_r8(Register8::A, val);
         self.register.inc_hl();
     }
 
     pub fn ld_a_hld_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.read_r16(Register16::HL));
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.write_r8(Register8::A, val);
         self.register.dec_hl();
     }
 
     pub fn ld_a_a16_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let lo = bus.read(self.register.pc) as u16;
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let hi = bus.read(self.register.pc) as u16;
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let addr = (hi << 8) | lo;
         let val = bus.read(addr);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.a = val;
     }
 
@@ -1194,18 +1194,18 @@ impl Cpu {
     }
 
     pub fn ld_sp_hl(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.sp = self.register.get_hl();
 
-        bus.advance_timer(4);
+        bus.tick(4);
     }
 
     pub fn ld_hl_sp_e8(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let e = bus.read(self.register.pc);
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let half_carry = (self.register.sp & 0x0F) + (e & 0x0F) as u16 > 0x0F; // Works w/ u8 b/c 2's Complement
         let carry = (self.register.sp & 0xFF) + e as u16 > 0xFF;
 
@@ -1220,54 +1220,54 @@ impl Cpu {
             self.register.set_flag_h_half_carry();
         }
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.set_hl(result);
     }
 
     // LDH
     pub fn ldh_a8_indirect_a(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let addr = bus.read(self.register.pc) as u16;
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let addr = 0xFF00 | addr;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(addr, self.register.a);
     }
 
     pub fn ldh_a_a8_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let addr = bus.read(self.register.pc) as u16;
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let addr = 0xFF00 | addr;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.a = bus.read(addr);
     }
 
     pub fn ldh_c_indirect_a(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let addr = 0xFF00 | self.register.c as u16;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(addr, self.register.a);
     }
 
     pub fn ldh_a_c_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let addr = 0xFF00 | self.register.c as u16;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.a = bus.read(addr);
     }
 
     // NOOP
     pub fn noop(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
     }
 
     pub fn or_a_a(&mut self, bus: &mut MemoryBus) {
@@ -1299,10 +1299,10 @@ impl Cpu {
     }
 
     pub fn or_a_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.a |= val;
         self.register.clear_flags();
         if self.register.a == 0 {
@@ -1311,11 +1311,11 @@ impl Cpu {
     }
 
     pub fn or_a_n8(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.pc);
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.a |= val;
         self.register.clear_flags();
         if self.register.a == 0 {
@@ -1394,18 +1394,18 @@ impl Cpu {
 
     // RET
     pub fn ret(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let lo = bus.read(self.register.sp) as u16;
         self.register.sp = self.register.sp.wrapping_add(1);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let hi = bus.read(self.register.sp) as u16;
         self.register.sp = self.register.sp.wrapping_add(1);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.pc = (hi << 8) | lo;
 
-        bus.advance_timer(4);
+        bus.tick(4);
     }
 
     pub fn ret_z(&mut self, bus: &mut MemoryBus) {
@@ -1426,24 +1426,24 @@ impl Cpu {
 
     // RETI
     pub fn reti(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let lo = bus.read(self.register.sp) as u16;
         self.register.sp = self.register.sp.wrapping_add(1);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let hi = bus.read(self.register.sp) as u16;
         self.register.sp = self.register.sp.wrapping_add(1);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.pc = (hi << 8) | lo;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.ime = true;
     }
 
     // Rotate Registers
     pub fn rla(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit7 = (self.register.a & 0b10000000) >> 7;
         let val = (self.register.a << 1) + self.register.get_flag_c_carry();
         self.register.clear_flags();
@@ -1454,7 +1454,7 @@ impl Cpu {
     }
 
     pub fn rlca(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         let bit7 = (self.register.a & 0b10000000) >> 7;
         let val = (self.register.a << 1) + bit7;
@@ -1465,7 +1465,7 @@ impl Cpu {
     }
 
     pub fn rra(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit0 = self.register.a & 0b00000001;
         let carry_into_7 = self.register.get_flag_c_carry() << 7;
         let val = (self.register.a >> 1) + carry_into_7;
@@ -1477,7 +1477,7 @@ impl Cpu {
     }
 
     pub fn rrca(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         let bit0 = self.register.a & 0b00000001;
         let val = (self.register.a >> 1) + (bit0 << 7);
@@ -1490,7 +1490,7 @@ impl Cpu {
     // STOP
     pub fn stop_n8(&mut self, bus: &mut MemoryBus) {
         // Puts CPU into very low power mode
-        bus.advance_timer(4);
+        bus.tick(4);
         let _ = bus.read(self.register.pc); // Followed by a byte, but doesn't do anything.
         self.inc_pc();
     }
@@ -1525,10 +1525,10 @@ impl Cpu {
     }
 
     pub fn sub_a_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let half_carry = (self.register.a & 0x0F) < val & 0x0F;
         let (result, carry) = self.register.a.overflowing_sub(val);
 
@@ -1556,11 +1556,11 @@ impl Cpu {
     }
 
     pub fn sub_a_n8(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.pc);
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let half_carry = (self.register.a & 0x0F) < val & 0x0F;
         let (result, carry) = self.register.a.overflowing_sub(val);
 
@@ -1617,10 +1617,10 @@ impl Cpu {
     }
 
     pub fn sbc_a_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let c = self.register.get_flag_c_carry();
         let half_carry = (self.register.a & 0x0F) < ((val & 0x0F) + c);
         let (tmp_result, carry1) = self.register.a.overflowing_sub(val);
@@ -1650,11 +1650,11 @@ impl Cpu {
     }
 
     pub fn sbc_a_n8(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.pc);
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let c = self.register.get_flag_c_carry();
         let half_carry = (self.register.a & 0x0F) < ((val & 0x0F) + c);
         let (tmp_result, carry1) = self.register.a.overflowing_sub(val);
@@ -1713,10 +1713,10 @@ impl Cpu {
     }
 
     pub fn xor_a_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.a = self.register.a ^ val;
         self.register.clear_flags();
         if self.register.a == 0 {
@@ -1725,11 +1725,11 @@ impl Cpu {
     }
 
     pub fn xor_a_n8(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.pc);
         self.inc_pc();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.a = self.register.a ^ val;
         self.register.clear_flags();
         if self.register.a == 0 {

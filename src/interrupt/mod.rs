@@ -86,18 +86,18 @@ pub fn interrupt_service_routine(cpu: &mut Cpu, bus: &mut MemoryBus) -> bool {
 }
 
 fn interrupt_jump_to(cpu: &mut Cpu, bus: &mut MemoryBus, addr: u16) {
-    bus.advance_timer(8);
+    bus.tick(8);
     let [hi, lo] = cpu.register.pc.to_be_bytes();
     cpu.register.sp = cpu.register.sp.wrapping_sub(1);
 
-    bus.advance_timer(4);
+    bus.tick(4);
     bus.write(cpu.register.sp, hi);
     cpu.register.sp = cpu.register.sp.wrapping_sub(1);
 
-    bus.advance_timer(4);
+    bus.tick(4);
     bus.write(cpu.register.sp, lo);
 
-    bus.advance_timer(4);
+    bus.tick(4);
     cpu.register.pc = addr;
     cpu.ime = false;
 }

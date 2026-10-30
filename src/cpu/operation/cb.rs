@@ -17,12 +17,12 @@ enum Bit {
 impl Cpu {
     // Routines
     fn rlc_r8(&mut self, bus: &mut MemoryBus, reg: Register8) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let reg_val = self.register.read_r8(reg);
         let bit7 = (reg_val & 0b10000000) >> 7;
         let val = (reg_val << 1) + bit7;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
@@ -35,12 +35,12 @@ impl Cpu {
     }
 
     fn rrc_r8(&mut self, bus: &mut MemoryBus, reg: Register8) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let reg_val = self.register.read_r8(reg);
         let bit0 = reg_val & 0b00000001;
         let val = (reg_val >> 1) + (bit0 << 7);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
@@ -53,12 +53,12 @@ impl Cpu {
     }
 
     fn rl_r8(&mut self, bus: &mut MemoryBus, reg: Register8) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let reg_val = self.register.read_r8(reg);
         let bit7 = (reg_val & 0b10000000) >> 7;
         let val = (reg_val << 1) + self.register.get_flag_c_carry();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
@@ -71,12 +71,12 @@ impl Cpu {
     }
 
     fn rr_r8(&mut self, bus: &mut MemoryBus, reg: Register8) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let reg_val = self.register.read_r8(reg);
         let bit0 = reg_val & 0b00000001;
         let val = (reg_val >> 1) + (self.register.get_flag_c_carry() << 7);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
@@ -89,12 +89,12 @@ impl Cpu {
     }
 
     fn sla_r8(&mut self, bus: &mut MemoryBus, reg: Register8) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let reg_val = self.register.read_r8(reg);
         let bit7 = (reg_val & 0b10000000) >> 7;
         let val = reg_val << 1;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
@@ -107,13 +107,13 @@ impl Cpu {
     }
 
     fn sra_r8(&mut self, bus: &mut MemoryBus, reg: Register8) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let reg_val = self.register.read_r8(reg);
         let bit0 = reg_val & 0b00000001;
         let bit7 = reg_val & 0b10000000;
         let val = (reg_val >> 1) + bit7;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
@@ -126,13 +126,13 @@ impl Cpu {
     }
 
     fn swap_r8(&mut self, bus: &mut MemoryBus, reg: Register8) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let reg_val = self.register.read_r8(reg);
         let hi = reg_val << 4;
         let lo = reg_val >> 4;
         let val = hi | lo;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
@@ -142,12 +142,12 @@ impl Cpu {
     }
 
     fn srl_r8(&mut self, bus: &mut MemoryBus, reg: Register8) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let reg_val = self.register.read_r8(reg);
         let bit0 = reg_val & 0b00000001;
         let val = reg_val >> 1;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
@@ -160,12 +160,12 @@ impl Cpu {
     }
 
     fn bit_b3_r8(&mut self, bus: &mut MemoryBus, bit: Bit, reg: Register8) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = bit as u8;
         let mask = 0b00000001 << bit;
         let val = self.register.read_r8(reg) & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flag_n_subtraction();
         self.register.set_flag_h_half_carry();
         if val == 0 {
@@ -176,22 +176,22 @@ impl Cpu {
     }
 
     fn res_b3_r8(&mut self, bus: &mut MemoryBus, bit: Bit, reg: Register8) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = bit as u8;
         let mask = !(0b00000001 << bit); // Bitshift 1 to the desired bit and then invert
         let val = self.register.read_r8(reg) & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.write_r8(reg, val);
     }
 
     fn set_b3_r8(&mut self, bus: &mut MemoryBus, bit: Bit, reg: Register8) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = bit as u8;
         let mask = 0b00000001 << bit;
         let val = self.register.read_r8(reg) | mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.write_r8(reg, val);
     }
 
@@ -225,15 +225,15 @@ impl Cpu {
     }
 
     pub fn cb_rlc_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         let bit7 = (val & 0b10000000) >> 7;
         let val = (val << 1) + bit7;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         if val == 0 {
             self.register.set_flag_z_zero();
         }
@@ -241,7 +241,7 @@ impl Cpu {
             self.register.set_flag_c_carry();
         }
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -275,15 +275,15 @@ impl Cpu {
     }
 
     pub fn cb_rrc_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         let bit0 = val & 0b00000001;
         let val = (val >> 1) + (bit0 << 7);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         if val == 0 {
             self.register.set_flag_z_zero();
         }
@@ -291,7 +291,7 @@ impl Cpu {
             self.register.set_flag_c_carry();
         }
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -325,14 +325,14 @@ impl Cpu {
     }
 
     pub fn cb_rl_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit7 = (val & 0b10000000) >> 7;
         let val = (val << 1) + self.register.get_flag_c_carry();
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
@@ -341,7 +341,7 @@ impl Cpu {
             self.register.set_flag_c_carry();
         }
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -375,14 +375,14 @@ impl Cpu {
     }
 
     pub fn cb_rr_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit0 = val & 0b00000001;
         let val = (val >> 1) + (self.register.get_flag_c_carry() << 7);
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
@@ -391,7 +391,7 @@ impl Cpu {
             self.register.set_flag_c_carry();
         }
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -425,14 +425,14 @@ impl Cpu {
     }
 
     pub fn cb_sla_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit7 = (val & 0b10000000) >> 7;
         let val = val << 1;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
@@ -441,7 +441,7 @@ impl Cpu {
             self.register.set_flag_c_carry();
         }
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -475,15 +475,15 @@ impl Cpu {
     }
 
     pub fn cb_sra_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit0 = val & 0b00000001;
         let bit7 = val & 0b10000000;
         let val = (val >> 1) + bit7;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
@@ -492,7 +492,7 @@ impl Cpu {
             self.register.set_flag_c_carry();
         }
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -526,21 +526,21 @@ impl Cpu {
     }
 
     pub fn cb_swap_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let hi = val << 4;
         let lo = val >> 4;
         let val = hi | lo;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
         }
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -574,14 +574,14 @@ impl Cpu {
     }
 
     pub fn cb_srl_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit0 = val & 0b00000001;
         let val = val >> 1;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flags();
         if val == 0 {
             self.register.set_flag_z_zero();
@@ -590,7 +590,7 @@ impl Cpu {
             self.register.set_flag_c_carry();
         }
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -624,14 +624,14 @@ impl Cpu {
     }
 
     pub fn cb_bit_0_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let mask = 0b00000001 << (Bit::B0 as u8);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flag_n_subtraction();
         self.register.set_flag_h_half_carry();
         if val == 0 {
@@ -670,14 +670,14 @@ impl Cpu {
     }
 
     pub fn cb_bit_1_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let mask = 0b00000001 << (Bit::B1 as u8);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flag_n_subtraction();
         self.register.set_flag_h_half_carry();
         if val == 0 {
@@ -716,14 +716,14 @@ impl Cpu {
     }
 
     pub fn cb_bit_2_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let mask = 0b00000001 << (Bit::B2 as u8);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flag_n_subtraction();
         self.register.set_flag_h_half_carry();
         if val == 0 {
@@ -762,14 +762,14 @@ impl Cpu {
     }
 
     pub fn cb_bit_3_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let mask = 0b00000001 << (Bit::B3 as u8);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flag_n_subtraction();
         self.register.set_flag_h_half_carry();
         if val == 0 {
@@ -808,14 +808,14 @@ impl Cpu {
     }
 
     pub fn cb_bit_4_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let mask = 0b00000001 << (Bit::B4 as u8);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flag_n_subtraction();
         self.register.set_flag_h_half_carry();
         if val == 0 {
@@ -854,14 +854,14 @@ impl Cpu {
     }
 
     pub fn cb_bit_5_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let mask = 0b00000001 << (Bit::B5 as u8);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flag_n_subtraction();
         self.register.set_flag_h_half_carry();
         if val == 0 {
@@ -900,14 +900,14 @@ impl Cpu {
     }
 
     pub fn cb_bit_6_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let mask = 0b00000001 << (Bit::B6 as u8);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flag_n_subtraction();
         self.register.set_flag_h_half_carry();
         if val == 0 {
@@ -946,14 +946,14 @@ impl Cpu {
     }
 
     pub fn cb_bit_7_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let mask = 0b00000001 << (Bit::B7 as u8);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         self.register.clear_flag_n_subtraction();
         self.register.set_flag_h_half_carry();
         if val == 0 {
@@ -992,17 +992,17 @@ impl Cpu {
     }
 
     pub fn cb_res_0_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B0 as u8;
         let mask = !(0b00000001 << bit); // Bitshift 1 to the desired bit and then invert
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1035,17 +1035,17 @@ impl Cpu {
     }
 
     pub fn cb_res_1_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B1 as u8;
         let mask = !(0b00000001 << bit); // Bitshift 1 to the desired bit and then invert
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1078,17 +1078,17 @@ impl Cpu {
     }
 
     pub fn cb_res_2_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B2 as u8;
         let mask = !(0b00000001 << bit); // Bitshift 1 to the desired bit and then invert
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1121,17 +1121,17 @@ impl Cpu {
     }
 
     pub fn cb_res_3_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B3 as u8;
         let mask = !(0b00000001 << bit); // Bitshift 1 to the desired bit and then invert
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1164,17 +1164,17 @@ impl Cpu {
     }
 
     pub fn cb_res_4_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B4 as u8;
         let mask = !(0b00000001 << bit); // Bitshift 1 to the desired bit and then invert
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1207,17 +1207,17 @@ impl Cpu {
     }
 
     pub fn cb_res_5_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B5 as u8;
         let mask = !(0b00000001 << bit); // Bitshift 1 to the desired bit and then invert
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1250,17 +1250,17 @@ impl Cpu {
     }
 
     pub fn cb_res_6_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B6 as u8;
         let mask = !(0b00000001 << bit); // Bitshift 1 to the desired bit and then invert
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1293,17 +1293,17 @@ impl Cpu {
     }
 
     pub fn cb_res_7_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B7 as u8;
         let mask = !(0b00000001 << bit); // Bitshift 1 to the desired bit and then invert
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val & mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1336,17 +1336,17 @@ impl Cpu {
     }
 
     pub fn cb_set_0_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B0 as u8;
         let mask = 0b00000001 << bit;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val | mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1379,17 +1379,17 @@ impl Cpu {
     }
 
     pub fn cb_set_1_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B1 as u8;
         let mask = 0b00000001 << bit;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val | mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1422,17 +1422,17 @@ impl Cpu {
     }
 
     pub fn cb_set_2_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B2 as u8;
         let mask = 0b00000001 << bit;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val | mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1465,17 +1465,17 @@ impl Cpu {
     }
 
     pub fn cb_set_3_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B3 as u8;
         let mask = 0b00000001 << bit;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val | mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1508,17 +1508,17 @@ impl Cpu {
     }
 
     pub fn cb_set_4_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B4 as u8;
         let mask = 0b00000001 << bit;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val | mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1551,17 +1551,17 @@ impl Cpu {
     }
 
     pub fn cb_set_5_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B5 as u8;
         let mask = 0b00000001 << bit;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val | mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1594,17 +1594,17 @@ impl Cpu {
     }
 
     pub fn cb_set_6_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B6 as u8;
         let mask = 0b00000001 << bit;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val | mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 
@@ -1637,17 +1637,17 @@ impl Cpu {
     }
 
     pub fn cb_set_7_hl_indirect(&mut self, bus: &mut MemoryBus) {
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = bus.read(self.register.get_hl());
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let bit = Bit::B7 as u8;
         let mask = 0b00000001 << bit;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         let val = val | mask;
 
-        bus.advance_timer(4);
+        bus.tick(4);
         bus.write(self.register.get_hl(), val);
     }
 }

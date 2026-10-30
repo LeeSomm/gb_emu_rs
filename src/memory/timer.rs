@@ -47,7 +47,7 @@ impl Timer {
     }
 
     // Returns true if a timer interrupt is requested
-    pub fn advance_timer(&mut self, cycles: u16) -> bool {
+    pub fn advance(&mut self, cycles: u16) -> bool {
         let ctrl_bit_mask: u16 = 1 << self.timer_control_bit();
         let ctrl_bit = self.timer & ctrl_bit_mask;
 
