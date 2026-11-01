@@ -1,6 +1,6 @@
-use crate::{
-    memory::timer::Timer,
+use crate::memory::{
     ppu::{LcdControl, LcdStatus},
+    timer::Timer,
 };
 
 #[derive(Default)]
@@ -18,6 +18,22 @@ pub struct Io {
 }
 
 impl Io {
+    pub fn init() -> Self {
+        let mut io = Io {
+            joypad: 0,               // 0xFF00
+            sb: 0,                   // 0xFF01 Serial transfer data
+            sc: 0,                   // 0xFF02 Serial transfer control
+            timer: Timer::default(), // 0xFF04-FF07 Timer Registers
+            int_flag: 0,             // 0xFF0F Interrupt flag
+            audio: Audio::default(), // 0xFF10-FF26 Audio
+            wave_pattern: [0; 16],   // 0xFF30-FF3F Wave Pattern
+            lcd: Lcd::default(),     // 0xFF40-FF4B LCD
+            boot_rom: 0,             // 0xFF50 Boot ROM mapping control
+        };
+        io.lcd.reset();
+        io
+    }
+
     pub fn read(&self, addr: u16) -> u8 {
         match addr {
             0xFF00 => self.joypad,
@@ -150,6 +166,19 @@ pub struct Lcd {
 }
 
 impl Lcd {
+    pub fn reset(&mut self) {
+        self.lcdc = LcdControl::from_bits(0x91);
+        self.stat = LcdStatus::from_bits(0x85);
+        self.ly = 0;
+        self.lyc = 0;
+        self.od_trans = 0xFF;
+        self.bgp = 0xFC;
+        self.obp0 = 0xFF;
+        self.obp1 = 0xFF;
+        self.wy = 0;
+        self.wx = 0;
+    }
+
     pub fn read(&self, addr: u16) -> u8 {
         match addr {
             0xFF40 => self.lcdc.into_bits(),

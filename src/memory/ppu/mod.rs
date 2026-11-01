@@ -1,5 +1,16 @@
 use bitfields::{bitfield, bitflag};
 
+#[derive(Default)]
+pub struct Ppu {
+    timer: u16,
+}
+
+impl Ppu {
+    pub fn advance(&mut self, cycles: u16) {
+        self.timer = self.timer.wrapping_add(cycles);
+    }
+}
+
 pub struct Tile {
     // Make sure to use from_le_bytes
     pub data: [u8; 16], // 8x8 pixel data, 2bits per pixel

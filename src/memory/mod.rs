@@ -3,8 +3,10 @@ use crate::{
     interrupt::{Interrupt, interrupt_flag_raise},
 };
 use io::Io;
+use ppu::Ppu;
 
 pub mod io;
+pub mod ppu;
 pub mod timer;
 pub mod vram;
 
@@ -16,7 +18,7 @@ pub struct MemoryBus {
     io: Io,             // Address 0xFF00-0xFF7F
     hram: [u8; 0x7F],   // Address 0xFF80-FFFE
     ie: u8,             // Address 0xFFFF
-                        // ppu: Ppu
+    ppu: Ppu,
 }
 
 impl MemoryBus {
@@ -26,9 +28,10 @@ impl MemoryBus {
             vram: [0; 0x2000],
             wram: [0; 0x2000],
             oam: [0; 0xA0],
-            io: Io::default(),
+            io: Io::init(),
             hram: [0; 0x7F],
             ie: 0,
+            ppu: Ppu::default(),
         }
     }
 
@@ -148,7 +151,8 @@ impl MemoryBus {
         if self.io.timer.advance(cycles) {
             interrupt_flag_raise(self, Interrupt::Timer);
         }
-        // self.ppu.advance(cycles);
+        self.ppu.advance(cycles);
+        // TODO: Pass PPU interrupts up
     }
 
     fn oam_dma_transfer(&mut self, page: u8) {

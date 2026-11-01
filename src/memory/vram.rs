@@ -1,4 +1,4 @@
-use crate::ppu::{Tile, TileMap};
+use crate::memory::ppu::{Tile, TileMap};
 
 pub struct VRam {
     pub data: [Tile; 384], // Addresses 0x8000-0x97FF
