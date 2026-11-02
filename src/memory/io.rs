@@ -1,7 +1,4 @@
-use crate::memory::{
-    ppu::{LcdControl, LcdStatus},
-    timer::Timer,
-};
+use crate::memory::timer::Timer;
 
 #[derive(Default)]
 pub struct Io {
@@ -12,14 +9,14 @@ pub struct Io {
     pub int_flag: u8,           // 0xFF0F Interrupt flag
     pub audio: Audio,           // 0xFF10-FF26 Audio
     pub wave_pattern: [u8; 16], // 0xFF30-FF3F Wave Pattern
-    pub lcd: Lcd,               // 0xFF40-FF4B LCD
     pub boot_rom: u8,           // 0xFF50 Boot ROM mapping control
                                 // CBG IO Registers are excluded
+                                // LCD registers in Ppu struct
 }
 
 impl Io {
     pub fn init() -> Self {
-        let mut io = Io {
+        Io {
             joypad: 0,               // 0xFF00
             sb: 0,                   // 0xFF01 Serial transfer data
             sc: 0,                   // 0xFF02 Serial transfer control
@@ -27,11 +24,8 @@ impl Io {
             int_flag: 0,             // 0xFF0F Interrupt flag
             audio: Audio::default(), // 0xFF10-FF26 Audio
             wave_pattern: [0; 16],   // 0xFF30-FF3F Wave Pattern
-            lcd: Lcd::default(),     // 0xFF40-FF4B LCD
             boot_rom: 0,             // 0xFF50 Boot ROM mapping control
-        };
-        io.lcd.reset();
-        io
+        }
     }
 
     pub fn read(&self, addr: u16) -> u8 {
@@ -43,7 +37,7 @@ impl Io {
             0xFF0F => self.int_flag,
             0xFF10..=0xFF26 => self.audio.read(addr),
             0xFF30..=0xFF3F => self.wave_pattern[addr as usize - 0xFF30],
-            0xFF40..=0xFF4B => self.lcd.read(addr),
+            // Gap from LCD registers
             0xFF50 => self.boot_rom,
             _ => 0xFF, // Unused bits of I/O registers return 1.
         }
@@ -58,7 +52,7 @@ impl Io {
             0xFF0F => self.int_flag = val,
             0xFF10..=0xFF26 => self.audio.write(addr, val),
             0xFF30..=0xFF3F => self.wave_pattern[addr as usize - 0xFF30] = val,
-            0xFF40..=0xFF4B => self.lcd.write(addr, val),
+            // Gap from LCD registers
             0xFF50 => self.boot_rom = val,
             _ => (), // NOOP
         }
@@ -145,73 +139,6 @@ impl Audio {
             0xFF22 => self.nr43 = val,
             0xFF23 => self.nr44 = val,
             _ => panic!("Attempted to write to invalid audio register: {:#x?}", addr),
-        }
-    }
-}
-
-#[derive(Default)]
-pub struct Lcd {
-    pub lcdc: LcdControl, // 0xFF40 LCD control
-    pub stat: LcdStatus,  // 0xFF41 LCD status
-    pub scy: u8,          // 0xFF42 Background viewport Y
-    pub scx: u8,          // 0xFF43 Background viewport X
-    pub ly: u8,           // 0xFF44 LCD Y coordinate (read-only)
-    pub lyc: u8,          // 0xFF45 LY compare
-    pub od_trans: u8,     // 0xFF46 OAM DMA transfer
-    pub bgp: u8,          // 0xFF47 BG palette data
-    pub obp0: u8,         // 0xFF48 OBJ palette 0 data
-    pub obp1: u8,         // 0xFF49 OBJ palette 1 data
-    pub wy: u8,           // 0xFF4A Window Y position
-    pub wx: u8,           // 0xFF4B Window X position plus 7
-}
-
-impl Lcd {
-    pub fn reset(&mut self) {
-        self.lcdc = LcdControl::from_bits(0x91);
-        self.stat = LcdStatus::from_bits(0x85);
-        self.ly = 0;
-        self.lyc = 0;
-        self.od_trans = 0xFF;
-        self.bgp = 0xFC;
-        self.obp0 = 0xFF;
-        self.obp1 = 0xFF;
-        self.wy = 0;
-        self.wx = 0;
-    }
-
-    pub fn read(&self, addr: u16) -> u8 {
-        match addr {
-            0xFF40 => self.lcdc.into_bits(),
-            0xFF41 => self.stat.into_bits(),
-            0xFF42 => self.scy,
-            0xFF43 => self.scx,
-            0xFF44 => 0x90, // TODO: Modify once PPU is implemented
-            0xFF45 => self.lyc,
-            0xFF46 => self.od_trans,
-            0xFF47 => self.bgp,
-            0xFF48 => self.obp0,
-            0xFF49 => self.obp1,
-            0xFF4A => self.wy,
-            0xFF4B => self.wx,
-            _ => panic!("Attempted to access invalid audio register: {:#x?}", addr),
-        }
-    }
-
-    pub fn write(&mut self, addr: u16, val: u8) {
-        match addr {
-            0xFF40 => self.lcdc.write_bits(val),
-            0xFF41 => self.stat.write_bits(val),
-            0xFF42 => self.scy = val,
-            0xFF43 => self.scx = val,
-            0xFF44 => panic!("Attempted to write to read-only LCD LY register"),
-            0xFF45 => self.lyc = val,
-            0xFF46 => unreachable!("Writes to 0xFF46 handled at MemoryBus level."),
-            0xFF47 => self.bgp = val,
-            0xFF48 => self.obp0 = val,
-            0xFF49 => self.obp1 = val,
-            0xFF4A => self.wy = val,
-            0xFF4B => self.wx = val,
-            _ => panic!("Attempted to access invalid audio register: {:#x?}", addr),
         }
     }
 }

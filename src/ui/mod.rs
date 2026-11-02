@@ -1,4 +1,4 @@
-use crate::memory::{MemoryBus, ppu::Tile};
+use crate::memory::{MemoryBus, ppu::vram::Tile};
 use minifb::{self, Scale, Window, WindowOptions};
 
 pub const W: usize = 160;

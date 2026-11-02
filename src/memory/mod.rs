@@ -8,13 +8,10 @@ use ppu::Ppu;
 pub mod io;
 pub mod ppu;
 pub mod timer;
-pub mod vram;
 
 pub struct MemoryBus {
     cart: Cartridge,    // Addresses 0x0000-0x7FFF & 0xA000-0xBFFF
-    vram: [u8; 0x2000], // Addresses 0x8000-0x9FFF
     wram: [u8; 0x2000], // Addresses 0xC000-DFFF & 0xE000-FDFF (via Echo RAM)
-    oam: [u8; 0xA0],    // Addresses 0xFE00-0xFE9F
     io: Io,             // Address 0xFF00-0xFF7F
     hram: [u8; 0x7F],   // Address 0xFF80-FFFE
     ie: u8,             // Address 0xFFFF
@@ -25,27 +22,27 @@ impl MemoryBus {
     pub fn init(cart: Cartridge) -> Self {
         MemoryBus {
             cart,
-            vram: [0; 0x2000],
             wram: [0; 0x2000],
-            oam: [0; 0xA0],
             io: Io::init(),
             hram: [0; 0x7F],
             ie: 0,
-            ppu: Ppu::default(),
+            ppu: Ppu::init(),
         }
     }
 
     pub fn read(&self, addr: u16) -> u8 {
         match addr {
             0x0..=0x7FFF => self.cart_rom_read(addr),
-            0x8000..=0x9FFF => self.vram[addr as usize - 0x8000],
+            0x8000..=0x9FFF => self.ppu.cpu_vram_read(addr),
             0xA000..=0xBFFF => self.cart_ram_read(addr),
             // If CGB mode, must modify 0xD000-0xDFFF for switchable banks
             0xC000..=0xDFFF => self.wram[addr as usize - 0xC000],
             0xE000..=0xFDFF => self.wram[addr as usize - 0xE000],
-            0xFE00..=0xFE9F => self.oam[addr as usize - 0xFE00],
+            0xFE00..=0xFE9F => self.ppu.cpu_oam_read(addr),
             0xFEA0..=0xFEFF => 0, // Unusable memory location
-            0xFF00..=0xFF7F => self.io.read(addr),
+            0xFF00..=0xFF3F => self.io.read(addr),
+            0xFF40..=0xFF4B => self.ppu.lcd.read(addr),
+            0xFF4C..=0xFF7F => self.io.read(addr),
             0xFF80..=0xFFFE => self.hram[addr as usize - 0xFF80],
             0xFFFF => self.ie,
         }
@@ -63,20 +60,22 @@ impl MemoryBus {
             0x2000..=0x3FFF => self.cart.mbc.set_bank1(val),
             0x4000..=0x5FFF => self.cart.mbc.set_bank2(val),
             0x6000..=0x7FFF => self.cart.mbc.set_mode(val),
-            0x8000..=0x9FFF => self.vram[addr as usize - 0x8000] = val,
+            0x8000..=0x9FFF => self.ppu.cpu_vram_write(addr, val),
             0xA000..=0xBFFF => self.cart_ram_write(addr, val),
             // If CGB mode, must modify 0xD000-0xDFFF for switchable banks
             0xC000..=0xDFFF => self.wram[addr as usize - 0xC000] = val,
             0xE000..=0xFDFF => self.wram[addr as usize - 0xE000] = val, // Echo RAM writes are effectively 0xC000-0xDDFF
-            0xFE00..=0xFE9F => self.oam[addr as usize - 0xFE00] = val,
+            0xFE00..=0xFE9F => self.ppu.cpu_oam_write(addr, val),
             0xFEA0..=0xFEFF => (), // Writes to this location have no effect
-            0xFF00..=0xFF45 => self.io.write(addr, val),
+            0xFF00..=0xFF3F => self.io.write(addr, val),
+            0xFF40..=0xFF45 => self.ppu.lcd.write(addr, val),
             0xFF46 => {
                 // OAM DMA Transfer requires full MemoryBus
-                self.io.lcd.od_trans = val;
+                self.ppu.lcd.od_trans = val;
                 self.oam_dma_transfer(val);
             }
-            0xFF47..=0xFF7F => self.io.write(addr, val),
+            0xFF47..=0xFF4B => self.ppu.lcd.write(addr, val),
+            0xFF4C..=0xFF7F => self.io.write(addr, val),
             0xFF80..=0xFFFE => self.hram[addr as usize - 0xFF80] = val,
             0xFFFF => self.ie = val,
         };
@@ -155,11 +154,12 @@ impl MemoryBus {
         // TODO: Pass PPU interrupts up
     }
 
+    // Trigger a DMA transfer from ROM/RAM to OAM
     fn oam_dma_transfer(&mut self, page: u8) {
         let src: u16 = u16::from(page) << 8;
         for i in 0..0xA0u16 {
             let byte = self.read(src + i);
-            self.write(0xFE00 + i, byte);
+            self.ppu.oam.write(0xFE00 + i, byte);
         }
     }
 }
