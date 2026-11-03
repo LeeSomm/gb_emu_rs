@@ -31,9 +31,8 @@ impl VRam {
     }
 
     /// Returns the tile index at (x, y) in one of the two 32x32 maps.
-    pub fn tile_index(&self, high_map: bool, x: usize, y: usize) -> u8 {
-        let base = if high_map { 0x1C00 } else { 0x1800 };
-        self.data[base + y * 32 + x]
+    pub fn tile_index(&self, map_offset: usize, x: usize, y: usize) -> u8 {
+        self.data[map_offset + y * 32 + x]
     }
 }
 
@@ -43,5 +42,5 @@ pub struct Tile {
 }
 
 pub struct TileMap {
-    pub data: [Tile; 1024], // Tile maps are 32x32 tiles (256 x 256 pixels)
+    pub data: [u8; 1024], // Tile maps are 32x32 bytes where each byte is a tile index
 }

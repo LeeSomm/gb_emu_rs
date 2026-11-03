@@ -2,18 +2,19 @@ use bitfields::{bitfield, bitflag};
 
 #[derive(Default)]
 pub struct Lcd {
-    pub lcdc: LcdControl, // 0xFF40 LCD control
-    pub stat: LcdStatus,  // 0xFF41 LCD status
-    pub scy: u8,          // 0xFF42 Background viewport Y
-    pub scx: u8,          // 0xFF43 Background viewport X
-    pub ly: u8,           // 0xFF44 LCD Y coordinate (read-only)
-    pub lyc: u8,          // 0xFF45 LY compare
-    pub od_trans: u8,     // 0xFF46 OAM DMA transfer
-    pub bgp: u8,          // 0xFF47 BG palette data
-    pub obp0: u8,         // 0xFF48 OBJ palette 0 data
-    pub obp1: u8,         // 0xFF49 OBJ palette 1 data
-    pub wy: u8,           // 0xFF4A Window Y position
-    pub wx: u8,           // 0xFF4B Window X position plus 7
+    pub lcdc: LcdControl,         // 0xFF40 LCD control
+    pub stat: LcdStatus,          // 0xFF41 LCD status
+    pub scy: u8,                  // 0xFF42 Background viewport Y
+    pub scx: u8,                  // 0xFF43 Background viewport X
+    pub ly: u8,                   // 0xFF44 LCD Y coordinate (read-only), values from 0-153
+    pub lyc: u8,                  // 0xFF45 LY compare
+    pub od_trans: u8,             // 0xFF46 OAM DMA transfer
+    pub bgp: u8,                  // 0xFF47 BG palette data
+    pub obp0: u8,                 // 0xFF48 OBJ palette 0 data
+    pub obp1: u8,                 // 0xFF49 OBJ palette 1 data
+    pub wy: u8,                   // 0xFF4A Window Y position
+    pub wx: u8,                   // 0xFF4B Window X position plus 7
+    pub window_y_condition: bool, // Track whether a window has begun rendering
 }
 
 impl Lcd {
@@ -31,6 +32,7 @@ impl Lcd {
             obp1: 0xFF,
             wy: 0,
             wx: 0,
+            window_y_condition: false,
         }
     }
 
@@ -69,6 +71,28 @@ impl Lcd {
             _ => panic!("Attempted to access invalid audio register: {:#x?}", addr),
         }
     }
+
+    /// Increment to next scanline. If final scanline, return true for completed frame.
+    pub fn next_scanline(&mut self) -> bool {
+        let ly = self.ly + 1;
+        let frame_complete: bool;
+
+        if ly > 153 {
+            self.ly = 0;
+            frame_complete = true;
+        } else {
+            self.ly = ly;
+            frame_complete = false;
+        }
+
+        self.stat.set_lyc_eq_ly(self.ly == self.lyc);
+
+        if self.ly == self.wy {
+            self.window_y_condition = true;
+        }
+
+        frame_complete
+    }
 }
 
 //FF40
@@ -90,7 +114,7 @@ pub struct LcdControl {
 #[bitfield(u8)]
 pub struct LcdStatus {
     #[bits(2)]
-    ppu_mode: PPUMode, // PPU's current status
+    ppu_mode: PpuMode, // PPU's current status
     lyc_eq_ly: bool,         // Set when LYC == LY
     m_zero_int_select: bool, // If set, selects Mode 0 condition for STAT interrupt
     m_one_int_select: bool,  // If set, selects Mode 1 condition for STAT interrupt
@@ -106,8 +130,17 @@ pub enum TileMapRef {
     TileMap2 = 1,
 }
 
+impl TileMapRef {
+    pub fn vram_offset(self) -> usize {
+        match self {
+            TileMapRef::TileMap1 => 0x1800,
+            TileMapRef::TileMap2 => 0x1C00,
+        }
+    }
+}
+
 #[bitflag(u8)]
-pub enum PPUMode {
+pub enum PpuMode {
     #[base]
     HBlank = 0x0,
     VBlank = 0x1,
