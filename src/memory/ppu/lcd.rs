@@ -2,19 +2,22 @@ use bitfields::{bitfield, bitflag};
 
 #[derive(Default)]
 pub struct Lcd {
-    pub lcdc: LcdControl,         // 0xFF40 LCD control
-    pub stat: LcdStatus,          // 0xFF41 LCD status
-    pub scy: u8,                  // 0xFF42 Background viewport Y
-    pub scx: u8,                  // 0xFF43 Background viewport X
-    pub ly: u8,                   // 0xFF44 LCD Y coordinate (read-only), values from 0-153
-    pub lyc: u8,                  // 0xFF45 LY compare
-    pub od_trans: u8,             // 0xFF46 OAM DMA transfer
-    pub bgp: u8,                  // 0xFF47 BG palette data
-    pub obp0: u8,                 // 0xFF48 OBJ palette 0 data
-    pub obp1: u8,                 // 0xFF49 OBJ palette 1 data
-    pub wy: u8,                   // 0xFF4A Window Y position
-    pub wx: u8,                   // 0xFF4B Window X position plus 7
-    pub window_y_condition: bool, // Track whether a window has begun rendering
+    pub lcdc: LcdControl,            // 0xFF40 LCD control
+    pub stat: LcdStatus,             // 0xFF41 LCD status
+    pub scy: u8,                     // 0xFF42 Background viewport Y
+    pub scx: u8,                     // 0xFF43 Background viewport X
+    pub ly: u8,                      // 0xFF44 LCD Y coordinate (read-only), values from 0-153
+    pub lyc: u8,                     // 0xFF45 LY compare
+    pub od_trans: u8,                // 0xFF46 OAM DMA transfer
+    pub bgp: u8,                     // 0xFF47 BG palette data
+    pub obp0: u8,                    // 0xFF48 OBJ palette 0 data
+    pub obp1: u8,                    // 0xFF49 OBJ palette 1 data
+    pub wy: u8,                      // 0xFF4A Window Y position
+    pub wx: u8,                      // 0xFF4B Window X position plus 7
+    pub output_x: u8,                // X value of current LCD output (0-159)
+    pub window_y_condition: bool,    // Track whether a window has begun rendering
+    pub drew_window_this_line: bool, // Tracks whether a window pixel was drawn this line
+    pub window_line: u8,             // Tracks which line of window is being rendered
 }
 
 impl Lcd {
@@ -32,7 +35,10 @@ impl Lcd {
             obp1: 0xFF,
             wy: 0,
             wx: 0,
+            output_x: 0,
             window_y_condition: false,
+            drew_window_this_line: false,
+            window_line: 0,
         }
     }
 
@@ -79,16 +85,22 @@ impl Lcd {
 
         if ly > 153 {
             self.ly = 0;
+            self.window_line = 0;
             frame_complete = true;
         } else {
             self.ly = ly;
+            if self.drew_window_this_line {
+                self.window_line += 1;
+            }
             frame_complete = false;
         }
 
+        self.output_x = 0;
+        self.drew_window_this_line = false;
         self.stat.set_lyc_eq_ly(self.ly == self.lyc);
 
         if self.ly == self.wy {
-            self.window_y_condition = true;
+            self.window_y_condition = true; // Set false each frame during VBlank
         }
 
         frame_complete

@@ -26,16 +26,13 @@ impl GameBoy {
     }
 
     pub fn run(&mut self) {
-        // Display debug
-        let mut offset = 0;
-
         loop {
             if self.cpu.halted {
                 if get_pending_interrupts(&self.bus).is_some() {
                     // Resume CPU operation if pending interrupts found
                     self.cpu.halted = false;
                 } else {
-                    // TODO: Logic for non-CPU hardware
+                    // Advances non-CPU hardware
                     self.bus.tick(4);
                     continue;
                 }
@@ -47,11 +44,10 @@ impl GameBoy {
 
                 self.step();
             }
-            // UI debug
-            self.ui.debug(&self.bus, offset);
-            // offset = offset.wrapping_add(1);
 
-            self.ui.present();
+            if self.bus.ppu.fb_ready {
+                self.ui.present(&self.bus.ppu.fb)
+            }
         }
     }
 

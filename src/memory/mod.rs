@@ -15,7 +15,7 @@ pub struct MemoryBus {
     io: Io,             // Address 0xFF00-0xFF7F
     hram: [u8; 0x7F],   // Address 0xFF80-FFFE
     ie: u8,             // Address 0xFFFF
-    ppu: Ppu,
+    pub ppu: Ppu,
 }
 
 impl MemoryBus {

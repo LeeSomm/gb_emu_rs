@@ -1,12 +1,13 @@
-use bitfields::{bitfield, bitflag};
 use lcd::Lcd;
 use oam::Oam;
+use palette::{Palette, PaletteRegister};
 use vram::VRam;
 
 use crate::memory::ppu::lcd::{PpuMode, TileMapRef};
 
 pub mod lcd;
 pub mod oam;
+pub mod palette;
 pub mod vram;
 
 const DISCARDED_PIXELS: u8 = 7;
@@ -16,16 +17,13 @@ pub struct Ppu {
     pub oam: Oam,   // Addresses 0xFE00-0xFE9F
     pub lcd: Lcd,   // 0xFF40-FF4B LCD
     // Pixel FIFO state
-    lcd_output_x: u8,       // X value of current LCD output (0-159)
-    window_line: u8,        // Tracks which line of window is being rendered
     drawing_complete: bool, // Signals end of PpuMode 3
     // Processing state
-    dots: u16, // 0-455, overflow moves to next scanline
-    timer: u16,
+    dots: u16,  // 0-455, overflow moves to next scanline
+    timer: u16, //TODO: Consider removal
     // Display
-    pub fb: [u8; 160 * 144], // Frame buffer
-    fifo_bg: [u16; 16],      // Background Pixel FIFO
-    fifo_obj: [u16; 16],     // Object Pixel FIFO
+    pub fb: [Palette; 160 * 144], // Frame buffer
+    pub fb_ready: bool,
 }
 
 impl Ppu {
@@ -34,14 +32,11 @@ impl Ppu {
             vram: VRam::init(),
             oam: Oam::init(),
             lcd: Lcd::init(), // 0xFF40-FF4B LCD
-            lcd_output_x: 0,
-            window_line: 0,
             drawing_complete: false,
             dots: 0,
             timer: 0,
-            fb: [0; 160 * 144],
-            fifo_bg: [0; 16],
-            fifo_obj: [0; 16],
+            fb: [Palette::from_bits(0x0); 160 * 144],
+            fb_ready: false,
         }
     }
 
@@ -78,14 +73,21 @@ impl Ppu {
     }
 
     pub fn advance(&mut self, cycles: u16) {
-        let frame_complete: bool;
         self.timer = self.timer.wrapping_add(cycles);
-        self.dots += cycles;
-        if self.dots > 455 {
-            self.dots = self.dots % 456;
-            frame_complete = self.lcd.next_scanline();
+        for dot in 0..cycles {
+            self.dots += dot;
+            if self.dots > 455 {
+                self.dots = self.dots % 456;
+                // If frame complete, signal fb is ready.
+                if self.lcd.next_scanline() {
+                    self.fb_ready = true;
+                }
+            }
+            self.set_mode();
+            if let PpuMode::Drawing = self.get_mode() {
+                self.fifo_pixel_fetcher();
+            }
         }
-        self.set_mode();
     }
 
     fn get_mode(&self) -> PpuMode {
@@ -112,23 +114,20 @@ impl Ppu {
         }
     }
 
+    // Currently pixel by pixel.
     fn fifo_pixel_fetcher(&mut self) {
-        // Get Tile
-        enum TileType {
-            Bg,
-            Window,
-        }
         // Determine whether Window or BG tile
         let tile_type: TileType;
         let tile_map: TileMapRef;
         if self.lcd.lcdc.window_enable()
             && self.lcd.window_y_condition
-            // Won't overflow b/c lcd_output_x wraps at 160
-            && (self.lcd_output_x + DISCARDED_PIXELS) >= self.lcd.wx
+            // Won't overflow b/c output_x wraps at 160
+            && (self.lcd.output_x + DISCARDED_PIXELS) >= self.lcd.wx
         {
             // If drawing inside window
             tile_map = self.lcd.lcdc.window_tilemap();
             tile_type = TileType::Window;
+            self.lcd.drew_window_this_line = true;
         } else {
             // If drawing outside of window
             tile_map = self.lcd.lcdc.bg_tilemap();
@@ -136,23 +135,7 @@ impl Ppu {
         }
 
         // Calculate xy coordinate of window/bg tile
-        let x: usize;
-        let y: usize;
-        match tile_type {
-            TileType::Bg => {
-                x = self.lcd_output_x.wrapping_add(self.lcd.scx) as usize;
-                y = self.lcd.ly.wrapping_add(self.lcd.scy) as usize;
-            }
-            TileType::Window => {
-                // Won't underflow given (self.lcd_output_x + DISCARDED_PIXELS) >= self.lcd.wx
-                x = (self.lcd_output_x + DISCARDED_PIXELS - self.lcd.wx) as usize;
-                y = self.window_line as usize;
-            }
-        }
-        let idx_x = x / 8;
-        let tile_x = x % 8;
-        let idx_y = y / 8;
-        let tile_y = y % 8;
+        let (idx_x, tile_x, idx_y, tile_y) = self.pixel_to_map_and_tile_coords(tile_type);
 
         let tile_idx = self.vram.tile_index(tile_map.vram_offset(), idx_x, idx_y);
 
@@ -162,5 +145,67 @@ impl Ppu {
         let hi_byte = tile[tile_y * 2 + 1];
         let bit = 7 - tile_x;
         let color_id = (((hi_byte >> bit) & 1) << 1) | ((lo_byte >> bit) & 1);
+
+        if let Some(palette) = self.convert_to_palette(PaletteRegister::BGP, color_id) {
+            self.fb[(self.lcd.ly as u16 * 160 + self.lcd.output_x as u16) as usize] = palette;
+        }
+        self.lcd.output_x = (self.lcd.output_x + 1) % 160;
+        if self.lcd.output_x == 0 {
+            self.drawing_complete = true;
+        }
     }
+
+    fn pixel_to_map_and_tile_coords(&self, tile_type: TileType) -> (usize, usize, usize, usize) {
+        let x: usize;
+        let y: usize;
+        match tile_type {
+            TileType::Bg => {
+                x = self.lcd.output_x.wrapping_add(self.lcd.scx) as usize;
+                y = self.lcd.ly.wrapping_add(self.lcd.scy) as usize;
+            }
+            TileType::Window => {
+                // Won't underflow given (self.lcd.output_x + DISCARDED_PIXELS) >= self.lcd.wx
+                x = (self.lcd.output_x + DISCARDED_PIXELS - self.lcd.wx) as usize;
+                y = self.lcd.window_line as usize;
+            }
+        }
+        let idx_x = x / 8;
+        let tile_x = x % 8;
+        let idx_y = y / 8;
+        let tile_y = y % 8;
+        (idx_x, tile_x, idx_y, tile_y)
+    }
+
+    // None means transparency
+    fn convert_to_palette(&self, register: PaletteRegister, color_id: u8) -> Option<Palette> {
+        let pal_reg: u8;
+        match register {
+            PaletteRegister::BGP => {
+                pal_reg = self.lcd.bgp;
+            }
+            PaletteRegister::OBP0 => {
+                // Color Index 0 is transparent for OBP
+                if color_id != 0 {
+                    pal_reg = self.lcd.obp0;
+                } else {
+                    return None;
+                }
+            }
+            PaletteRegister::OBP1 => {
+                // Color Index 0 is transparent for OBP
+                if color_id != 0 {
+                    pal_reg = self.lcd.obp1;
+                } else {
+                    return None;
+                }
+            }
+        }
+        let shade = (pal_reg >> (color_id * 2)) & 0b11;
+        return Some(Palette::from_bits(shade));
+    }
+}
+
+enum TileType {
+    Bg,
+    Window,
 }

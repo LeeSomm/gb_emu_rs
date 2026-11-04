@@ -1,36 +1,36 @@
-use crate::memory::{MemoryBus, ppu::vram::Tile};
+use crate::memory::ppu::{palette::Palette, vram::Tile};
 use minifb::{self, Scale, Window, WindowOptions};
 
 pub const W: usize = 160;
 pub const H: usize = 144;
 
-#[repr(u32)]
-#[derive(Clone, Copy)]
-pub enum Palette {
-    Black = 0x0004380f, // Darkest
-    DarkGray = 0x00306230,
-    LightGray = 0x0083a30e,
-    White = 0x009bbc0f, // Brightest
-}
+// #[repr(u32)]
+// #[derive(Clone, Copy)]
+// pub enum Palette {
+//     Black = 0x0004380f, // Darkest
+//     DarkGray = 0x00306230,
+//     LightGray = 0x0083a30e,
+//     White = 0x009bbc0f, // Brightest
+// }
 
-impl From<u8> for Palette {
-    fn from(id: u8) -> Self {
-        match id {
-            0 => Palette::White,
-            1 => Palette::LightGray,
-            2 => Palette::DarkGray,
-            _ => Palette::Black,
-        }
-    }
-}
+// impl From<u8> for Palette {
+//     fn from(id: u8) -> Self {
+//         match id {
+//             0 => Palette::White,
+//             1 => Palette::LightGray,
+//             2 => Palette::DarkGray,
+//             _ => Palette::Black,
+//         }
+//     }
+// }
 
-#[repr(u32)]
-#[derive(Clone, Copy)]
-pub enum PaletteRegister {
-    BGP = 0xFF47,  // Full color range
-    OBP0 = 0xFF48, // Color index 0 is transparent
-    OBP1 = 0xFF49, // Color index 0 is transparent
-}
+// #[repr(u32)]
+// #[derive(Clone, Copy)]
+// pub enum PaletteRegister {
+//     BGP = 0xFF47,  // Full color range
+//     OBP0 = 0xFF48, // Color index 0 is transparent
+//     OBP1 = 0xFF49, // Color index 0 is transparent
+// }
 
 pub struct UI {
     pub window: Window,
@@ -52,12 +52,26 @@ impl UI {
         }
     }
 
-    pub fn present(&mut self) {
+    pub fn present(&mut self, fb: &[Palette; W * H]) {
+        self.buffer = fb
+            .into_iter()
+            .map(|x| Self::palette_conversion(x))
+            .collect();
+
         self.window.update_with_buffer(&self.buffer, W, H).unwrap();
     }
 
     pub fn clear(&mut self, color: Palette) {
         self.buffer.iter_mut().for_each(|x| *x = color as u32)
+    }
+
+    fn palette_conversion(palette: &Palette) -> u32 {
+        match palette {
+            Palette::Black => 0x0004380f, // Darkest
+            Palette::DarkGray => 0x00306230,
+            Palette::LightGray => 0x0083a30e,
+            Palette::White => 0x009bbc0f, // Brightest
+        }
     }
 
     pub fn decode_tile(&self, tile: &Tile) -> [u8; 64] {
@@ -74,39 +88,39 @@ impl UI {
         pixel_data
     }
 
-    pub fn draw_tile(
-        &mut self,
-        bus: &MemoryBus,
-        register: PaletteRegister,
-        x: usize,
-        y: usize,
-        tile: &Tile,
-    ) {
-        let tile_data = self.decode_tile(tile);
+    // pub fn draw_tile(
+    //     &mut self,
+    //     bus: &MemoryBus,
+    //     register: PaletteRegister,
+    //     x: usize,
+    //     y: usize,
+    //     tile: &Tile,
+    // ) {
+    //     let tile_data = self.decode_tile(tile);
 
-        for ax in x..x + 8 {
-            for ay in y..y + 8 {
-                let color_id = tile_data[((ay - y) * 8) + (ax - x)];
-                match register {
-                    PaletteRegister::BGP => {
-                        let bgp = bus.read(register as u16);
-                        let shade = (bgp >> (color_id * 2)) & 0b11;
-                        self.put_pixel(ax, ay, Palette::from(shade));
-                    }
-                    PaletteRegister::OBP0 | PaletteRegister::OBP1 => {
-                        // Color Index 0 is transparent for OBP
-                        if color_id != 0 {
-                            let obp = bus.read(register as u16);
-                            let shade = (obp >> (color_id * 2)) & 0b11;
-                            self.put_pixel(ax, ay, Palette::from(shade));
-                        }
-                    }
-                }
-            }
-        }
-    }
+    //     for ax in x..x + 8 {
+    //         for ay in y..y + 8 {
+    //             let color_id = tile_data[((ay - y) * 8) + (ax - x)];
+    //             match register {
+    //                 PaletteRegister::BGP => {
+    //                     let bgp = bus.read(register as u16);
+    //                     let shade = (bgp >> (color_id * 2)) & 0b11;
+    //                     self.put_pixel(ax, ay, Palette::from(shade));
+    //                 }
+    //                 PaletteRegister::OBP0 | PaletteRegister::OBP1 => {
+    //                     // Color Index 0 is transparent for OBP
+    //                     if color_id != 0 {
+    //                         let obp = bus.read(register as u16);
+    //                         let shade = (obp >> (color_id * 2)) & 0b11;
+    //                         self.put_pixel(ax, ay, Palette::from(shade));
+    //                     }
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }
 
-    pub fn put_pixel(&mut self, x: usize, y: usize, color: Palette) {
+    pub fn put_pixel(&mut self, x: usize, y: usize, color: u32) {
         // Make sure pixel location is in bounds
         if x < W && y < H {
             self.buffer[(y * W) + x] = color as u32;
@@ -116,25 +130,26 @@ impl UI {
         }
     }
 
-    pub fn debug(&mut self, bus: &MemoryBus, offset: u8) {
-        let mut color_idx = u8::from(offset % 4);
+    // pub fn debug(&mut self, bus: &MemoryBus, offset: u8) {
+    //     let mut color_idx = u8::from(offset % 4);
 
-        let end = H * W;
+    //     let end = H * W;
 
-        for idx in 0..end {
-            let x = idx % W;
-            let y = idx / W;
-            self.put_pixel(x, y, Palette::from(color_idx));
-            color_idx = (color_idx + 1) % 4;
-        }
+    //     for idx in 0..end {
+    //         let x = idx % W;
+    //         let y = idx / W;
+    //         let color = Palette::from(color_idx);
+    //         self.put_pixel(x, y, self::palette_conversion(color));
+    //         color_idx = (color_idx + 1) % 4;
+    //     }
 
-        let tile = Tile {
-            data: [
-                0x3C, 0x7E, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x7E, 0x5E, 0x7E, 0x0A, 0x7C, 0x56,
-                0x38, 0x7C,
-            ],
-        };
+    //     let tile = Tile {
+    //         data: [
+    //             0x3C, 0x7E, 0x42, 0x42, 0x42, 0x42, 0x42, 0x42, 0x7E, 0x5E, 0x7E, 0x0A, 0x7C, 0x56,
+    //             0x38, 0x7C,
+    //         ],
+    //     };
 
-        self.draw_tile(bus, PaletteRegister::BGP, 5, 10, &tile);
-    }
+    //     self.draw_tile(bus, PaletteRegister::BGP, 5, 10, &tile);
+    // }
 }
