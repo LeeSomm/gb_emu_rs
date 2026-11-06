@@ -46,7 +46,8 @@ impl GameBoy {
             }
 
             if self.bus.ppu.fb_ready {
-                self.ui.present(&self.bus.ppu.fb)
+                self.ui.present(&self.bus.ppu.fb);
+                self.bus.ppu.fb_ready = false;
             }
         }
     }

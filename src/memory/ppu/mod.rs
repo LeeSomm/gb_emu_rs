@@ -41,7 +41,9 @@ impl Ppu {
     }
 
     pub fn cpu_vram_read(&self, addr: u16) -> u8 {
-        if let PpuMode::Drawing = self.get_mode() {
+        if let PpuMode::Drawing = self.get_mode()
+            && !self.lcd.lcdc.lcd_ppu_enable()
+        {
             0xFF // Undefined data when VRAM is read during PPU Mode 3
         } else {
             self.vram.read(addr)
@@ -49,7 +51,9 @@ impl Ppu {
     }
 
     pub fn cpu_vram_write(&mut self, addr: u16, val: u8) {
-        if let PpuMode::Drawing = self.get_mode() {
+        if let PpuMode::Drawing = self.get_mode()
+            && !self.lcd.lcdc.lcd_ppu_enable()
+        {
             () // Write ignored when VRAM is read during PPU Mode 3
         } else {
             self.vram.write(addr, val);
@@ -57,7 +61,9 @@ impl Ppu {
     }
 
     pub fn cpu_oam_read(&self, addr: u16) -> u8 {
-        if let PpuMode::OAMSearch | PpuMode::Drawing = self.get_mode() {
+        if let PpuMode::OAMSearch | PpuMode::Drawing = self.get_mode()
+            && !self.lcd.lcdc.lcd_ppu_enable()
+        {
             0xFF // Undefined data when OAM is read during PPU Modes 2 & 3
         } else {
             self.oam.read(addr)
@@ -65,7 +71,9 @@ impl Ppu {
     }
 
     pub fn cpu_oam_write(&mut self, addr: u16, val: u8) {
-        if let PpuMode::OAMSearch | PpuMode::Drawing = self.get_mode() {
+        if let PpuMode::OAMSearch | PpuMode::Drawing = self.get_mode()
+            && !self.lcd.lcdc.lcd_ppu_enable()
+        {
             () // Write ignored when OAM is read during PPU Modes 2 & 3
         } else {
             self.oam.write(addr, val);
@@ -75,7 +83,7 @@ impl Ppu {
     pub fn advance(&mut self, cycles: u16) {
         self.timer = self.timer.wrapping_add(cycles);
         for dot in 0..cycles {
-            self.dots += dot;
+            self.dots += 1;
             if self.dots > 455 {
                 self.dots = self.dots % 456;
                 // If frame complete, signal fb is ready.
@@ -101,7 +109,7 @@ impl Ppu {
             if self.lcd.window_y_condition {
                 self.lcd.window_y_condition = false;
             }
-        } else if (0..=80).contains(&self.dots) {
+        } else if (0..80).contains(&self.dots) {
             self.lcd.stat.set_ppu_mode(PpuMode::OAMSearch);
             // Reset drawing_complete flag
             if self.drawing_complete {

@@ -150,7 +150,9 @@ impl MemoryBus {
         if self.io.timer.advance(cycles) {
             interrupt_flag_raise(self, Interrupt::Timer);
         }
-        self.ppu.advance(cycles);
+        if self.ppu.lcd.lcdc.lcd_ppu_enable() {
+            self.ppu.advance(cycles);
+        }
         // TODO: Pass PPU interrupts up
     }
 
