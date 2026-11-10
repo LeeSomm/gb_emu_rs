@@ -16,11 +16,7 @@ pub struct Ppu {
     pub vram: VRam, // Addresses 0x8000-0x9FFF
     pub oam: Oam,   // Addresses 0xFE00-0xFE9F
     pub lcd: Lcd,   // 0xFF40-FF4B LCD
-    // Pixel FIFO state
-    drawing_complete: bool, // Signals end of PpuMode 3
-    // Processing state
-    dots: u16,  // 0-455, overflow moves to next scanline
-    timer: u16, //TODO: Consider removal
+    // timer: u16, //TODO: Consider removal
     // Display
     pub fb: [Palette; 160 * 144], // Frame buffer
     pub fb_ready: bool,
@@ -32,9 +28,7 @@ impl Ppu {
             vram: VRam::init(),
             oam: Oam::init(),
             lcd: Lcd::init(), // 0xFF40-FF4B LCD
-            drawing_complete: false,
-            dots: 0,
-            timer: 0,
+            // timer: 0,
             fb: [Palette::from_bits(0x0); 160 * 144],
             fb_ready: false,
         }
@@ -81,11 +75,11 @@ impl Ppu {
     }
 
     pub fn advance(&mut self, cycles: u16) {
-        self.timer = self.timer.wrapping_add(cycles);
-        for dot in 0..cycles {
-            self.dots += 1;
-            if self.dots > 455 {
-                self.dots = self.dots % 456;
+        // self.timer = self.timer.wrapping_add(cycles);
+        for _dot in 0..cycles {
+            self.lcd.dots += 1;
+            if self.lcd.dots > 455 {
+                self.lcd.dots = self.lcd.dots % 456;
                 // If frame complete, signal fb is ready.
                 if self.lcd.next_scanline() {
                     self.fb_ready = true;
@@ -95,6 +89,8 @@ impl Ppu {
             if let PpuMode::Drawing = self.get_mode() {
                 self.fifo_pixel_fetcher();
             }
+            // Interrupt flags
+            self.lcd.stat.set_lyc_eq_ly(self.lcd.ly == self.lcd.lyc);
         }
     }
 
@@ -109,13 +105,13 @@ impl Ppu {
             if self.lcd.window_y_condition {
                 self.lcd.window_y_condition = false;
             }
-        } else if (0..80).contains(&self.dots) {
+        } else if (0..80).contains(&self.lcd.dots) {
             self.lcd.stat.set_ppu_mode(PpuMode::OAMSearch);
             // Reset drawing_complete flag
-            if self.drawing_complete {
-                self.drawing_complete = false
+            if self.lcd.drawing_complete {
+                self.lcd.drawing_complete = false
             }
-        } else if self.drawing_complete {
+        } else if self.lcd.drawing_complete {
             self.lcd.stat.set_ppu_mode(PpuMode::HBlank);
         } else {
             self.lcd.stat.set_ppu_mode(PpuMode::Drawing);
@@ -159,7 +155,7 @@ impl Ppu {
         }
         self.lcd.output_x = (self.lcd.output_x + 1) % 160;
         if self.lcd.output_x == 0 {
-            self.drawing_complete = true;
+            self.lcd.drawing_complete = true;
         }
     }
 

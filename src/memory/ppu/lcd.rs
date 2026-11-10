@@ -2,22 +2,27 @@ use bitfields::{bitfield, bitflag};
 
 #[derive(Default)]
 pub struct Lcd {
-    pub lcdc: LcdControl,            // 0xFF40 LCD control
-    pub stat: LcdStatus,             // 0xFF41 LCD status
-    pub scy: u8,                     // 0xFF42 Background viewport Y
-    pub scx: u8,                     // 0xFF43 Background viewport X
-    pub ly: u8,                      // 0xFF44 LCD Y coordinate (read-only), values from 0-153
-    pub lyc: u8,                     // 0xFF45 LY compare
-    pub od_trans: u8,                // 0xFF46 OAM DMA transfer
-    pub bgp: u8,                     // 0xFF47 BG palette data
-    pub obp0: u8,                    // 0xFF48 OBJ palette 0 data
-    pub obp1: u8,                    // 0xFF49 OBJ palette 1 data
-    pub wy: u8,                      // 0xFF4A Window Y position
-    pub wx: u8,                      // 0xFF4B Window X position plus 7
+    // Regsiters
+    pub lcdc: LcdControl, // 0xFF40 LCD control
+    pub stat: LcdStatus,  // 0xFF41 LCD status
+    pub scy: u8,          // 0xFF42 Background viewport Y
+    pub scx: u8,          // 0xFF43 Background viewport X
+    pub ly: u8,           // 0xFF44 LCD Y coordinate (read-only), values from 0-153
+    pub lyc: u8,          // 0xFF45 LY compare
+    pub od_trans: u8,     // 0xFF46 OAM DMA transfer
+    pub bgp: u8,          // 0xFF47 BG palette data
+    pub obp0: u8,         // 0xFF48 OBJ palette 0 data
+    pub obp1: u8,         // 0xFF49 OBJ palette 1 data
+    pub wy: u8,           // 0xFF4A Window Y position
+    pub wx: u8,           // 0xFF4B Window X position plus 7
+    // Processing state
+    pub dots: u16,                   // 0-455, overflow moves to next scanline
     pub output_x: u8,                // X value of current LCD output (0-159)
     pub window_y_condition: bool,    // Track whether a window has begun rendering
     pub drew_window_this_line: bool, // Tracks whether a window pixel was drawn this line
     pub window_line: u8,             // Tracks which line of window is being rendered
+    // Pixel FIFO state
+    pub drawing_complete: bool, // Signals end of PpuMode 3
 }
 
 impl Lcd {
@@ -35,10 +40,12 @@ impl Lcd {
             obp1: 0xFF,
             wy: 0,
             wx: 0,
+            dots: 0,
             output_x: 0,
             window_y_condition: false,
             drew_window_this_line: false,
             window_line: 0,
+            drawing_complete: false,
         }
     }
 
@@ -62,7 +69,12 @@ impl Lcd {
 
     pub fn write(&mut self, addr: u16, val: u8) {
         match addr {
-            0xFF40 => self.lcdc.write_bits(val),
+            0xFF40 => {
+                if (val >> 7) == 0 && self.lcdc.lcd_ppu_enable() {
+                    self.lcd_disable_clear_state();
+                }
+                self.lcdc.write_bits(val);
+            }
             0xFF41 => self.stat.write_bits(val),
             0xFF42 => self.scy = val,
             0xFF43 => self.scx = val,
@@ -76,6 +88,16 @@ impl Lcd {
             0xFF4B => self.wx = val,
             _ => panic!("Attempted to access invalid audio register: {:#x?}", addr),
         }
+    }
+
+    fn lcd_disable_clear_state(&mut self) {
+        self.dots = 0;
+        self.ly = 0;
+        self.stat.set_ppu_mode(PpuMode::HBlank);
+        self.output_x = 0;
+        self.window_y_condition = false;
+        self.drew_window_this_line = false;
+        self.drawing_complete = false;
     }
 
     /// Increment to next scanline. If final scanline, return true for completed frame.
@@ -97,7 +119,6 @@ impl Lcd {
 
         self.output_x = 0;
         self.drew_window_this_line = false;
-        self.stat.set_lyc_eq_ly(self.ly == self.lyc);
 
         if self.ly == self.wy {
             self.window_y_condition = true; // Set false each frame during VBlank
